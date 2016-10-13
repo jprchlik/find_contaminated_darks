@@ -37,11 +37,11 @@ pro check_sig_level,file,pass,endfile,timfile
     pass3 = float(lsig53)/n_elements(port3) lt passfrac
     pass4 = float(lsig54)/n_elements(port4) lt passfrac
 
-    pass = (pass1 and pass2 and pass3 and pass4)
+    pass = (pass1 or pass2 or pass3 or pass4)
 ;    print,'NEW',file
 ;    print,lsig51,lsig52,lsig53,lsig54
 ;    print,float(lsig51)/n_elements(port1)
-    print,endfile,' ',timfile,pass
+   print,endfile,' ',timfile,pass
 
 ;number of pixels in each port which have values above the 5 sigma level
 ;    lsig51 = sig51

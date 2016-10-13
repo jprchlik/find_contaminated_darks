@@ -74,6 +74,9 @@ pro find_con_darks,month,yeari,sdir=sdir,simpleb=simpleb,complexa=complexa,type=
         filesProcessed = 0
         nextIndex = 0
         cpl = 0
+        passer = []
+        timeou = strarr(1)
+        basicf = strarr(1)
 
 ;Multithread file list       
         while filesProcessed lt nFiles do begin
@@ -101,10 +104,10 @@ pro find_con_darks,month,yeari,sdir=sdir,simpleb=simpleb,complexa=complexa,type=
     ;Store the results
                         filesProcessed++
                         cpl += oBridge[j]->getVar('pass')
-                        passer = oBridge[j]->getVar('pass')
-                        basicf = oBridge[j]->getVar('endfile')
-                        timeou = oBridge[j]->getVar('timfile')
-                        print,basicf,' ',timeou,passer
+                        passer = [passer,oBridge[j]->getVar('pass')]
+                        basicf = [basicf,oBridge[j]->getVar('endfile')]
+                        timeou = [timeou,oBridge[j]->getVar('timfile')]
+;                        print,basicf,' ',timeou,passer
                        
                         oBridge[j].setProperty,userData=0
                         break
@@ -115,14 +118,24 @@ pro find_con_darks,month,yeari,sdir=sdir,simpleb=simpleb,complexa=complexa,type=
                 endswitch
             endfor
         endwhile
+
+;Stats for the entire month
+        bigstat = syeari+'/'+smonth+' Number Pass = '+strcompress(cpl,/remove_all)+' ('+strcompress(float(cpl)/nFiles*100.,/remove_all)+'%)'
+;write information to file
+        format = '(A25,2X,A20,2X,I6)'
+        fname = type+'_'+syeari+'_'+smonth+'.txt'
+        openw,1,fname
+        printf,1,bigstat
+        for j=0,n_elements(passer)-1 do printf,1,basicf[j],timeou[j],passer[j],format=format
             
-        
+;       printf,bigstat
+        close,1
 ;      
+        print,bigstat
 ;
 ;
 ;
 ;    print,'File criteria values'
-    print,syeari+'/'+smonth+' Number Pass = '+strcompress(cpl,/remove_all)+' ('+strcompress(float(cpl)/nFiles*100.,/remove_all)+'%)'
 ;   for j=0, nFiles-1 do print,filelist[j],cpl[j]
 
     endfor
