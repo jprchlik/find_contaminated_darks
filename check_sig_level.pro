@@ -31,14 +31,19 @@ pro check_sig_level,file,pass,endfile,timfile,total5,exptime
     total5 = lsig51+lsig52+lsig53+lsig54
 
 ;return exposure time
-    exptime = sxpar(hdr,'EXPTIME')
+    exptime = sxpar(hdr,'INT_TIME')
 
+;normalize total5 by expsure time
+    if exptime gt 1.0 then total5 = total5/exptime
+    
 
 ;fraction to pass as good 
 ;   passfrac = 0.0001
-;This value comes from the Gaussian Distribution of 5 sigma
-;   passfrac = 6.E-5
-    passfrac = 2.E-4
+;6.E-5 value comes from the Gaussian Distribution of 5 sigma
+   passfrac = 6.E-5
+;being a little more restrictive
+   passfrac = 3.E-5
+;   passfrac = 2.E-4
 ;
     pass1 = float(lsig51)/n_elements(port1) lt passfrac
     pass2 = float(lsig52)/n_elements(port2) lt passfrac
@@ -46,10 +51,13 @@ pro check_sig_level,file,pass,endfile,timfile,total5,exptime
     pass4 = float(lsig54)/n_elements(port4) lt passfrac
 
     pass = (pass1 or pass2 or pass3 or pass4)
-;    print,'NEW',file
-;    print,lsig51,lsig52,lsig53,lsig54
-;    print,float(lsig51)/n_elements(port1)
-   print,endfile,' ',timfile,pass
+;fraction of pixels with sigma greater than 5 sigma normalized by exposure time
+    badfrac = float(total5)/(n_elements(port1)+n_elements(port2)+n_elements(port3)+n_elements(port4))
+    pass = badfrac lt passfrac
+
+;print data to output file sorted by processor
+    print,endfile,' ',timfile,pass
+
 
 ;number of pixels in each port which have values above the 5 sigma level
 ;    lsig51 = sig51

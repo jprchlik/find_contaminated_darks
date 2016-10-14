@@ -131,6 +131,8 @@ pro find_con_darks,month,yeari,sdir=sdir,simpleb=simpleb,complexa=complexa,type=
        basicf = basicf[sorter]
        timeou = timeou[sorter]
        passer = passer[sorter]
+       exptim = exptim[sorter]
+       total5 = total5[sorter]
 
 ;Stats for the entire month
         bigstat = '#'+syeari+'/'+smonth+' Number Pass = '+strcompress(cpl,/remove_all)+' ('+strcompress(float(cpl)/nFiles*100.,/remove_all)+'%)'
