@@ -75,6 +75,8 @@ pro find_con_darks,month,yeari,sdir=sdir,simpleb=simpleb,complexa=complexa,type=
         nextIndex = 0
         cpl = 0
         passer = []
+        total5 = []
+        exptim = []
         timeou = strarr(1)
         basicf = strarr(1)
 
@@ -94,7 +96,7 @@ pro find_con_darks,month,yeari,sdir=sdir,simpleb=simpleb,complexa=complexa,type=
 ;                            oBridge[j].execute,".r /Volumes/Pegasus/jprchlik/iris/find_con_darks/check_sig_level.pro",/nowait
 ;                            oBridge[j].execute,".r /Volumes/Pegasus/jprchlik/iris/find_con_darks/fivesigma.pro",/nowait
                             oBridge[j].execute, "check_sig_level,'"+$
-                                filelist[nextIndex]+"', pass,endfile,timfile",/nowait
+                                filelist[nextIndex]+"', pass,endfile,timfile,total5,exptime",/nowait
     ;Add 1 to next index
                             nextIndex++
                         endif
@@ -107,6 +109,8 @@ pro find_con_darks,month,yeari,sdir=sdir,simpleb=simpleb,complexa=complexa,type=
                         passer = [passer,oBridge[j]->getVar('pass')]
                         basicf = [basicf,oBridge[j]->getVar('endfile')]
                         timeou = [timeou,oBridge[j]->getVar('timfile')]
+                        total5 = [total5,oBridge[j]->getVar('total5')]
+                        exptim = [exptim,oBridge[j]->getVar('exptime')]
 ;                        print,basicf,' ',timeou,passer
                        
                         oBridge[j].setProperty,userData=0
@@ -131,13 +135,13 @@ pro find_con_darks,month,yeari,sdir=sdir,simpleb=simpleb,complexa=complexa,type=
 ;Stats for the entire month
         bigstat = '#'+syeari+'/'+smonth+' Number Pass = '+strcompress(cpl,/remove_all)+' ('+strcompress(float(cpl)/nFiles*100.,/remove_all)+'%)'
 ;write information to file
-        format = '(A25,2X,A20,2X,I6)'
+        format = '(A25,2X,A20,2X,I6,2X,I8,2X,F8.2)'
         fname = type+'_'+syeari+'_'+smonth+'.txt'
         openw,1,fname
         printf,1,bigstat
 ; add header to file
-        printf,1,'file','time','pass',format='(A25,2X,A20,2X,A6)'
-        for j=0,n_elements(passer)-1 do printf,1,basicf[j],timeou[j],passer[j],format=format
+        printf,1,'file','time','pass','total5','exptime',format='(A25,2X,A20,2X,A6,2X,A8,2X,A8)'
+        for j=0,n_elements(passer)-1 do printf,1,basicf[j],timeou[j],passer[j],total5[j],exptim[j],format=format
 ;       printf,bigstat
         close,1
 ;      

@@ -1,5 +1,5 @@
-pro check_sig_level,file,pass,endfile,timfile
-;file is file name data is an array containing whether the ports passed or failed (0 is pass 1 is failed)
+pro check_sig_level,file,pass,endfile,timfile,total5,exptime
+;file is file name data is an array containing whether the ports passed or failed (1 is pass 0 is failed)
     compile_opt idl2
 ;    read_iris,file,index,data
     fits_read,file,data,hdr
@@ -27,10 +27,18 @@ pro check_sig_level,file,pass,endfile,timfile
     lsig52 = fivesigma(port2)
     lsig53 = fivesigma(port3)
     lsig54 = fivesigma(port4)
+;get total values above 5 sigma
+    total5 = lsig51+lsig52+lsig53+lsig54
+
+;return exposure time
+    exptime = sxpar(hdr,'EXPTIME')
+
+
 ;fraction to pass as good 
-    passfrac = 0.0001
-    passfrac = 6.E-5
-    
+;   passfrac = 0.0001
+;This value comes from the Gaussian Distribution of 5 sigma
+;   passfrac = 6.E-5
+    passfrac = 2.E-4
 ;
     pass1 = float(lsig51)/n_elements(port1) lt passfrac
     pass2 = float(lsig52)/n_elements(port2) lt passfrac
