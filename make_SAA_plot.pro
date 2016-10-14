@@ -1,11 +1,22 @@
-pro make_saa_plot,month,year,type
+pro make_saa_plot,month,year,type,outdir,plotdir=plotdir
 
+
+
+    ;output plot file name
+    fname = type+'_'+year+'_'+month+'.eps'
+
+    ;add plot directory
+    if keyword_set(plotdir) then fname=plotdir+'/'+fname
+
+    ;setup plot device
     set_plot,'ps'
-    device,/encap,/color,filename=type+'_'+year+'_'+month+'.eps'
+    device,/encap,/color,filename=fname
     loadct,12
+
+   
     
     
-    readcol,type+'_'+year+'_'+month+'.txt',file,time,pass,numb,intt,format='A,A,f,f,f',delimiter=' ',skipline=1
+    readcol,outdir+type+'_'+year+'_'+month+'.txt',file,time,pass,numb,intt,format='A,A,f,f,f',delimiter=' ',skipline=1
     ;set artificial counting time
     normal = JulDay(1,1,2012,0,0,0)
 
@@ -34,18 +45,23 @@ pro make_saa_plot,month,year,type
 ;group Darks which pass and fail inspection
     good = where(pass eq 1)
     bad  = where(pass eq 0)
+;start day to output tile
+    sday = strmid(file[0],9,2)
     
-    utplot,[0,0],[0,0],'1-jan-12',ytitle="Normalized Number of 5 Sigma Pixels",title=year+'/'+month,$
+    utplot,[0,0],[0,0],'1-jan-12',ytitle="Normalized Number of 5 Sigma Pixels",title=year+'/'+month+'/'+sday,$
         xtitle='Hours (UT)',XSTYLE=1,$;timerange=['24-aug-16,05:59:00','24-aug-16,8:00:00'],$
         xrange=[min(jime),max(jime)],$
         /nodata,yrange=[0,max(numb)]
 
 
 ;overplot good and bad points
-        oplot,jime[good],numb[good],psym=6,color=0
-        oplot,jime[bad],numb[bad],psym=6,color=200
+;fix for empty good array
+        if n_elements(size(good)) gt 3 then oplot,jime[good],numb[good],psym=6,color=0
+;fix for empty bad array
+        if n_elements(size(bad)) gt 3 then oplot,jime[bad],numb[bad],psym=6,color=200
 
 
+;manually set SAA for now
         saai = double(JulDAY(09,21,2016,18,09)-normal)*24.*3600.
         saao = double(JulDAY(09,21,2016,18,26)-normal)*24.*3600.
         yval = [-10000,10000]
