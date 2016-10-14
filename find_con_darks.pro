@@ -1,4 +1,4 @@
-pro find_con_darks,month,yeari,sdir=sdir,simpleb=simpleb,complexa=complexa,type=type
+pro find_con_darks,month,yeari,sdir=sdir,simpleb=simpleb,complexa=complexa,type=type,plotter=plotter,logdir=logdir,outdir=outdir
     compile_opt idl2
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 ;needs simpleb or complexa
@@ -9,6 +9,8 @@ pro find_con_darks,month,yeari,sdir=sdir,simpleb=simpleb,complexa=complexa,type=
     if keyword_set(simpleb) then sdir=sdir+'simpleB/'
     if keyword_set(complexa) then sdir=sdir+'complexA/' 
     if keyword_set(type) then type = type else type = 'NUV'
+    if keyword_set(logdir) then logdir=logdir+'/' else logdir = ''
+    if keyword_set(outdir) then outdir=outdir+'/' else outdir = ''
 
 ; find whether month is list or single value
     monarr = n_elements(size(month))
@@ -66,7 +68,7 @@ pro find_con_darks,month,yeari,sdir=sdir,simpleb=simpleb,complexa=complexa,type=
 
         for j=0,n_elements(oBridge)-1 do begin
             oBridge[j] = obj_new('IDL_IDLBridge',$
-                Callback='check_sig_levelCallback',output="log_"+strcompress(string(j),/remove_all)+".txt")
+                Callback='check_sig_levelCallback',output=logdir+"log_"+strcompress(string(j),/remove_all)+".txt")
             oBridge[j].setProperty, userData=0
         endfor
 
@@ -138,7 +140,7 @@ pro find_con_darks,month,yeari,sdir=sdir,simpleb=simpleb,complexa=complexa,type=
         bigstat = '#'+syeari+'/'+smonth+' Number Pass = '+strcompress(cpl,/remove_all)+' ('+strcompress(float(cpl)/nFiles*100.,/remove_all)+'%)'
 ;write information to file
         format = '(A25,2X,A20,2X,I6,2X,I8,2X,F8.2)'
-        fname = type+'_'+syeari+'_'+smonth+'.txt'
+        fname = outdir+type+'_'+syeari+'_'+smonth+'.txt'
         openw,1,fname
         printf,1,bigstat
 ; add header to file
@@ -148,11 +150,10 @@ pro find_con_darks,month,yeari,sdir=sdir,simpleb=simpleb,complexa=complexa,type=
         close,1
 ;      
         print,bigstat
-;
-;
-;
-;    print,'File criteria values'
-;   for j=0, nFiles-1 do print,filelist[j],cpl[j]
+
+ ;plot if ploter keyword set
+        if keyword_set(plotter) then make_saa_plot,smonth,syeari,type,outdir,plotdir='plots'
+
 
     endfor
 ;
