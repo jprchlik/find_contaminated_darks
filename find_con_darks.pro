@@ -59,6 +59,11 @@ pro find_con_darks,month,yeari,sdir=sdir,simpleb=simpleb,complexa=complexa,type=
         filelist = file_search(fullp+type+'*fits')
         nFiles = n_elements(filelist)
         passarra = intarr(nFiles)
+;Check to make sure dark exist that month (added 2016/10/17)
+        if n_elements(filelist) le 1 then begin
+            print,syeari,'/',smonth,' contains no darks'
+            continue
+        endif
         
 
 ;list all files in current month
