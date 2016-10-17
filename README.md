@@ -17,11 +17,12 @@ Then it finds the number of pixels more than 5 sigma away from the mean.
 I then sum the total number of pixels 5 sigma away from the mean and 
 normalize that number by the integration time (if the integration time is greater than 1.
 Then I use the pixel fraction greater than 5 sigma to find images affected by SAA.
-If you assume a Gaussian distribution we would expect that fraction to be 6.E-5; however,
-for empirical reasons I used a more restrictive fraction of 2.E-5.
+If you assume a Gaussian distribution we would expect that fraction to be 6.E-5,
+so we assume the 5 sigma Gaussian fraction to reject images with fraction higher than the Gaussian value.
 Finally, the program writes the file name, start time of integration, whether it passed (1 is passed 0 is failed),
  total pixels above the 5 sigma level normalized by exposure time, and the integration time to a file.
 The output file is formated NUV(or FUV)_YYYY_MM.txt.
+So far the Gaussian fraction prediects 12 months are contaminated by SAAs, since the start of IRIS.
 
 I include an example output from September, 2016, which we know is contaminated by SAA from 18:09:11 to 18:26:12.
  What we find is the SAA only contributed significantly from 18:14:49 to 18:20:52.
