@@ -42,7 +42,7 @@ pro check_sig_level,file,pass,endfile,timfile,total5,exptime
 ;6.E-5 value comes from the Gaussian Distribution of 5 sigma
    passfrac = 6.E-5
 ;being a little more restrictive
-   passfrac = 3.E-5
+;   passfrac = 3.E-5
 ;   passfrac = 2.E-4
 ;
     pass1 = float(lsig51)/n_elements(port1) lt passfrac
