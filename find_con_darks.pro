@@ -144,12 +144,12 @@ pro find_con_darks,month,yeari,sdir=sdir,simpleb=simpleb,complexa=complexa,type=
 ;Stats for the entire month
         bigstat = '#'+syeari+'/'+smonth+' Number Pass = '+strcompress(cpl,/remove_all)+' ('+strcompress(float(cpl)/nFiles*100.,/remove_all)+'%)'
 ;write information to file
-        format = '(A25,2X,A20,2X,I6,2X,I8,2X,F8.2)'
+        format = '(A35,2X,A20,2X,I6,2X,I8,2X,F8.2)'
         fname = outdir+type+'_'+syeari+'_'+smonth+'.txt'
         openw,1,fname
         printf,1,bigstat
 ; add header to file
-        printf,1,'file','time','pass','total5','exptime',format='(A25,2X,A20,2X,A6,2X,A8,2X,A8)'
+        printf,1,'file','time','pass','total5','exptime',format='(A35,2X,A20,2X,A6,2X,A8,2X,A8)'
         for j=0,n_elements(passer)-1 do printf,1,basicf[j],timeou[j],passer[j],total5[j],exptim[j],format=format
 ;       printf,bigstat
         close,1
