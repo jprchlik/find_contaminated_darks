@@ -23,7 +23,7 @@ pro dark_trend,sdir=sdir,pdir=pdir,simpleb=simpleb,logdir=logdir,outdir=outdir
     endfor
 
 ;correct for empty first string
-    files = files[1,*]
+    files = files[1:*]
 
 ;Start a process of multithreading in IDL (creating objects to pass to processors)
     nproc = !cpu.TPOOL_NTHREADS/2
