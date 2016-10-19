@@ -4,13 +4,7 @@ pro check_ave_pixel_sub,file,endfile,timfile,avepix,sigpix
 ;    read_iris,file,index,data
 ;read in iris data
     read_iris,file,hdr,data
-;give data to iris_prep_dark subtracts off temperature and base line dark model
-    index = iris_prep_dark(data,hdr)
 
-    port1 = data[0:2071,0:547]
-    port2 = data[0:2071,548:*]
-    port3 = data[2072:*,0:547]
-    port4 = data[2072:*,548:*]
 ;get file time 
     splfile = strsplit(file,'/',/extract)
     endfile = splfile[n_elements(splfile) - 1]
@@ -23,7 +17,25 @@ pro check_ave_pixel_sub,file,endfile,timfile,avepix,sigpix
   
 
     timfile = year+'/'+month+'/'+day+'T'+hour+':'+min+':'+sec
+;read in dark data from that day
+    readcol,'../temps/'+year+month+day+'_iris_temp.fmt',date_obs,tccd1,tccd2,tccd3,tccd4,bt06,bt07,format='A,f,f,f,f,f,f'
+
+    time_tab = date_obs
+    temp_tab = [[tccd1],[tccd2],[tccd3],[tccd4],[bt06],[bt07]]
+
+   
+;give data to iris_prep_dark subtracts off temperature and base line dark model
+    index = iris_make_dark,hdr,dark,temps,time_tab,temp_tab,levels
+
+;remove calculated dark from data
+    data = data-dark
     
+    
+;split data into ports
+    port1 = data[0:2071,0:547]
+    port2 = data[0:2071,548:*]
+    port3 = data[2072:*,0:547]
+    port4 = data[2072:*,548:*]
     
 ;average and sigma values for each port
     ave_sig,port1,lave1,lsig1
