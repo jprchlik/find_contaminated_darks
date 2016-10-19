@@ -58,7 +58,12 @@ pro dark_trend,sdir=sdir,pdir=pdir,simpleb=simpleb,logdir=logdir,outdir=outdir
                         year = strmid(files[nextIndex],3,4)
                         month = strmid(files[nextIndex],7,2)
                         oBridge[j].setProperty, userData=1
-                        oBridge[j].execute, "check_ave_pixel,'"+$
+                        print,"check_ave_pixel_sub,'"+$
+                            sdir+'/'+year+'/'+month+'/'+ $
+                            files[nextIndex]+$
+                            "',endfile,timfile,avepix,sigpix"
+;run command
+                        oBridge[j].execute, "check_ave_pixel_sub,'"+$
                             sdir+'/'+year+'/'+month+'/'+ $
                             files[nextIndex]+$
                             "',endfile,timfile,avepix,sigpix",/nowait
@@ -97,11 +102,31 @@ pro dark_trend,sdir=sdir,pdir=pdir,simpleb=simpleb,logdir=logdir,outdir=outdir
         avepix[j,*] = avepix[j,sorter]
         sigpix[j,*] = sigpix[j,sorter]
     endfor
+;create IDL save file
+    save,/variables,filename='alldark_ave_sig.sav'
 
 ;plot darks average over time
     plot_dark_trend,basicf,avepix
 
-    
+;output file
+    fname = outdir+'current_pixel_averages.txt'
+
+;format for the header
+    fformat = '(A35,2X,A20,2X,8A10)'
+;format for the data
+    dformat = '(A35,2X,A20,2X,8F10.2)'
+
+
+
+
+   
+
+    open,1,fname
+    printf,1,'file','time','ave1','ave2','ave3','ave4','sig1','sig2','sig3','sig4',format=fformat
+    for j=0,n_elements(basicf)-1 do printf,1,basicf[j],timeou[j],avepix[0,j],avepix[1,j],avepix[2,j],$
+        avepix[3,j],sigpix[0,j],sigpix[1,j],sigpix[2,j],sigpix[3,j]
+    close,1
+
 
 
 end
