@@ -23,12 +23,12 @@ pro plot_dark_trend,time,yval
     ;convert time to seconds since normalized day
     jime = (jime)*24.*3600.
   
-    dummy = LABEL_DATE(DATE_FORMAT=["%M-%Y"])
+    dummy = LABEL_DATE(DATE_FORMAT=["%M","%Y"])
 
     utplot,[0,0],[0,0],'1-jan-12',ytitle="Average Pixel Value",title='Dark Pixel Evolution',$
         XSTYLE=1,$;timerange=['24-aug-16,05:59:00','24-aug-16,8:00:00'],$
-        xrange=[min(jime),max(jime)],$
-        /nodata,yrange=[0,max(yval)]
+        xrange=[min(jime)-3*240.*3600.,max(jime)+3*240.*3600.],$
+        /nodata,yrange=[80,120]
 
 
     syms = [4,5,6,7]
@@ -39,7 +39,7 @@ pro plot_dark_trend,time,yval
         oplot,jime,port,psym=syms[i]
     endfor
 
-    al_legend,['port1','port2','port3','port4'],psym=syms,colors=color,box=0
+    al_legend,['port1','port2','port3','port4'],psym=syms,colors=color,box=0,/left
 
 
 ;    p.Save, "test.png",BORDER=10,$
