@@ -1,5 +1,6 @@
 pro dark_trend,sdir=sdir,pdir=pdir,simpleb=simpleb,logdir=logdir,outdir=outdir
 ;create a plot containing the average dark value as a function of time
+    compile_opt idl2
 
 
 ;look up directory structure which contain level0 darks
@@ -98,7 +99,7 @@ pro dark_trend,sdir=sdir,pdir=pdir,simpleb=simpleb,logdir=logdir,outdir=outdir
     endfor
 
 ;plot darks average over time
-    plot_dark_trend,timeou,avepix
+    plot_dark_trend,basicf,avepix
 
     
 
