@@ -40,14 +40,12 @@ pro check_ave_pixel_sub,file,endfile,timfile,avepix,sigpix
     temp_tab = transpose(temp_tab)
 
    
-    print,size(temp_tab),'Time',size(time_tab)
     
 ;give data to iris_prep_dark subtracts off temperature and base line dark model
     iris_make_dark,hdr,dark,temps,date_obs,temp_tab,levels
 
 ;remove calculated dark from data
     data = data-dark
-    
     
 ;split data into ports
     port1 = data[0:2071,0:547]
@@ -65,6 +63,5 @@ pro check_ave_pixel_sub,file,endfile,timfile,avepix,sigpix
 ;put all sigma values and average values into one array
     avepix = [lave1,lave2,lave3,lave4]
     sigpix = [lsig1,lsig2,lsig3,lsig4]
-    print,avepix
 
 end
