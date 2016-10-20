@@ -28,7 +28,7 @@ pro plot_dark_trend,time,yval
     utplot,[0,0],[0,0],'1-jan-12',ytitle="Average Pixel Value",title='Dark Pixel Evolution',$
         XSTYLE=1,$;timerange=['24-aug-16,05:59:00','24-aug-16,8:00:00'],$
         xrange=[min(jime)-3*240.*3600.,max(jime)+3*240.*3600.],$
-        /nodata,yrange=[80,120]
+        /nodata,yrange=[-1,5] ;yrange=[80,120]
 
 
     syms = [4,5,6,7]
