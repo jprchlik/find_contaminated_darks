@@ -1,4 +1,4 @@
-pro check_ave_pixel_sub,file,endfile,timfile,avepix,sigpix
+pro check_ave_pixel_sub,file,endfile,timfile,avepix,sigpix,temps
 ;file is file name data is an array containing whether the ports passed or failed (1 is pass 0 is failed)
     compile_opt idl2
 ;    read_iris,file,index,data
@@ -21,19 +21,19 @@ pro check_ave_pixel_sub,file,endfile,timfile,avepix,sigpix
     readcol,'../temps/'+year+month+day+'_iris_temp.fmt',date_obs,tccd1,tccd2,tccd3,tccd4,bt06,bt07,format='A,f,f,f,f,f,f',/silent,skipline=1
 
 ;   create julian day array
-    time_tab = dblarr(n_elements(date_obs))
-
-
-    for i=0,n_elements(date_obs)-1 do begin
-        timet = date_obs[i]
-        year  = fix(strmid(timet,0,4))
-        month = fix(strmid(timet,5,2))
-        day   = fix(strmid(timet,8,2))
-        hour  = fix(strmid(timet,11,2))
-        min   = fix(strmid(timet,14,2))
-        sec   = fix(strmid(timet,17,2))
-        time_tab[i] = julday(month,day,year,hour,min,sec)
-    endfor
+;    time_tab = dblarr(n_elements(date_obs))
+;
+;
+;    for i=0,n_elements(date_obs)-1 do begin
+;        timet = date_obs[i]
+;        year  = fix(strmid(timet,0,4))
+;        month = fix(strmid(timet,5,2))
+;        day   = fix(strmid(timet,8,2))
+;        hour  = fix(strmid(timet,11,2))
+;        min   = fix(strmid(timet,14,2))
+;        sec   = fix(strmid(timet,17,2))
+;        time_tab[i] = julday(month,day,year,hour,min,sec)
+;    endfor
 
 
     temp_tab = [[tccd1],[tccd2],[tccd3],[tccd4],[bt06],[bt07]]
