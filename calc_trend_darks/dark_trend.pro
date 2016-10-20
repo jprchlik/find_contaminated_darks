@@ -18,7 +18,7 @@ pro dark_trend,sdir=sdir,pdir=pdir,simpleb=simpleb,logdir=logdir,outdir=outdir
     for i=0,n_elements(rmonths)-1 do begin
         readcol,rmonths[i],dfile,time,pass,numb,intt,format='A,A,F,F,F',delimiter=' ',skipline=1
 ;only include files which pass SAA cut (i.e. a normal amount of 5 sigma pixels) and are the 0 second darks
-        dfile = dfile[where((pass gt 0) and (intt < 0.5))]
+        dfile = dfile[where((pass gt 0) and (intt lt 0.5))]
         files = [files,dfile]
     endfor
 
@@ -56,16 +56,19 @@ pro dark_trend,sdir=sdir,pdir=pdir,simpleb=simpleb,logdir=logdir,outdir=outdir
     sigpix = fltarr(4,nFiles)
     timeou = strarr(nFiles)
     basicf = strarr(nFiles)
+    otemps = fltarr(12,nFiles)
 
 ;loop to file model subtraced dark pixel values
     for j=0,nFiles-1 do begin
         year = strmid(files[j],3,4)
         month = strmid(files[j],7,2)
-        check_ave_pixel_sub,sdir+'/'+year+'/'+month+'/'+files[j],endfile,timfile,avepix1,sigpix1
+;check ave pixel returns the average pixel value per dark integration minus the iris model dark, the RMS around the average, and the assumed temperatures for the background model
+        check_ave_pixel_sub,sdir+'/'+year+'/'+month+'/'+files[j],endfile,timfile,avepix1,sigpix1,temps
         avepix[*,j] = avepix1
         sigpix[*,j] = sigpix1
-        basicf[j] = endfile
-        timeou[j] = timfile
+        otemps[*,j] = temps
+        basicf[j]   = endfile
+        timeou[j]   = timfile
     endfor
 
 ;;Multithread file list       
