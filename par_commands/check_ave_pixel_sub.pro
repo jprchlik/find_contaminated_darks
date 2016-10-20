@@ -18,7 +18,7 @@ pro check_ave_pixel_sub,file,endfile,timfile,avepix,sigpix
 
     timfile = year+'/'+month+'/'+day+'T'+hour+':'+min+':'+sec
 ;read in dark data from that day
-    readcol,'../temps/'+year+month+day+'_iris_temp.fmt',date_obs,tccd1,tccd2,tccd3,tccd4,bt06,bt07,format='A,f,f,f,f,f,f'
+    readcol,'../temps/'+year+month+day+'_iris_temp.fmt',date_obs,tccd1,tccd2,tccd3,tccd4,bt06,bt07,format='A,f,f,f,f,f,f',/silent,skipline=1
 
 ;   create julian day array
     time_tab = dblarr(n_elements(date_obs))
