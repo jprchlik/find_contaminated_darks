@@ -20,12 +20,30 @@ pro check_ave_pixel_sub,file,endfile,timfile,avepix,sigpix
 ;read in dark data from that day
     readcol,'../temps/'+year+month+day+'_iris_temp.fmt',date_obs,tccd1,tccd2,tccd3,tccd4,bt06,bt07,format='A,f,f,f,f,f,f'
 
-    time_tab = date_obs
+;   create julian day array
+    time_tab = dblarr(n_elements(date_obs))
+
+
+    for i=0,n_elements(date_obs)-1 do begin
+        timet = date_obs[i]
+        year  = fix(strmid(timet,0,4))
+        month = fix(strmid(timet,5,2))
+        day   = fix(strmid(timet,8,2))
+        hour  = fix(strmid(timet,11,2))
+        min   = fix(strmid(timet,14,2))
+        sec   = fix(strmid(timet,17,2))
+        time_tab[i] = julday(month,day,year,hour,min,sec)
+    endfor
+
+
     temp_tab = [[tccd1],[tccd2],[tccd3],[tccd4],[bt06],[bt07]]
+    temp_tab = transpose(temp_tab)
 
    
+    print,size(temp_tab),'Time',size(time_tab)
+    
 ;give data to iris_prep_dark subtracts off temperature and base line dark model
-    index = iris_make_dark,hdr,dark,temps,time_tab,temp_tab,levels
+    iris_make_dark,hdr,dark,temps,date_obs,temp_tab,levels
 
 ;remove calculated dark from data
     data = data-dark
@@ -47,5 +65,6 @@ pro check_ave_pixel_sub,file,endfile,timfile,avepix,sigpix
 ;put all sigma values and average values into one array
     avepix = [lave1,lave2,lave3,lave4]
     sigpix = [lsig1,lsig2,lsig3,lsig4]
+    print,avepix
 
 end
