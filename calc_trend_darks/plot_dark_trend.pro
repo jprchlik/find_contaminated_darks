@@ -37,36 +37,40 @@ for z=0,1 do begin
        
     
     ;find observations less than one day apart and group them
-       sime = jime[bindgen(n_elements(jime)-2)+1]
-       eime = jime[bindgen(n_elements(jime)-2)]
+       sime = jime[indgen(n_elements(jime)-2)+1]
+       eime = jime[indgen(n_elements(jime)-2)]
     
        adif = sime-eime
     
-       newd = where(adif gt .5)
+       newd = where(adif gt 10.5)
+
+;Add one to newd to offset one less elements
+       newd = newd+1
+;Add first and last pixe values
+       newd = [0,newd,n_elements(jime)]
+
        gropave = fltarr(4,n_elements(newd))
        gropsig = fltarr(4,n_elements(newd))
        groptim = dblarr(n_elements(newd))
     
-       print,newd
-       print,n_elements(newd)
-       print,n_elements(jime),n_elements(ttime)
-       for i=0,n_elements(newd)-1 do begin
+       print,'Split Day'
+
+;Since value in greater than 255 must use dindgen instead of indgen
+       indices = dindgen(n_elements(jime))
+
+;       for i=0,n_elements(newd) do print,ttime[newd[i]],' ',ttime[newd[i]+1]
+       for i=1,n_elements(newd)-1 do begin
            print,'NEW'
-    
-           case i of 
-               0: grouparray = bindgen(newd[i])
-               else: grouparray = bindgen(newd[i]-newd[i-1])+newd[i-1]+1
-           endcase
-           case i of
-               0:print,newd[i]
-               else:print,newd[i]-newd[i-1],newd[i-1]+1,newd[i]
-           endcase
-           print,n_elements(grouparray),grouparray[0],grouparray[n_elements(grouparray)-1]
+           grouparray = where((indices ge newd[i-1]) and (indices lt newd[i]))
+
+;          print,ttime[newd[i]],' ',ttime[newd[i]],' ',ttime[newd[i]+2]
+           print,ttime[grouparray[0]-1],' ',ttime[grouparray[0]],' ',ttime[grouparray[n_elements(grouparray)-1]]
+;          print,ttime[grouparray[0]],' ',ttime[grouparray[n_elements(grouparray)-1]]
            for j=0,3 do begin       
                gropave[j,i] = mean(nyval[j,grouparray])
                gropsig[j,i] = stddev(nyval[j,grouparray])
            endfor
-           groptim[i] = jime[newd[i]]
+           groptim[i] = mean(jime[grouparray])
        
         endfor 
        
