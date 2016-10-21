@@ -1,5 +1,6 @@
 pro plot_dark_trend,time,yval,sdir=sdir,pdir=pdir
 
+loadct,12
 if keyword_set(sdir) then sdir=sdir else sdir='/data/alisdair/opabina/scratch/joan/iris/newdat/orbit/level0/simpleB/'
 if keyword_set(pdir) then pdir=pdir else pdir='plots/'
 
@@ -76,7 +77,6 @@ for z=0,1 do begin
            read_iris,readfi,index,data
            iris_dark_trend_fix,index,ltoff
 
-
 ;Save offsets in arrays 
            groptrd[*,i] = ltoff
            for j=0,3 do begin       
@@ -94,18 +94,19 @@ for z=0,1 do begin
       
         dummy = LABEL_DATE(DATE_FORMAT=["%D-%M-%Y"])
    ;set up the plot 
-        utplot,[0,0],[0,0],'1-jan-12',ytitle="Average Pixel Value",title=type[z]+' Dark Pixel Evolution',$
+        utplot,[0,0],[0,0],'1-jan-12',ytitle="Average Offset Dark-Model [ADU]",title=type[z]+' Dark Pixel Evolution',$
             XSTYLE=1,$;timerange=['24-aug-16,05:59:00','24-aug-16,8:00:00'],$
             xrange=[min(jime)-3*240.*3600.,max(jime)+3*240.*3600.],$
             /nodata,yrange=[-5,9],background=cgColor('white'),color=0,$
-            charthick=3,charsize=2.5 ;yrange=[80,120]
+            charthick=3,charsize=2.5,xminor=12 ;yrange=[80,120]
     
     
     ;set up symbolts and colors for ports
         syms = [4,5,6,7]
-        color = [0,0,0,0]
+        color = [0,100,120,200]
         lines = [0,1,2,3]
     
+;loop and plot each port individually
         for i=0,3 do begin
     ;        port = yval[i,*]
     ;        oplot,jime,port,psym=syms[i],color=color[i]
@@ -117,7 +118,8 @@ for z=0,1 do begin
             oplot,groptim,groptrd[i,*],color=color[i],psym=0,linestyle=lines[i]
         endfor
     
-        al_legend,['port1','port2','port3','port4'],psym=syms,colors=color,linestyle=color,box=0,/top,charsize=2.0
+        al_legend,['port1','port2','port3','port4'],psym=syms,colors=color,linestyle=[0,0,0,0],box=0,/top,charsize=2.0
+        al_legend,['port1','port2','port3','port4'],psym=[0,0,0,0],colors=colors,linestyle=lines,box=0,/right,charsize=2.0
     
         write_png,pdir+'/'+type[z]+'_test.png',tvrd(/true)
     
