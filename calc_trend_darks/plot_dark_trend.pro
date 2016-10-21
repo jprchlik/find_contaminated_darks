@@ -1,5 +1,7 @@
-pro plot_dark_trend,time,yval
+pro plot_dark_trend,time,yval,sdir=sdir,pdir=pdir
 
+if keyword_set(sdir) then sdir=sdir else sdir='/data/alisdair/opabina/scratch/joan/iris/newdat/orbit/level0/simpleB/'
+if keyword_set(pdir) then pdir=pdir else pdir='plots/'
 
 type = ['NUV','FUV']
 for z=0,1 do begin
@@ -42,6 +44,7 @@ for z=0,1 do begin
     
        adif = sime-eime
     
+;Set looking area to be 10 days different from previous value (might be too inclusive but darks are ~30 days apart)
        newd = where(adif gt 10.5)
 
 ;Add one to newd to offset one less elements
@@ -51,6 +54,7 @@ for z=0,1 do begin
 
        gropave = fltarr(4,n_elements(newd))
        gropsig = fltarr(4,n_elements(newd))
+       groptrd = fltarr(4,n_elements(newd)) ;Steve's predicted long term trend
        groptim = dblarr(n_elements(newd))
     
        print,'Split Day'
@@ -60,15 +64,25 @@ for z=0,1 do begin
 
 ;       for i=0,n_elements(newd) do print,ttime[newd[i]],' ',ttime[newd[i]+1]
        for i=1,n_elements(newd)-1 do begin
-           print,'NEW'
            grouparray = where((indices ge newd[i-1]) and (indices lt newd[i]))
 
-;          print,ttime[newd[i]],' ',ttime[newd[i]],' ',ttime[newd[i]+2]
-           print,ttime[grouparray[0]-1],' ',ttime[grouparray[0]],' ',ttime[grouparray[n_elements(grouparray)-1]]
-;          print,ttime[grouparray[0]],' ',ttime[grouparray[n_elements(grouparray)-1]]
+
+;find the first file in day
+           ffile = ttime[grouparray[0]]
+           syear = strmid(ffile,3,4)
+           smonth= strmid(ffile,7,2)
+           readfi = sdir+'/'+syear+'/'+smonth+'/'+ffile
+;Find Steve's long term trend
+           read_iris,readfi,index,data
+           iris_dark_trend_fix,index,ltoff
+
+
+;Save offsets in arrays 
+           groptrd[*,i] = ltoff
            for j=0,3 do begin       
                gropave[j,i] = mean(nyval[j,grouparray])
-               gropsig[j,i] = stddev(nyval[j,grouparray])
+;use the error in the mean for the error
+               gropsig[j,i] = stddev(nyval[j,grouparray])/float(n_elements(grouparray))
            endfor
            groptim[i] = mean(jime[grouparray])
        
@@ -79,27 +93,33 @@ for z=0,1 do begin
         groptim = groptim*24.*3600.
       
         dummy = LABEL_DATE(DATE_FORMAT=["%D-%M-%Y"])
-    
+   ;set up the plot 
         utplot,[0,0],[0,0],'1-jan-12',ytitle="Average Pixel Value",title=type[z]+' Dark Pixel Evolution',$
             XSTYLE=1,$;timerange=['24-aug-16,05:59:00','24-aug-16,8:00:00'],$
             xrange=[min(jime)-3*240.*3600.,max(jime)+3*240.*3600.],$
-            /nodata,yrange=[-1,5],background=cgColor('white'),color=0,$
+            /nodata,yrange=[-5,9],background=cgColor('white'),color=0,$
             charthick=3,charsize=2.5 ;yrange=[80,120]
     
     
+    ;set up symbolts and colors for ports
         syms = [4,5,6,7]
         color = [0,0,0,0]
+        lines = [0,1,2,3]
     
         for i=0,3 do begin
     ;        port = yval[i,*]
     ;        oplot,jime,port,psym=syms[i],color=color[i]
             port = gropave[i,*]
+            porte = gropsig[i,*]
             oplot,groptim,port,psym=syms[i],color=color[i]
+            errplot,groptim,port-porte,port+porte,color=color[i]
+   ;overplot long term trend
+            oplot,groptim,groptrd[i,*],color=color[i],psym=0,linestyle=lines[i]
         endfor
     
         al_legend,['port1','port2','port3','port4'],psym=syms,colors=color,linestyle=color,box=0,/top,charsize=2.0
     
-        write_png,'plots/'+type[z]+'_test.png',tvrd(/true)
+        write_png,pdir+'/'+type[z]+'_test.png',tvrd(/true)
     
     
     ;    p.Save, "test.png",BORDER=10,$
