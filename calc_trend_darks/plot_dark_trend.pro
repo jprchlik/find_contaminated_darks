@@ -68,29 +68,50 @@ for z=0,1 do begin
            grouparray = where((indices ge newd[i-1]) and (indices lt newd[i]))
 
 
-;find the first file in day
-           ffile = ttime[grouparray[0]]
-           syear = strmid(ffile,3,4)
-           smonth= strmid(ffile,7,2)
-           readfi = sdir+'/'+syear+'/'+smonth+'/'+ffile
-;Find Steve's long term trend
-           read_iris,readfi,index,data
-           iris_dark_trend_fix,index,ltoff
+;;find the first file in day
+;           ffile = ttime[grouparray[0]]
+;           syear = strmid(ffile,3,4)
+;           smonth= strmid(ffile,7,2)
+;           readfi = sdir+'/'+syear+'/'+smonth+'/'+ffile
+;;Find Steve's long term trend
+;           read_iris,readfi,index,data
+;           iris_dark_trend_fix,index,ltoff
 
 ;Save offsets in arrays 
-           groptrd[*,i] = ltoff
+;           groptrd[*,i] = ltoff
            for j=0,3 do begin       
                gropave[j,i] = mean(nyval[j,grouparray])
 ;use the error in the mean for the error
-               gropsig[j,i] = stddev(nyval[j,grouparray])/float(n_elements(grouparray))
+               gropsig[j,i] = stddev(nyval[j,grouparray])/sqrt(float(n_elements(grouparray)))
+               if gropsig[j,i] gt 20 then gropsig[j,i] = 0 ;removes 1 bad point for now
            endfor
            groptim[i] = mean(jime[grouparray])
        
         endfor 
+;get number of days which span observations
+        spanday = jime[n_elements(jime)-1]-jime[0]
+
+
+; Create date span line for plot fit
+;Then put in format that iris_dark_trend_fix uses
+        spanarray = TIMEGEN(spanday,START=jime[0])+JULDAY(1,1,2012,0,0,0)
+        offsets = fltarr(4,n_elements(spanarray))
+        for i=0,n_elements(spanarray)-1 do begin
+            CALDAT,spanarray[i],mon,day,year
+            indat = strcompress(year,/remove_all)+'/'+strcompress(mon,/remove_all)+'/'+strcompress(day,/remove_all) 
+            iris_dark_trend_fix,indat,doffsets,type[z]
+            offsets[*,i] = doffsets
+        endfor
+
+;put span array back into jime day reference
+        spanarray = spanarray-JULDAY(1,1,2012,0,0,0)
+        spanarray = spanarray*24.*3600.
+
        
         ;convert time to seconds since normalized day
         jime = (jime)*24.*3600.
         groptim = groptim*24.*3600.
+    
       
         dummy = LABEL_DATE(DATE_FORMAT=["%D-%M-%Y"])
    ;set up the plot 
@@ -98,7 +119,7 @@ for z=0,1 do begin
             XSTYLE=1,$;timerange=['24-aug-16,05:59:00','24-aug-16,8:00:00'],$
             xrange=[min(jime)-3*240.*3600.,max(jime)+3*240.*3600.],$
             /nodata,yrange=[-5,9],background=cgColor('white'),color=0,$
-            charthick=3,charsize=2.5,xminor=12 ;yrange=[80,120]
+            charthick=3,charsize=2.5,xminor=12,xtitle='Year [20XX]' ;yrange=[80,120]
     
     
     ;set up symbolts and colors for ports
@@ -112,14 +133,16 @@ for z=0,1 do begin
     ;        oplot,jime,port,psym=syms[i],color=color[i]
             port = gropave[i,*]
             porte = gropsig[i,*]
-            oplot,groptim,port,psym=syms[i],color=color[i]
-            errplot,groptim,port-porte,port+porte,color=color[i]
+            oplot,groptim,port,psym=syms[i],color=color[i],thick=2
+            errplot,groptim,port-porte,port+porte,color=color[i],thick=2
    ;overplot long term trend
-            oplot,groptim,groptrd[i,*],color=color[i],psym=0,linestyle=lines[i]
+   ;        oplot,groptim,groptrd[i,*],color=color[i],psym=0,linestyle=lines[i]
+            oplot,spanarray,offsets[i,*],color=color[i],psym=0,linestyle=lines[i],thick=3
+        
         endfor
     
         al_legend,['port1','port2','port3','port4'],psym=syms,colors=color,linestyle=[0,0,0,0],box=0,/top,charsize=2.0
-        al_legend,['port1','port2','port3','port4'],psym=[0,0,0,0],colors=colors,linestyle=lines,box=0,/right,charsize=2.0
+        al_legend,['fit port1','fit port2','fit port3','fit port4'],psym=[0,0,0,0],colors=colors,linestyle=lines,box=0,/right,charsize=2.0
     
         write_png,pdir+'/'+type[z]+'_test.png',tvrd(/true)
     
