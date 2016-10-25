@@ -134,7 +134,7 @@ for z=0,1 do begin
         ;set up symbolts and colors for ports
             syms = [1,2,5,4,1,2,4,2,5,6,7,8,0]
             color = [0,100,120,200,0,100,120,200,0,100,120,200]
-            labels = ['FUV1','FUV2','NUV','SJI','CEB_POSX1', 'CEB_POSX2', 'CEB_POSX3', 'CEB_POSX4', 'CEB_POSY1', 'CEB_POSY2', 'CEB_POSY3', 'CEB_POSY4']
+            labels = ['FUV1','FUV2','NUV','SJI','CEB_POSX1', 'CEB_POSX2', 'CEB_POSX3', 'CEB_POSX4', 'CEB_NEGX1', 'CEB_NEGX2', 'CEB_NEGX3', 'CEB_NEGX4']
             lines = [0,1,2,3]
         
             k=0
