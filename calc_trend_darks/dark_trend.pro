@@ -7,8 +7,9 @@ pro dark_trend,sdir=sdir,pdir=pdir,simpleb=simpleb,logdir=logdir,outdir=outdir
     if keyword_set(sdir) then sdir=sdir else sdir = '/data/alisdair/opabina/scratch/joan/iris/newdat/orbit/level0/'
     if keyword_set(simpleb) then sdir=sdir+'simpleB/'
     if keyword_set(complexa) then sdir=sdir+'complexA/'
-    if keyword_set(logdir) then logdir=logdir+'/' else logdir = ''
-    if keyword_set(outdir) then outdir=outdir+'/' else outdir = ''
+    if keyword_set(logdir) then logdir=logdir+'/' else logdir = 'log/'
+    if keyword_set(outdir) then outdir=outdir+'/' else outdir = 'txtout/'
+    if keyword_set(pdir) then pdir=pdir+'/' else pdir='plots/'
 
     files = strarr(1)
 ;get all darks from filelist with SAA data
