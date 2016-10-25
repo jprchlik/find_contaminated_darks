@@ -28,28 +28,11 @@ pro dark_trend,sdir=sdir,pdir=pdir,simpleb=simpleb,logdir=logdir,outdir=outdir
 
 
 
-;dropping parallel functionality 
-;Start a process of multithreading in IDL (creating objects to pass to processors)
-;    nproc = !cpu.TPOOL_NTHREADS/2
-;    oBridge = objarr(nproc)
-;    for j=0,n_elements(oBridge)-1 do begin
-;        oBridge[j] = obj_new('IDL_IDLBridge',$
-;            Callback='check_ave_pixelCallback',output=logdir+"log_"+strcompress(string(j),/remove_all)+".txt")
-;        oBridge[j].setProperty, userData=0
-;    endfor
-
 
 ;initalize threading variables
     nFiles = n_elements(files)
     filesProcessed = 0
     nextIndex = 0
-;    avepix = []
-;    sigpix = []
-;    timeou = strarr(1)
-;    basicf = strarr(1)
-
-;Testing purposes
-;    nFiles = 45
    
 
 ;Non parallel variables
@@ -72,63 +55,6 @@ pro dark_trend,sdir=sdir,pdir=pdir,simpleb=simpleb,logdir=logdir,outdir=outdir
         timeou[j]   = timfile
     endfor
 
-;;Multithread file list       
-;    while filesProcessed lt nFiles do begin
-;        for j=0, nproc-1 do begin
-;;Get status of loop
-;            oBridge[j].getProperty,userdata=status
-;;Check the status value
-;            switch (status) of
-;                0: begin
-;;Assign the work if not yet complete
-;                    if nextIndex lt nFiles then begin
-;                        year = strmid(files[nextIndex],3,4)
-;                        month = strmid(files[nextIndex],7,2)
-;                        oBridge[j].setProperty, userData=1
-;                        print,"check_ave_pixel_sub,'"+$
-;                            sdir+'/'+year+'/'+month+'/'+ $
-;                            files[nextIndex]+$
-;                            "',endfile,timfile,avepix,sigpix"
-;;run command
-;                        oBridge[j].execute, "check_ave_pixel_sub,'"+$
-;                            sdir+'/'+year+'/'+month+'/'+ $
-;                            files[nextIndex]+$
-;                            "',endfile,timfile,avepix,sigpix",/nowait
-;;Add 1 to next index
-;                        nextIndex++
-;                    endif
-;                    break
-;                end
-;                2: begin
-;;Store the results
-;                    filesProcessed++
-;                    basicf = [basicf,oBridge[j]->getVar('endfile')]
-;                    timeou = [timeou,oBridge[j]->getVar('timfile')]
-;                    avepix = [[avepix],[oBridge[j]->getVar('avepix')]]
-;                    sigpix = [[sigpix],[oBridge[j]->getVar('sigpix')]]
-;
-;                    oBridge[j].setProperty,userData=0
-;                    break
-;                end
-;;quit if you get some other value
-;                else: begin
-;                end
-;            endswitch
-;        endfor
-;    endwhile
-;
-;;remove first empty element from string arrays
-;    basicf = basicf[1:*]
-;    timeou = timeou[1:*]
-;;sort by output time
-;    sorter = sort(timeou)
-;    basicf = basicf[sorter]
-;    timeou = timeou[sorter]
-;;which be 2-D array
-;    for j=0,3 do begin
-;        avepix[j,*] = avepix[j,sorter]
-;        sigpix[j,*] = sigpix[j,sorter]
-;    endfor
 ;create IDL save file
     save,/variables,filename='alldark_ave_sig.sav'
 
