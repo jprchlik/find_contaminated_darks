@@ -288,7 +288,7 @@ crate=1.03
 ns=21                                  ; smoothing for ramp juncture
 
 bin=nspec*nspat                        ; binning factor
-levels=fltarr(2,4)                     ; setup output levels array
+levels=fltarr(3,4)                     ; setup output levels array (Added another row to split up ped. levels [J. Prchlik 2016/10/16])
 x=findgen(2061)
 xarr=x#(fltarr(528)+1.)                ; array of row #s (x) for non-pedestal
 if ins eq 1 then begin                 ; setup ramp sizes
@@ -316,7 +316,7 @@ endelse
 
 
 ;iris_dark_trend_fix,index,ltoff        ;* compute long-term trends by port
-;skip long term trend
+;skip long term trend J. Prchlik (2016/10/21)
 ltoff = fltarr(4)
 
 sign1f = -1                            ;  slope1 sign for FUV
@@ -351,7 +351,9 @@ for k=0,3 do begin                     ; loop thru CCD read ports
          djx = djx + ramp + n2offk                        ; add ramp adjustment 
          djx = djx + rate*tint                            ; add dark current 
          d0[0,0] = dj0                                ; input new pedestal 
-         levels[0,k] = ped                            ; put pedestal in levels
+         levels[0,k] = poly(tempped,cped)                 ; put pedestal in levels (Split 2016/10/28 J. Prchlik to find cause of long term trend)
+         levels[2,k] = poff[k]                            ; put pedestal in levels (Split 2016/10/28 J. Prchlik to find cause of long term trend)
+
          d0[0,20] = djx                               ; input new data 
          levels[1,k] = rate*tint + n2offk        ; put <dark current> in levels
       end                                               ; with corrections
@@ -373,7 +375,9 @@ for k=0,3 do begin                     ; loop thru CCD read ports
          djx = djx + ramp + n2offk                        ; add ramp adjustment 
          djx = djx + rate*tint                            ; add dark current 
          d0[0,548] = dj0                                  ; input new pedestal 
-         levels[0,k] = ped                            ; put pedestal in levels
+;         levels[0,k] = ped                            ; put pedestal in levels
+         levels[0,k] = poly(tempped,cped)                 ; put pedestal in levels (Split 2016/10/28 J. Prchlik to find cause of long term trend)
+         levels[2,k] = poff[k]                            ; put pedestal in levels (Split 2016/10/28 J. Prchlik to find cause of long term trend)
          d0[0,548] = djx                               ; input new data 
          levels[1,k] = rate*tint + n2offk        ; put <dark current> in levels
       end                                               ; with corrections
@@ -395,7 +399,9 @@ for k=0,3 do begin                     ; loop thru CCD read ports
          djx = djx + ramp + n2offk                        ; add ramp adjustment 
          djx = djx + rate*tint                            ; add dark current 
          d0[2072,0] = dj0                                ; input new pedestal 
-         levels[0,k] = ped                            ; put pedestal in levels
+;         levels[0,k] = ped                            ; put pedestal in levels
+         levels[0,k] = poly(tempped,cped)                 ; put pedestal in levels (Split 2016/10/28 J. Prchlik to find cause of long term trend)
+         levels[2,k] = poff[k]                            ; put pedestal in levels (Split 2016/10/28 J. Prchlik to find cause of long term trend)
          d0[2083,20] = djx                               ; input new data 
          levels[1,k] = rate*tint + n2offk        ; put <dark current> in levels
       end                                               ; with corrections
@@ -417,7 +423,9 @@ for k=0,3 do begin                     ; loop thru CCD read ports
          djx = djx + ramp + n2offk                        ; add ramp adjustment 
          djx = djx + rate*tint                            ; add dark current 
          d0[2072,548] = dj0                                ; input new pedestal 
-         levels[0,k] = ped                            ; put pedestal in levels
+;         levels[0,k] = ped                            ; put pedestal in levels
+         levels[0,k] = poly(tempped,cped)                 ; put pedestal in levels (Split 2016/10/28 J. Prchlik to find cause of long term trend)
+         levels[2,k] = poff[k]                            ; put pedestal in levels (Split 2016/10/28 J. Prchlik to find cause of long term trend)
          d0[2083,548] = djx                               ; input new data 
          levels[1,k] = rate*tint + n2offk        ; put <dark current> in levels
       end                                               ; with corrections
