@@ -14,7 +14,7 @@ syms = [4,5,6,7]
 color= [0,100,120,200]
 
 ;create TIME array
-jime = dblarr(n_elements(timeou))
+time = dblarr(n_elements(timeou))
 normal = JULDAY(1,1,2012,0,0,0)
 for i=0,n_elements(timeou)-1 do begin
 
@@ -24,10 +24,10 @@ for i=0,n_elements(timeou)-1 do begin
      hour  = fix(strmid(timeou[i],11,2))
      min   = fix(strmid(timeou[i],14,2))
      sec   = fix(strmid(timeou[i],17,2))
-     jime[i] = JULDAY(month,day,year,hour,min,sec)-normal
+     time[i] = JULDAY(month,day,year,hour,min,sec)-normal
 endfor
 
-jime = jime*24.*3600.
+time = time*24.*3600.
 
 
 ;get shape of avepix array
@@ -53,8 +53,9 @@ for k=0,n_elements(type)-1 do begin
     nlevls = size(olevel)
     nlevls = nlevls[1]
 
+;Start and end time for fitting
     stime = (JULDAY(1,1,2014,0,0,0) -normal)*24.*3600.
-    etime = (JULDAY(1,1,2016,0,0,0) -normal)*24.*3600.
+    etime = (JULDAY(1,1,2015,0,0,0) -normal)*24.*3600.
   
 
     for i=0,3 do begin 
@@ -75,7 +76,7 @@ for k=0,n_elements(type)-1 do begin
              xval = otemps[i,ccdtyp];+otemps[i+(k+1)*4,ccdtyp]
 
 ; only use good data to fit
-             good = where((xval gt xlim[0]) and (xval lt xlim[1]) and (yval gt ylim[0]) and (yval lt ylim[1]) and (jime[ccdtyp] gt stime) and (jime[ccdtyp] lt etime))
+             good = where((xval gt xlim[0]) and (xval lt xlim[1]) and (yval gt ylim[0]) and (yval lt ylim[1]) and (time[ccdtyp] gt stime) and (time[ccdtyp] lt etime))
              fitr = poly_fit(xval[good],yval[good],1,sigma=sigma)
 
              case 1 of
@@ -91,13 +92,13 @@ for k=0,n_elements(type)-1 do begin
                      ;store new ave pixel value
                      newavepix[j,ccdtyp]  = yval-poly(xval,fitr)
                  end
-                 ((k eq 0) and (j lt 2) and (i eq 2)): begin
+                 ((k eq 0) and (j gt 1) and (i eq 2)): begin
                       fitpoly[j+4,*] = fitr ;NUV
                       real=1
                      ;store new ave pixel value
                      newavepix[j,ccdtyp]  = yval-poly(xval,fitr)
                  end
-                 ((k eq 0) and (j gt 1) and (i eq 3)): begin
+                 ((k eq 0) and (j lt 2) and (i eq 3)): begin
                       fitpoly[j+4,*] = fitr ;SJI
                       real=1
                      ;store new ave pixel value
@@ -122,8 +123,10 @@ for k=0,n_elements(type)-1 do begin
     endfor
 
 
+;New end time fore CEB BOX data
+    etime = (JULDAY(1,1,2015,0,0,0) -normal)*24.*3600.
 ;Now do fits for POSX and NEGX temperatures
-    for i=4,11 do begin 
+    for i=4,7 do begin 
         xlim = [-1.,5.]+273.
         
         writeplot=0
@@ -138,10 +141,11 @@ for k=0,n_elements(type)-1 do begin
         for j=0,3 do begin
              real = 1 ;check if it is a real correlation
              yval = newavepix[j,ccdtyp] ; Add the temperature pedestal back in to find new correlation
-             xval = otemps[i,ccdtyp];+otemps[i+(k+1)*4,ccdtyp]
+             xval = (otemps[i,ccdtyp]+otemps[(k+1)*4,ccdtyp])/2.
+     
 
 ; only use good data to fit
-             good = where((xval gt xlim[0]) and (xval lt xlim[1]) and (yval gt ylim[0]) and (yval lt ylim[1]) and (jime[ccdtyp] gt stime) and (jime[ccdtyp] lt etime))
+             good = where((xval gt xlim[0]) and (xval lt xlim[1]) and (yval gt ylim[0]) and (yval lt ylim[1]) and (time[ccdtyp] gt stime) and (time[ccdtyp] lt etime))
              fitr = poly_fit(xval[good],yval[good],1,sigma=sigma)
 
 ;             case 1 of
@@ -187,14 +191,56 @@ for k=0,n_elements(type)-1 do begin
         endif
     endfor
 
+
+;store new CCD values in array
+    nyval = fltarr(4,n_elements(ccdtyp))
+    for i=0,3 do nyval[i,*] = newavepix[i,ccdtyp]
+    jime = time[ccdtyp] 
+ ;find observations less than one day apart and group them
+    sime = jime[indgen(n_elements(jime)-2)+1]
+    eime = jime[indgen(n_elements(jime)-2)]
+
+    adif = sime-eime
+
+;Set looking area to be 10 days different from previous value (might be too inclusive but darks are ~3 days apart)
+    newd = where(adif gt 2.5*3600.*24.)
+
+;Add one to newd to offset one less elements
+    newd = newd+1
+;Add first and last pixe values
+    newd = [0,newd,n_elements(jime)]
+
+    gropave = fltarr(4,n_elements(newd))
+    gropsig = fltarr(4,n_elements(newd))
+    groptim = dblarr(n_elements(newd))
+
+;Since value in greater than 255 must use dindgen instead of indgen
+    indices = dindgen(n_elements(jime))
+
+    for i=1,n_elements(newd)-1 do begin
+        grouparray = where((indices ge newd[i-1]) and (indices lt newd[i]))
+
+        for j=0,3 do begin
+            gropave[j,i] = mean(nyval[j,grouparray])
+;use the error in the mean for the error
+           gropsig[j,i] = stddev(nyval[j,grouparray])/sqrt(float(n_elements(grouparray)))
+           if gropsig[j,i] gt 20 then gropsig[j,i] = 0 ;removes 1 bad point for now
+       endfor
+       groptim[i] = mean(jime[grouparray])
+
+    endfor
+
+
+
 ; New time plots
     dummy = LABEL_DATE(DATE_FORMAT=["%D-%M-%Y"])
     utplot,[0,0],[0,0],'1-jan-12',/nodata,psym=0,linestyle=2,title=type[k],ytitle='Average Dark Offset (Dark-New Model) [ADU]',$
             xtitle=' Year [20XX]',xrange=[min(jime),max(jime)],$ ;yrange=[min(avepix[*,ccdtyp]),max(avepix[*,ccdtyp])],$
-            background=cgColor('white'),color=0,charthick=3,charsize=2.3,xminor=5,yrange=[-5,5],XSTYLE=1
+            background=cgColor('white'),color=0,charthick=3,charsize=2.3,xminor=5,yrange=[-5,10],XSTYLE=1
     for j=0,3 do begin
-        oplot,jime[ccdtyp],newavepix[j,ccdtyp],psym=syms[j],color=color[j]
-        print,median(newavepix[j,ccdtyp])
+;        oplot,jime[ccdtyp],newavepix[j,ccdtyp],psym=syms[j],color=color[j]
+        oplot,groptim,gropave[j,*],psym=syms[j],color=color[j]
+        errplot,groptim,gropave[j,*]-gropsig[j,*],gropave[j,*]+gropsig[j,*],color=color[j],thick=2
     endfor
     al_legend,ports,psym=syms,colors=color,box=0,/right,charsize=2.0
     write_png,'plots/new_trend/'+type[k]+'_new_long_term_trend.png',tvrd(/true)
