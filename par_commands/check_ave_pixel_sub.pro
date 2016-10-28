@@ -1,4 +1,4 @@
-pro check_ave_pixel_sub,file,endfile,timfile,avepix,sigpix,temps
+pro check_ave_pixel_sub,file,endfile,timfile,avepix,sigpix,temps,levels
 ;file is file name data is an array containing whether the ports passed or failed (1 is pass 0 is failed)
     compile_opt idl2
 ;    read_iris,file,index,data
