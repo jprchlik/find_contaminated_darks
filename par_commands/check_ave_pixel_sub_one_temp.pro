@@ -45,7 +45,7 @@ pro check_ave_pixel_sub_one_temp,file,endfile,timfile,avepix,sigpix,temps
     iris_make_dark_one_temp,hdr,dark,temps,date_obs,temp_tab,levels
 
 ;remove calculated dark from data
-    data = data;-dark
+    data = data-dark
     
 ;split data into ports
     port1 = data[0:2071,0:547]
