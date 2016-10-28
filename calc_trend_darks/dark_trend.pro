@@ -41,18 +41,22 @@ pro dark_trend,sdir=sdir,pdir=pdir,simpleb=simpleb,logdir=logdir,outdir=outdir
     timeou = strarr(nFiles)
     basicf = strarr(nFiles)
     otemps = fltarr(12,nFiles)
+    olevel = fltarr(3,4,nFiles)
 
 ;loop to file model subtraced dark pixel values
     for j=0,nFiles-1 do begin
         year = strmid(files[j],3,4)
         month = strmid(files[j],7,2)
 ;check ave pixel returns the average pixel value per dark integration minus the iris model dark, the RMS around the average, and the assumed temperatures for the background model
-        check_ave_pixel_sub,sdir+'/'+year+'/'+month+'/'+files[j],endfile,timfile,avepix1,sigpix1,temps
+        check_ave_pixel_sub,sdir+'/'+year+'/'+month+'/'+files[j],endfile,timfile,avepix1,sigpix1,temps,levels
         avepix[*,j] = avepix1
         sigpix[*,j] = sigpix1
         otemps[*,j] = temps
         basicf[j]   = endfile
         timeou[j]   = timfile
+        olevel[0,*,j] = levels[0,*] ;Temperature polynomial 
+        olevel[1,*,j] = levels[1,*] ;Dark Current 
+        olevel[2,*,j] = levels[2,*] ; pedestal offset from read_iris
     endfor
 
 ;create IDL save file
