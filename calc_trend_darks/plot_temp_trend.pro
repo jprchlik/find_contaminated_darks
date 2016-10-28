@@ -1,4 +1,4 @@
-pro plot_temp_trend,time,yval,sdir=sdir,pdir=pdir
+pro plot_temp_trend,sdir=sdir,pdir=pdir
 
 restore,'alldark_ave_sig.sav'
 ; Make a vector of 16 points, A[i] = 2pi/16:
@@ -6,6 +6,12 @@ A = FINDGEN(17) * (!PI*2/16.)
 ; Define the symbol to be a unit circle with 16 points, 
 ; and set the filled flag:
 USERSYM, COS(A), SIN(A), /FILL
+;set up symbolts and colors for ports
+syms = [1,2,5,4,1,2,4,2,5,6,7,8,0]
+color = [0,100,120,200,0,100,120,200,0,100,120,200]
+labels = ['FUV1','FUV2','NUV','SJI','CEB_POSX1', 'CEB_POSX2', 'CEB_POSX3', 'CEB_POSX4', 'CEB_NEGX1', 'CEB_NEGX2', 'CEB_NEGX3', 'CEB_NEGX4']
+lines = [0,1,2,3]
+ports = ['port1','port2','port3','port4']
 
 
 yval = avepix
@@ -41,6 +47,9 @@ for z=0,1 do begin
 ;Find number of temperatures used in model
        ntemps = size(otemps)
        ntemps = ntemps[1]
+;Find number of ports used in model
+       nports = size(yval)
+       nports = nports[1]
     
        ;remove observations from other CCD (i.e. examine only NUV or FUV)
        keep = where(jime gt 0)
@@ -73,6 +82,9 @@ for z=0,1 do begin
        gropave = fltarr(ntemps,n_elements(newd))
        gropsig = fltarr(ntemps,n_elements(newd))
        groptrd = fltarr(ntemps,n_elements(newd)) ;Steve's predicted long term trend
+;group pixel values
+       pixeave = fltarr(nports,n_elements(newd))
+       pixesig = fltarr(nports,n_elements(newd))
        groptim = dblarr(n_elements(newd))
     
 ;Since value in greater than 255 must use dindgen instead of indgen
@@ -90,6 +102,12 @@ for z=0,1 do begin
 ;use the error in the mean for the error
                gropsig[j,i] = stddev(nyval[j,grouparray])/sqrt(float(n_elements(grouparray)))
                if gropsig[j,i] gt 20 then gropsig[j,i] = 0 ;removes 1 bad point for now
+;get pixel difference values
+               if j lt nports then begin
+                   pixeave[j,i] = mean(yval[j,grouparray])
+                   pixesig[j,i] = stddev(yval[j,grouparray])/sqrt(n_elements(grouparray))
+                   if pixesig[j,i] gt 20 then pixesig[j,i] =0
+               endif
            endfor
            groptim[i] = mean(jime[grouparray])
        
@@ -108,6 +126,28 @@ for z=0,1 do begin
             iris_dark_trend_fix,indat,doffsets,type[z]
             offsets[*,i] = doffsets
         endfor
+
+;plot temperatures and ave pixels binned by day
+
+        for p=0,ntemps-1 do begin
+             ;ylim = [min(gropave),max(gropave)]
+             ;xlim = [min(pixeave),max(pixeave)]
+             ylim = [-5,10]
+             if min(gropave[p,*]) gt -40 then xlim = [-0,3] else xlim=[-66,-58]
+        
+             plot,[0,0],[0,0],ytitle='Dark Pixel Value [ADU]',title=type[z],$
+                 XSTYLE=1,xrange=xlim,/nodata,yrange=ylim,background=cgColor('white'),$
+                 color=0,charthick=3,charsize=2.5,xminor=5,xtitle=labels[p]+' Temperature [K]'
+              for k=0,nports-1 do begin
+                  oplot,gropave[p,*],pixeave[k,*],color=color[k],psym=syms[k],thick=2
+                  errplot,gropave[p,*],pixeave[k,*]-pixesig[k,*],pixeave[k,*]+pixesig[k,*],color=color[k],thick=1.5
+              endfor
+              al_legend,ports,colors=color[0:3],psym=syms[0:3],box=0,/top,charsize=2.0
+             
+              write_png,pdir+'/bined/'+type[z]+'_temp_'+labels[p]+'_cor.png',tvrd(/true),xres=3000,yres=3000
+         endfor
+              
+
 
 ;put span array back into jime day reference
         spanarray = spanarray-JULDAY(1,1,2012,0,0,0)
@@ -131,11 +171,6 @@ for z=0,1 do begin
                 charthick=3,charsize=2.5,xminor=12,xtitle='Year [20XX]' ;yrange=[80,120]
         
         
-        ;set up symbolts and colors for ports
-            syms = [1,2,5,4,1,2,4,2,5,6,7,8,0]
-            color = [0,100,120,200,0,100,120,200,0,100,120,200]
-            labels = ['FUV1','FUV2','NUV','SJI','CEB_POSX1', 'CEB_POSX2', 'CEB_POSX3', 'CEB_POSX4', 'CEB_NEGX1', 'CEB_NEGX2', 'CEB_NEGX3', 'CEB_NEGX4']
-            lines = [0,1,2,3]
         
             k=0
     ;loop and plot each port individually
@@ -160,6 +195,8 @@ for z=0,1 do begin
             al_legend,['fit port1','fit port2','fit port3','fit port4'],psym=[0,0,0,0],colors=colors,linestyle=lines,box=0,/right,charsize=2.0
         
             write_png,pdir+'/temps/'+type[z]+'_'+strcompress(p,/remove_all)+'_test.png',tvrd(/true),xresolution=3000,yresolution=3000
+
+
     
         endfor    
 
