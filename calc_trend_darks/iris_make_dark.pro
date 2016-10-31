@@ -232,8 +232,6 @@ csl2 = reform(sl2[*,*,indt])          ; dark slope2 poly coeffs
 poff = reform(poff[*,indt])          ; epoch pedestal offset
 dt = reform(dt[*,indt])               ; epoch time shifts
 
-;remove time temerature offset (J. Prchlik 2016/10/31)
-dt = fltarr(nint)
 
 ; if indt eq 0 and ins eq 1 then poff=[0,21.94,19.4,21.87]
 
@@ -270,7 +268,7 @@ endif else begin                           ; use temperature tables
    ib=where(temp_tab lt -100,nb)           ; look for bad temperatures
    if nb ne 0 then temp_tab0[ib] = -9999999. ; set to *really* bad temp value
    for k=0,nint-1 do tccd[k] = $           ; interpolate with time shifts
-       interpol(reform(temp_tab0[it0[k],*]),ttab+dt[k]*60.,tdate)
+       interpol(reform(temp_tab0[it0[k],*]),ttab+dt[k]*60.,tdate,/LSQUADRATIC) ;change interpolation to quadratic
 endelse
 
 ;              estimate average seasonal temperature
