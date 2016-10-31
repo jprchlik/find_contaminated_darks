@@ -232,6 +232,9 @@ csl2 = reform(sl2[*,*,indt])          ; dark slope2 poly coeffs
 poff = reform(poff[*,indt])          ; epoch pedestal offset
 dt = reform(dt[*,indt])               ; epoch time shifts
 
+;remove time temerature offset (J. Prchlik 2016/10/31)
+dt = fltarr(nint)
+
 ; if indt eq 0 and ins eq 1 then poff=[0,21.94,19.4,21.87]
 
 nt = n_elements(temps)
