@@ -268,7 +268,7 @@ endif else begin                           ; use temperature tables
    ib=where(temp_tab lt -100,nb)           ; look for bad temperatures
    if nb ne 0 then temp_tab0[ib] = -9999999. ; set to *really* bad temp value
    for k=0,nint-1 do tccd[k] = $           ; interpolate with time shifts
-       interpol(reform(temp_tab0[it0[k],*]),ttab+dt[k]*60.,tdate,/LSQUADRATIC) ;change interpolation to quadratic
+       interpol(reform(temp_tab0[it0[k],*]),ttab+dt[k]*60.,tdate) 
 endelse
 
 ;              estimate average seasonal temperature
