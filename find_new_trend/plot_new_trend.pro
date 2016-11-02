@@ -4,16 +4,20 @@ pro plot_new_trend
 
 loadct,12
 restore,'../calc_trend_darks/alldark_ave_sig.sav'
+
+resolve_routine,'get_binned_iris_dark_trend',/COMPILE_FULL_FILE
 ;fname = 'alldark_ave_sig_no_dark_model.sav'
 ;restore,fname
 
 type = ['NUV','FUV']
 ports = ['port1','port2','port3','port4']
 labels = ['FUV1','FUV2','NUV','SJI','CEB_POSX1', 'CEB_POSX2', 'CEB_POSX3', 'CEB_POSX4', 'CEB_NEGX1', 'CEB_NEGX2', 'CEB_NEGX3', 'CEB_NEGX4']
+labels = ['ITF1CCD1','ITF2CCD2','ITNUCCD3','ITSJCCD4','BT06CBPX','BT07CBNX','BT10HOPA','BT17SMAP','IT01PMRF','IT03PMRA','IT04TELF','IT12HOPA','IT13FRA']
 ;labels = ['ped1','ped2']
 ;labels = ['Temp Poly','Dark Current','Pedestal Off']
 syms = [4,5,6,7]
 color= [0,100,120,200]
+;color = bindgen(n_elements(labels)-1)/n_elements(labels)*255
 
 ;create TIME array
 ;time = dblarr(n_elements(timeou))
@@ -39,8 +43,14 @@ aveshape = size(avepix)
 ;create newly corrected CCD out values
 newavepix = fltarr(aveshape[1],aveshape[2])
 
+print,size(otemps)
+;get new temperatures 
+find_new_temps,timeou,otemps
+
 ;change temperature to K 
 otemps = otemps+273.
+print,size(otemps)
+
 
 
 ;level = alog10(olevel)
@@ -59,20 +69,25 @@ for k=0,n_elements(type)-1 do begin
 ;Start and end time for fitting (To be predictive use just 2014)
     stime = (JULDAY(1,1,2014,0,0,0) -normal)*24.*3600.
     etime = (JULDAY(1,1,2015,0,0,0) -normal)*24.*3600.
+
+
+
+; New time plots
   
 
 ;fit the most relavent temperatures
-    for i=0,3 do begin 
-        xlim = [-65.,-52.]+273.
+    for i=0,n_elements(labels)-1 do begin 
+        xlim = [-75.,-52.]+273.
+        xlim = [200.,400.]
         
-        writeplot=0
+        writeplot=1
         if k eq 0 then ylim = [98.,104.] else ylim = [93.,105.]
 ;store poly fits
         plot,[0,0],[0,0],psym=0,linestyle=2,title=type[k],ytitle='Average Dark Offset (Dark-Model) [ADU]',$
             xtitle=labels[i]+' Temperature [K]',xrange=xlim, $ ;yrange=[min(avepix[*,ccdtyp]),max(avepix[*,ccdtyp])],$
             /nodata,background=cgColor('white'),color=0,charthick=3,charsize=2.3,xminor=5,yrange=ylim
         for j=0,3 do begin
-             real = 0 ;check if it is a real correlation
+             real = 1 ;check if it is a real correlation
              yval = avepix[j,ccdtyp]+olevel[0,j,ccdtyp]+olevel[1,j,ccdtyp] ; Add the temperature pedestal back in to find new correlation
              xval = otemps[i,ccdtyp];+otemps[i+(k+1)*4,ccdtyp]
 
@@ -80,34 +95,35 @@ for k=0,n_elements(type)-1 do begin
              good = where((xval gt xlim[0]) and (xval lt xlim[1]) and (yval gt ylim[0]) and (yval lt ylim[1]) and (time[ccdtyp] gt stime) and (time[ccdtyp] lt etime))
              fitr = poly_fit(xval[good],yval[good],1,sigma=sigma)
 
+;Commented out for testing
 ;Store appro fits in arrays
-             case 1 of
-                 ((k eq 1) and (j lt 2) and (i eq 0)): begin
-                     fitpoly[j,*] = fitr ;FUV CCD1
-                     real=1
-                     ;store new ave pixel value
-                     newavepix[j,ccdtyp]  = yval-poly(xval,fitr)
-                 end
-                 ((k eq 1) and (j gt 1) and (i eq 1)): begin
-                     fitpoly[j,*] = fitr ;FUV CCD2
-                     real=1
-                     ;store new ave pixel value
-                     newavepix[j,ccdtyp]  = yval-poly(xval,fitr)
-                 end
-                 ((k eq 0) and (j gt 1) and (i eq 2)): begin
-                      fitpoly[j+4,*] = fitr ;NUV
-                      real=1
-                     ;store new ave pixel value
-                     newavepix[j,ccdtyp]  = yval-poly(xval,fitr)
-                 end
-                 ((k eq 0) and (j lt 2) and (i eq 3)): begin
-                      fitpoly[j+4,*] = fitr ;SJI
-                      real=1
-                     ;store new ave pixel value
-                     newavepix[j,ccdtyp]  = yval-poly(xval,fitr)
-                 end
-                 else: print,'Do Nothing'
-             endcase
+;             case 1 of
+;                 ((k eq 1) and (j lt 2) and (i eq 0)): begin
+;                     fitpoly[j,*] = fitr ;FUV CCD1
+;                     real=1
+;                     ;store new ave pixel value
+;                     newavepix[j,ccdtyp]  = yval-poly(xval,fitr)
+;                 end
+;                 ((k eq 1) and (j gt 1) and (i eq 1)): begin
+;                     fitpoly[j,*] = fitr ;FUV CCD2
+;                     real=1
+;                     ;store new ave pixel value
+;                     newavepix[j,ccdtyp]  = yval-poly(xval,fitr)
+;                 end
+;                 ((k eq 0) and (j gt 1) and (i eq 2)): begin
+;                      fitpoly[j+4,*] = fitr ;NUV
+;                      real=1
+;                     ;store new ave pixel value
+;                     newavepix[j,ccdtyp]  = yval-poly(xval,fitr)
+;                 end
+;                 ((k eq 0) and (j lt 2) and (i eq 3)): begin
+;                      fitpoly[j+4,*] = fitr ;SJI
+;                      real=1
+;                     ;store new ave pixel value
+;                     newavepix[j,ccdtyp]  = yval-poly(xval,fitr)
+;                 end
+;                 else: print,'Do Nothing'
+;             endcase
 
 
              
@@ -127,9 +143,6 @@ for k=0,n_elements(type)-1 do begin
 
 ;check other CCD temperatures and their correlation with the excess
 
-
-
-
 ;store new CCD values in array
     nyval = fltarr(4,n_elements(ccdtyp))
     for i=0,3 do nyval[i,*] = newavepix[i,ccdtyp]
@@ -138,10 +151,8 @@ for k=0,n_elements(type)-1 do begin
 ;    group_iris_darks,jime,newd
     get_binned_iris_dark_trend,nyval,jime,gropave,gropsig,groptim
 
-    find_new_temps,timeou,out_temps
 
 
-; New time plots
     dummy = LABEL_DATE(DATE_FORMAT=["%D-%M-%Y"])
     utplot,[0,0],[0,0],'1-jan-12',/nodata,psym=0,linestyle=2,title=type[k],ytitle='Average Dark Offset (Dark-New Model) [ADU]',$
             xtitle=' Year [20XX]',xrange=[min(jime),max(jime)+3.*24.*3600.],$ ;yrange=[min(avepix[*,ccdtyp]),max(avepix[*,ccdtyp])],$
