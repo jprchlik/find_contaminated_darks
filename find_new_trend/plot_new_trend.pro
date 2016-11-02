@@ -61,14 +61,12 @@ for k=0,n_elements(type)-1 do begin
     etime = (JULDAY(1,1,2015,0,0,0) -normal)*24.*3600.
   
 
+;fit the most relavent temperatures
     for i=0,3 do begin 
         xlim = [-65.,-52.]+273.
         
         writeplot=0
         if k eq 0 then ylim = [98.,104.] else ylim = [93.,105.]
-
-;
-
 ;store poly fits
         plot,[0,0],[0,0],psym=0,linestyle=2,title=type[k],ytitle='Average Dark Offset (Dark-Model) [ADU]',$
             xtitle=labels[i]+' Temperature [K]',xrange=xlim, $ ;yrange=[min(avepix[*,ccdtyp]),max(avepix[*,ccdtyp])],$
@@ -82,6 +80,7 @@ for k=0,n_elements(type)-1 do begin
              good = where((xval gt xlim[0]) and (xval lt xlim[1]) and (yval gt ylim[0]) and (yval lt ylim[1]) and (time[ccdtyp] gt stime) and (time[ccdtyp] lt etime))
              fitr = poly_fit(xval[good],yval[good],1,sigma=sigma)
 
+;Store appro fits in arrays
              case 1 of
                  ((k eq 1) and (j lt 2) and (i eq 0)): begin
                      fitpoly[j,*] = fitr ;FUV CCD1
@@ -139,27 +138,7 @@ for k=0,n_elements(type)-1 do begin
 ;    group_iris_darks,jime,newd
     get_binned_iris_dark_trend,nyval,jime,gropave,gropsig,groptim
 
-
-;
-;    gropave = fltarr(4,n_elements(newd))
-;    gropsig = fltarr(4,n_elements(newd))
-;    groptim = dblarr(n_elements(newd))
-;;Since value in greater than 255 must use dindgen instead of indgen
-;    indices = dindgen(n_elements(jime))
-;
-;    for i=1,n_elements(newd)-1 do begin
-;        grouparray = where((indices ge newd[i-1]) and (indices lt newd[i]))
-;
-;        for j=0,3 do begin
-;            gropave[j,i] = mean(nyval[j,grouparray])
-;;use the error in the mean for the error
-;           gropsig[j,i] = stddev(nyval[j,grouparray])/sqrt(float(n_elements(grouparray)))
-;           if gropsig[j,i] gt 20 then gropsig[j,i] = 0 ;removes 1 bad point for now
-;       endfor
-;       groptim[i] = mean(jime[grouparray])
-;
-;    endfor
-
+    find_new_temps,timeou,out_temps
 
 
 ; New time plots
