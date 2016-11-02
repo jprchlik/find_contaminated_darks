@@ -25,6 +25,53 @@ pro group_iris_darks,jime,newd,bin=bin
 
 end
 
+pro find_new_temps,strday,out_temps
+
+
+    tempsamps = 1440 ;number of temperature samples per day
+;covert input string to JULDAY
+    string_to_time,strday,jime 
+    jime =jime*24.*3600.
+;get group array
+    group_iris_darks,jime,newd
+;Indcides of jime array
+    indices= dindgen(n_elements(jime))
+;output temperatures
+    out_temps = fltarr(13,n_elements(jime))
+ 
+; loop over group array
+    for i=1,n_elements(newd)-1 do begin
+        ;get the grouped subset
+        subset = where((indices ge newd[i-1]) and (indices lt newd[i]))
+        strsub = strmid(strday[subset],0,10)
+        ;grab a subset of days for grouping for reading the temperature file
+        days = strsub[uniq(strsub)]
+        
+        
+        subtemps = fltarr(13,n_elements(days)*tempsamps)
+        subdates = strarr(n_elements(days)*tempsamps)
+
+        for j=0,n_elements(days)-1 do begin
+            fday = STRJOIN(STRSPLIT(days[j],'/',/extract),'') 
+            finp = '/Volumes/Pegasus/jprchlik/iris/find_con_darks/temps/'+fday+'_iris_temp.fmt'
+            readcol,finp,DATE_OBS,ITF1CCD1,ITF2CCD2,ITNUCCD3,ITSJCCD4,BT06CBPX,BT07CBNX,BT10HOPA,BT17SMAP,IT01PMRF,IT03PMRA,IT04TELF,IT12HOPA,IT13FRAP,format='A,F,F',/sil
+            ;store values in array for obs
+
+            subdates[j*tempsamps:(j+1)*tempsamps-1] = DATE_OBS
+            subtemps[0:12,j*tempsamps:(j+1)*tempsamps-1] = [ITF1CCD1,ITF2CCD2,ITNUCCD3,ITSJCCD4,BT06CBPX,BT07CBNX,BT10HOPA,BT17SMAP,IT01PMRF,IT03PMRA,IT04TELF,IT12HOPA,IT13FRAP]
+        endfor
+        ;interpolate temperatures and store in output array
+        for j=0,12 do begin
+            interp_temps,strday[subset],temp_int,subdates,subtemps[j,*]
+            out_temps[j,subset] = temp_int
+        endfor
+        
+    endfor
+
+
+
+end
+
 
 pro get_binned_iris_dark_trend,nyval,jime,gropave,gropsig,groptim
 
