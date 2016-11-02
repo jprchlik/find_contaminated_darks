@@ -26,7 +26,7 @@ pro group_iris_darks,jime,newd,bin=bin
 end
 
 
-pro get_binned_iris_dark_trend,nyval,jime,gropave,gropsig,groptime
+pro get_binned_iris_dark_trend,nyval,jime,gropave,gropsig,groptim
 
 ;nyval an array of with shape [x,y] which to group and find the average values and uncertainty  
 ;jime is an array of julday time converted to seconds which corresponds to the rows in nyval
