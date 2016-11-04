@@ -27,6 +27,10 @@ end
 
 pro find_new_temps,strday,out_temps
 
+    loadct,12
+    labels = ['ITF1CCD1','ITF2CCD2','ITNUCCD3','ITSJCCD4','BT06CBPX','BT07CBNX','BT10HOPA','BT17SMAP','IT01PMRF','IT03PMRA','IT04TELF','IT12HOPA','IT13FRAP']
+    colors = bindgen(n_elements(labels))/n_elements(labels)*255
+
 
     tempsamps = 1440 ;number of temperature samples per day
 ;covert input string to JULDAY
@@ -58,12 +62,24 @@ pro find_new_temps,strday,out_temps
             ;store values in array for obs
 
             subdates[j*tempsamps:(j+1)*tempsamps-1] = DATE_OBS
-            subtemps[0:12,j*tempsamps:(j+1)*tempsamps-1] = [ITF1CCD1,ITF2CCD2,ITNUCCD3,ITSJCCD4,BT06CBPX,BT07CBNX,BT10HOPA,BT17SMAP,IT01PMRF,IT03PMRA,IT04TELF,IT12HOPA,IT13FRAP]
+            daystack = [[ITF1CCD1],[ITF2CCD2],[ITNUCCD3],[ITSJCCD4],[BT06CBPX],[BT07CBNX],[BT10HOPA],[BT17SMAP],[IT01PMRF],[IT03PMRA],[IT04TELF],[IT12HOPA],[IT13FRAP]] 
+            daystack = transpose(daystack)
+            daysize = size(daystack)
+;            print,'Data Array size = '+strcompress(daysize,/remove_all)
+;put temperatures into 13 elements array
+            for k=0,daysize[1]-1 do subtemps[k,j*tempsamps:(j+1)*tempsamps-1] = daystack[k,*]
+;           subtemps[0:12,j*tempsamps:(j+1)*tempsamps-1] = [[ITF1CCD1],[ITF2CCD2],[ITNUCCD3],[ITSJCCD4],[BT06CBPX],[BT07CBNX],[BT10HOPA],[BT17SMAP],[IT01PMRF],[IT03PMRA],[IT04TELF],[IT12HOPA],[IT13FRAP]]
         endfor
         ;interpolate temperatures and store in output array
+        ;plot test interpolation
         for j=0,12 do begin
             interp_temps,strday[subset],temp_int,subdates,subtemps[j,*]
             out_temps[j,subset] = temp_int
+;            print,'Interp. Y Values'
+;            print,temp_int
+;            print,'Known Y values'
+;            print,subtemps[j,*]
+;            print,labels[j],median(temp_int),max(temp_int),min(temp_int)
         endfor
         
     endfor
