@@ -48,9 +48,13 @@ print,size(otemps)
 find_new_temps,timeou,otemps
 
 ;change temperature to K 
-otemps = otemps+273.
-print,size(otemps)
+so = size(otemps)
 
+print,so
+;for j=0,so[1]-1 do print,median(otemps[j,*]),max(otemps[j,*]),min(otemps[j,*])
+
+
+otemps = otemps+273.
 
 
 ;level = alog10(olevel)
@@ -79,6 +83,22 @@ for k=0,n_elements(type)-1 do begin
     for i=0,n_elements(labels)-1 do begin 
         xlim = [-75.,-52.]+273.
         xlim = [200.,400.]
+
+        case labels[i] of 
+            'BT06CBPX': xlim=[270.,280.]
+            'BT07CBNX': xlim=[270.,280.]
+            'BT10HOPA': xlim=[300.,370.]
+            'BT17SMAP': xlim=[290.,310.]
+            'IT01PMRF': xlim=[300.,320.]
+            'IT03PMRA': xlim=[300.,320.]
+            'IT04TELF': xlim=[290.,310.]
+            'IT12HOPA': xlim=[330.,370.]
+            'IT13FRA' : xlim=[290.,310.]
+            'ITF1CCD1': xlim=[206.,218.]
+            'ITF2CCD2': xlim=[206.,218.]
+            'ITNUCCD3': xlim=[206.,218.]
+            'ITSJCCD4': xlim=[206.,218.]
+        endcase
         
         writeplot=1
         if k eq 0 then ylim = [98.,104.] else ylim = [93.,105.]
@@ -95,6 +115,7 @@ for k=0,n_elements(type)-1 do begin
              good = where((xval gt xlim[0]) and (xval lt xlim[1]) and (yval gt ylim[0]) and (yval lt ylim[1]) and (time[ccdtyp] gt stime) and (time[ccdtyp] lt etime))
              fitr = poly_fit(xval[good],yval[good],1,sigma=sigma)
 
+             print,median(xval[good]),max(xval[good]),min(yval[good])
 ;Commented out for testing
 ;Store appro fits in arrays
 ;             case 1 of
