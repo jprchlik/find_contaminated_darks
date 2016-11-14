@@ -88,7 +88,9 @@ progver = 'v2016.Oct.07' ;--- (SSaar) V7 update of 2 sine model + shifted quad
 ins = type ne 'FUV'
 
 ii=indgen(4)
-k=ii + ins*4                          
+;k=ii + ins*4 pretty sure this is wrong and it is the value should not go beyond 4                         
+k = ii
+print,k
 
 
 fuv1=[0.163 ,  0.0800 ,3.18e+07 ,   0.397  ,  0.259, 2.25e-08, $
@@ -121,7 +123,7 @@ if ins eq 0 then begin                     ; if FUV, load up variables
    quad=[fuv1(6),fuv2(6),fuv3(6),fuv4(6)]  ;  quadratic term
    off=[fuv1(7),fuv2(7),fuv3(7),fuv4(7)]   ; offset constant
    dtq0 = 5e7                               ; start time, quad term
-endif else begin                          ; if NUV/SJI
+endif else begin
    amp1=[nuv1(0),nuv2(0),nuv3(0),nuv4(0)]
    amp2=[nuv1(1),nuv2(1),nuv3(1),nuv4(1)]
    p1=[nuv1(2),nuv2(2),nuv3(2),nuv4(2)]
