@@ -73,6 +73,13 @@ for k=0,n_elements(type)-1 do begin
 ;Start and end time for fitting (To be predictive use just 2014)
     stime = (JULDAY(1,1,2014,0,0,0) -normal)*24.*3600.
     etime = (JULDAY(1,1,2015,0,0,0) -normal)*24.*3600.
+;2015
+    stime5 = (JULDAY(1,1,2015,0,0,0) -normal)*24.*3600.
+    etime5 = (JULDAY(1,1,2016,0,0,0) -normal)*24.*3600.
+
+;2016
+    stime6 = (JULDAY(1,1,2016,0,0,0) -normal)*24.*3600.
+    etime6 = (JULDAY(1,1,2017,0,0,0) -normal)*24.*3600.
 
 
 
@@ -85,10 +92,10 @@ for k=0,n_elements(type)-1 do begin
         xlim = [200.,400.]
 
         case labels[i] of 
-            'BT06CBPX': xlim=[270.,280.]
-            'BT07CBNX': xlim=[270.,280.]
-            'BT10HOPA': xlim=[300.,370.]
-            'BT17SMAP': xlim=[290.,310.]
+            'BT06CBPX': xlim=[271.,276.]
+            'BT07CBNX': xlim=[271.,276.]
+            'BT10HOPA': xlim=[360.,372.]
+            'BT17SMAP': xlim=[298.,308.]
             'IT01PMRF': xlim=[300.,320.]
             'IT03PMRA': xlim=[300.,320.]
             'IT04TELF': xlim=[290.,310.]
@@ -100,58 +107,84 @@ for k=0,n_elements(type)-1 do begin
             'ITSJCCD4': xlim=[206.,218.]
         endcase
         
-        writeplot=1
-        if k eq 0 then ylim = [98.,104.] else ylim = [93.,105.]
+        writeplot=0
+        if type[k] eq 'NUV' then ylim = [98.,104.] else ylim = [93.,105.]
+        if i ge 4 then ylim=ylim-100.
+        if i ge 4 then offset = 0. else offset = 0.
+        if i le 3 then ylab = 'Average Dark Value ' else ylab='Average Dark Offset (Dark-New Model) '
+
 ;store poly fits
-        plot,[0,0],[0,0],psym=0,linestyle=2,title=type[k],ytitle='Average Dark Offset (Dark-Model) [ADU]',$
+        plot,[0,0],[0,0],psym=0,linestyle=2,title=type[k],ytitle=ylab+'[ADU]',$
             xtitle=labels[i]+' Temperature [K]',xrange=xlim, $ ;yrange=[min(avepix[*,ccdtyp]),max(avepix[*,ccdtyp])],$
-            /nodata,background=cgColor('white'),color=0,charthick=3,charsize=2.3,xminor=5,yrange=ylim
+            /nodata,background=cgColor('white'),color=0,charthick=3,charsize=2.3,xminor=5,yrange=ylim-offset
         for j=0,3 do begin
-             real = 1 ;check if it is a real correlation
-             yval = avepix[j,ccdtyp]+olevel[0,j,ccdtyp]+olevel[1,j,ccdtyp] ; Add the temperature pedestal back in to find new correlation
+             real = 0 ;check if it is a real correlation
+             if i le 3 then yval = avepix[j,ccdtyp]+olevel[0,j,ccdtyp]+olevel[1,j,ccdtyp] $; Add the temperature pedestal back in to find new correlation using CCD operating temperature first
+                 else yval = newavepix[j,ccdtyp] 
+                     
+             
              xval = otemps[i,ccdtyp];+otemps[i+(k+1)*4,ccdtyp]
 
 ; only use good data to fit
              good = where((xval gt xlim[0]) and (xval lt xlim[1]) and (yval gt ylim[0]) and (yval lt ylim[1]) and (time[ccdtyp] gt stime) and (time[ccdtyp] lt etime))
+             good5 = where((xval gt xlim[0]) and (xval lt xlim[1]) and (yval gt ylim[0]) and (yval lt ylim[1]) and (time[ccdtyp] gt stime5) and (time[ccdtyp] lt etime5))
+             good6 = where((xval gt xlim[0]) and (xval lt xlim[1]) and (yval gt ylim[0]) and (yval lt ylim[1]) and (time[ccdtyp] gt stime6) and (time[ccdtyp] lt etime6))
              fitr = poly_fit(xval[good],yval[good],1,sigma=sigma)
 
-             print,median(xval[good]),max(xval[good]),min(yval[good])
 ;Commented out for testing
 ;Store appro fits in arrays
-;             case 1 of
-;                 ((k eq 1) and (j lt 2) and (i eq 0)): begin
-;                     fitpoly[j,*] = fitr ;FUV CCD1
-;                     real=1
-;                     ;store new ave pixel value
-;                     newavepix[j,ccdtyp]  = yval-poly(xval,fitr)
-;                 end
-;                 ((k eq 1) and (j gt 1) and (i eq 1)): begin
-;                     fitpoly[j,*] = fitr ;FUV CCD2
-;                     real=1
-;                     ;store new ave pixel value
-;                     newavepix[j,ccdtyp]  = yval-poly(xval,fitr)
-;                 end
-;                 ((k eq 0) and (j gt 1) and (i eq 2)): begin
-;                      fitpoly[j+4,*] = fitr ;NUV
-;                      real=1
-;                     ;store new ave pixel value
-;                     newavepix[j,ccdtyp]  = yval-poly(xval,fitr)
-;                 end
-;                 ((k eq 0) and (j lt 2) and (i eq 3)): begin
-;                      fitpoly[j+4,*] = fitr ;SJI
-;                      real=1
-;                     ;store new ave pixel value
-;                     newavepix[j,ccdtyp]  = yval-poly(xval,fitr)
-;                 end
-;                 else: print,'Do Nothing'
-;             endcase
+             case 1 of
+                 ((type[k] eq 'FUV') and (j lt 2) and (labels[i] eq 'ITF1CCD1')): begin
+                     fitpoly[j,*] = fitr ;FUV CCD1
+                     real=1
+                     ;store new ave pixel value
+                     newavepix[j,ccdtyp]  = yval-poly(xval,fitr)
+                     ;Old temperature model
+                     if j eq 0 then c0 =[6.57168,0.15872] else c0 = [6.62957,0.15932]
+                   
+                 end
+                 ((type[k] eq 'FUV') and (j gt 1) and (labels[i] eq 'ITF2CCD2')): begin
+                     fitpoly[j,*] = fitr ;FUV CCD2
+                     real=1
+                     ;store new ave pixel value
+                     newavepix[j,ccdtyp]  = yval-poly(xval,fitr)
+                     ;Old temperature model
+                     if j eq 2 then c0 =[6.48711,0.15713] else c0 = [6.69489,0.16202]
+                 end
+                 ((type[k] eq 'NUV') and (j gt 1) and (labels[i] eq 'ITNUCCD3')): begin
+                      fitpoly[j+4,*] = fitr ;NUV
+                      real=1
+                     ;store new ave pixel value
+                     newavepix[j,ccdtyp]  = yval-poly(xval,fitr)
+                     ;Old temperature model
+                     if j eq 2 then c0 =[6.4848,0.15895] else c0 = [6.4783,0.15938]
+                 end
+                 ((type[k] eq 'NUV') and (j lt 2) and (labels[i] eq 'ITSJCCD4')): begin
+                      fitpoly[j+4,*] = fitr ;SJI
+                      real=1
+                     ;store new ave pixel value
+                     newavepix[j,ccdtyp]  = yval-poly(xval,fitr)
+                     ;Old temperature model
+                     if j eq 0 then c0 =[6.4821,0.15605] else c0 = [6.5912,0.15824]
+                 end
+                 ((labels[i] eq 'BT10HOPA')) : real=1
+                 else: print,'Do Nothing'
+             endcase
 
 
              
              if real eq 1 then begin 
                  oplot,xval,yval,color=color[j],psym=syms[j],thick=2
+                 oplot,xval,newavepix[j,ccdtyp],color=color[j],psym=syms[j],thick=2
                  oplot,xval[good],yval[good],color=20,psym=syms[j],thick=2
+                 oplot,xval[good5],yval[good5],color=120,psym=syms[j],thick=2
+                 oplot,xval[good6],yval[good6],color=200,psym=syms[j],thick=2
                  oplot,xlim,poly(xlim,fitr),color=color[j],psym=0,thick=3,linestyle=j
+                 sortx = sort(xval)
+;                 oplot,xval[sortx],solevel[sortx],color=color[j],psym=0,thick=2 
+                 crate = 1.03
+                 bin = 1
+;                 if real eq 1 then oplot,xval,crate*bin*exp(poly(xval-273.,c0)),color=color[j],psym=0,thick=2 
                  writeplot = 1
              endif
 ;             if i eq 0 then print,type[k]+' '+ports[j]+'Mean = '+strcompress(median(yval))+'+/-'+strcompress(stddev(yval)/sqrt(n_elements(yval)))
@@ -163,6 +196,7 @@ for k=0,n_elements(type)-1 do begin
     endfor
 
 ;check other CCD temperatures and their correlation with the excess
+   
 
 ;store new CCD values in array
     nyval = fltarr(4,n_elements(ccdtyp))
