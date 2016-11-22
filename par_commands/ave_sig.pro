@@ -16,6 +16,8 @@ pro ave_sig,data,ave,sig,sigl=sigl,tol
         sig = stddev(data[good])
 
         tave = abs(oave-ave)/abs(ave)
+; if you reject as many points as the toleralence  then exit and store mean
+        if float(n_elements(good))/n_elements(data) le tol then tave =0
     endwhile
     
 
