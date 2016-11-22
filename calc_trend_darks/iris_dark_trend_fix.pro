@@ -1,5 +1,5 @@
 
-pro iris_dark_trend_fix, obstime,offsets,type,  progver = progver
+pro iris_dark_trend_fix, obstime, offsets, type,  progver = progver
 
 ; ============================================================================
 ;+
@@ -28,7 +28,6 @@ pro iris_dark_trend_fix, obstime,offsets,type,  progver = progver
 ;
 ;         INDEX:  [mandatory] IRIS type index structure of the data array
 ;                 for which you want a dark generated (a single index).
-;                 Replaced with obs. time (J. Prchlik 2016/10/21)
 ;
 ;
 ;
@@ -77,6 +76,8 @@ progver = 'v2016.May.13' ;--- (SSaar) V6 update of double sine model + quad
 ;                                       trend, P2=P1/2, data thru 05/16 
 progver = 'v2016.Oct.07' ;--- (SSaar) V7 update of 2 sine model + shifted quad
 ;                                       trend, P2=P1/2, data thru 09/16
+progver = 'v2016.Nov.14' ;--- (SSaar) V8 same as V7, fixed indexing bug
+;
 ;
 ;
 ;-
@@ -87,10 +88,7 @@ progver = 'v2016.Oct.07' ;--- (SSaar) V7 update of 2 sine model + shifted quad
 ;ins = index.instrume ne 'FUV'
 ins = type ne 'FUV'
 
-ii=indgen(4)
-;k=ii + ins*4 pretty sure this is wrong and it is the value should not go beyond 4                         
-k = ii
-print,k
+k=indgen(4)  + ins*4                          
 
 
 fuv1=[0.163 ,  0.0800 ,3.18e+07 ,   0.397  ,  0.259, 2.25e-08, $
@@ -109,7 +107,7 @@ nuv2=[0.520  ,  0.605 ,3.12500e+07  ,  0.290  ,  0.838,-9.01e-10, $
 nuv3=[ 0.194 ,  0.210, 3.20800e+07 ,   0.340 ,   0.951, 1.00e-08, $
   2.56e-16 , -0.0926976]
 nuv4=[ 0.320 ,  0.408, 3.14400e+07 ,   0.317 ,   0.860 ,6.66e-09, $
-  1.11450e-15 ,  -0.104511 ]
+  1.11450e-15. ,  -0.104511 ]
 
 
 
@@ -123,7 +121,7 @@ if ins eq 0 then begin                     ; if FUV, load up variables
    quad=[fuv1(6),fuv2(6),fuv3(6),fuv4(6)]  ;  quadratic term
    off=[fuv1(7),fuv2(7),fuv3(7),fuv4(7)]   ; offset constant
    dtq0 = 5e7                               ; start time, quad term
-endif else begin
+endif else begin                          ; if NUV/SJI
    amp1=[nuv1(0),nuv2(0),nuv3(0),nuv4(0)]
    amp2=[nuv1(1),nuv2(1),nuv3(1),nuv4(1)]
    p1=[nuv1(2),nuv2(2),nuv3(2),nuv4(2)]
@@ -141,9 +139,8 @@ t0=[1090654728d0,1089963933d0,1090041516d0,1090041516d0,1090037115d0, $
      1090037115d0,1090037185d0,1090037185d0]     ; zero epoch
 
 
-;changed index to observed time
+;t=anytim(index.date_obs)
 t=anytim(obstime)
-;t = obstime
 
 c=2*!pi
 
@@ -157,9 +154,9 @@ dtq = (dt0 - dtq0) > 0.     ; timeline for quad term, not present dt0<dtq0
 ;  A1 *sin(t/p +phi1) + A2 *sin (2*t/p +phi2) + B*t + C*((t-tq)>0)^2   
 
 
-offsets = amp1[k] *sin(c*(dt0/p1[k] + phi1[k])) +  $
-           amp2[k] *sin(c*(dt0/(p1[k]/2) + phi2[k])) +  $
-           trend[k]*dt0  + quad[k]*dtq^2 + off[k] 
+offsets = amp1 *sin(c*(dt0/p1 + phi1)) +  $
+           amp2 *sin(c*(dt0/(p1/2) + phi2)) +  $
+           trend*dt0  + quad*dtq^2 + off 
 
 
 return
