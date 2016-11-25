@@ -121,7 +121,7 @@ pro get_binned_iris_dark_trend,nyval,jime,gropave,gropsig,groptim
            gropave[j,i] = dumave 
 ;use the error in the mean for the error
            gropsig[j,i] = dumsig/sqrt(float(n_elements(grouparray)))
-           if gropsig[j,i] gt 20 then gropsig[j,i] = 0 ;removes 1 bad point for now
+;           if gropsig[j,i] gt 20 then gropsig[j,i] = 0 ;removes 1 bad point for now
        endfor
        groptim[i] = mean(jime[grouparray])
 
