@@ -216,12 +216,15 @@ for k=0,n_elements(type)-1 do begin
 ;    group_iris_darks,jime,newd
     get_binned_iris_dark_trend,nyval,jime,gropave,gropsig,groptim
 
+    if type[k] eq 'FUV' then ylim = [-1,6] else ylim = [-1.0,1.5]
+
+
 
 
     dummy = LABEL_DATE(DATE_FORMAT=["%D-%M-%Y"])
     utplot,[0,0],[0,0],'1-jan-12',/nodata,psym=0,linestyle=2,title=type[k],ytitle='Average Dark Offset (Dark-New Model) [ADU]',$
             xtitle=' Year [20XX]',xrange=[min(jime),max(jime)+3.*24.*3600.],$ ;yrange=[min(avepix[*,ccdtyp]),max(avepix[*,ccdtyp])],$
-            background=cgColor('white'),color=0,charthick=3,charsize=2.3,xminor=5,yrange=[-5,10],XSTYLE=1
+            background=cgColor('white'),color=0,charthick=3,charsize=2.3,xminor=5,yrange=ylim,XSTYLE=1
     for j=0,3 do begin
 ;        oplot,jime[ccdtyp],newavepix[j,ccdtyp],psym=syms[j],color=color[j]
         oplot,groptim,gropave[j,*],psym=syms[j],color=color[j]
