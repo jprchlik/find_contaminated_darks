@@ -113,11 +113,14 @@ pro get_binned_iris_dark_trend,nyval,jime,gropave,gropsig,groptim
 
     for i=1,n_elements(newd)-1 do begin
         grouparray = where((indices ge newd[i-1]) and (indices lt newd[i]))
+        
 
         for j=0,3 do begin
-            gropave[j,i] = mean(nyval[j,grouparray])
+;use sigma clipping to find ave
+           ave_sig,nyval[j,grouparray],dumave,dumsig
+           gropave[j,i] = dumave 
 ;use the error in the mean for the error
-           gropsig[j,i] = stddev(nyval[j,grouparray])/sqrt(float(n_elements(grouparray)))
+           gropsig[j,i] = dumsig/sqrt(float(n_elements(grouparray)))
            if gropsig[j,i] gt 20 then gropsig[j,i] = 0 ;removes 1 bad point for now
        endfor
        groptim[i] = mean(jime[grouparray])
