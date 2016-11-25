@@ -230,6 +230,18 @@ for k=0,n_elements(type)-1 do begin
         oplot,groptim,gropave[j,*],psym=syms[j],color=color[j]
         errplot,groptim,gropave[j,*]-gropsig[j,*],gropave[j,*]+gropsig[j,*],color=color[j],thick=2
     endfor
+
+    ;Include vertical lines that represent when the bakeouts occured. These need to be manually updated for each bakeout. 
+    bakeout_time=[julday(10,16,2014),julday(10,26,2015),julday(4,26,2016)]-normal
+
+    for j=0,n_elements(bakeout_time)-1 do oplot,[bakeout_time[j],bakeout_time[j]]*24.*3600.,$
+                                               [-1000.,1000.],linestyle=2,color='black',thick=2
+    
+    
+
+
+
+
     al_legend,ports,psym=syms,colors=color,box=0,/right,charsize=2.0
     write_png,'plots/new_trend/'+type[k]+'_new_long_term_trend.png',tvrd(/true)
 
