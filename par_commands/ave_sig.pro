@@ -20,7 +20,7 @@ pro ave_sig,data,ave,sig,sigl=sigl,tol=tol,verbose=verbose
         if float(n_elements(good))/n_elements(data) le tol then tave =0
     endwhile
 
-    if keyword_set(verbose) then print,strcompress(n_elements(good))+'out of '+strcompress(n_elements(data))+' kept'
+    if keyword_set(verbose) then print,strcompress(n_elements(good))+' out of '+strcompress(n_elements(data))+' kept'
     
 
 end
