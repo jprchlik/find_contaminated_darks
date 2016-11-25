@@ -28,18 +28,18 @@ pro format_for_steve
         get_binned_iris_dark_trend,avepix[*,ccdtyp],time[ccdtyp],gropave,gropsig,groptim
 
         if type[i] eq 'NUV' then begin 
-            sigmx = gropsig[*,1:*]
+            sigmx = gropsig[*,2:*]
             fname = 'offset30n.dat'
-            avni = gropave[*,1:*]
-            tin = groptim[1:*]
+            avni = gropave[*,2:*]
+            tni = groptim[2:*]
             xoff = [1.0e7,1.0e7,1.0e7,1.0e7]
             yoff = [-0.30,-0.30,-0.25,-0.15]
-            save,sigmx,avni,tin,xoff,yoff,filename=fname
+            save,sigmx,avni,tni,xoff,yoff,filename=fname
          endif else begin
-            sigmx = gropsig[*,1:*]
+            sigmx = gropsig[*,2:*]
             fname = 'offset30f.dat'
-            avi = gropave[*,1:*]
-            ti = groptim[1:*]
+            avi = gropave[*,2:*]
+            ti = groptim[2:*]
             xoff = [1.0e7,1.0e7,1.0e7,1.0e7]
             yoff = [-0.25,-0.50,-1.80,-0.60]
             save,sigmx,avi,ti,xoff,yoff,filename=fname
