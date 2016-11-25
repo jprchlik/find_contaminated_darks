@@ -117,7 +117,7 @@ pro get_binned_iris_dark_trend,nyval,jime,gropave,gropsig,groptim
 
         for j=0,3 do begin
 ;use sigma clipping to find ave
-           ave_sig,nyval[j,grouparray],dumave,dumsig
+           ave_sig,nyval[j,grouparray],dumave,dumsig,/ver
            gropave[j,i] = dumave 
 ;use the error in the mean for the error
            gropsig[j,i] = dumsig/sqrt(float(n_elements(grouparray)))
