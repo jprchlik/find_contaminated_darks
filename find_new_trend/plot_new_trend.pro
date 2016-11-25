@@ -109,9 +109,13 @@ for k=0,n_elements(type)-1 do begin
         
         writeplot=0
         if type[k] eq 'NUV' then ylim = [98.,104.] else ylim = [93.,105.]
-        if i ge 4 then ylim=ylim-100.
-        if i ge 4 then offset = 0. else offset = 0.
-        if i le 3 then ylab = 'Average Dark Value ' else ylab='Average Dark Offset (Dark-New Model) '
+ ;       if i ge 4 then ylim=ylim-100.
+ ;       if i ge 4 then offset = 0. else offset = 0.
+ ;       if i le 3 then ylab = 'Average Dark Value ' else ylab='Average Dark Offset (Dark-New Model) '
+
+        if labels[i] ne 'BT06CBPX' then ylim=ylim-100.
+        if labels[i] ne 'BT06CBPX' then offset = 0. else offset = 0.
+        if labels[i] ne 'BT06CBPX' then ylab = 'Average Dark Value ' else ylab='Average Dark Offset (Dark-New Model) '
 
 ;store poly fits
         plot,[0,0],[0,0],psym=0,linestyle=2,title=type[k],ytitle=ylab+'[ADU]',$
@@ -119,7 +123,9 @@ for k=0,n_elements(type)-1 do begin
             /nodata,background=cgColor('white'),color=0,charthick=3,charsize=2.3,xminor=5,yrange=ylim-offset
         for j=0,3 do begin
              real = 0 ;check if it is a real correlation
-             if i le 3 then yval = avepix[j,ccdtyp]+olevel[0,j,ccdtyp]+olevel[1,j,ccdtyp] $; Add the temperature pedestal back in to find new correlation using CCD operating temperature first
+;             if i le 3 then yval = avepix[j,ccdtyp]+olevel[0,j,ccdtyp]+olevel[1,j,ccdtyp] $; Add the temperature pedestal back in to find new correlation using CCD operating temperature first
+;                 else yval = newavepix[j,ccdtyp] 
+             if labels[i] eq 'BT06CBPX' then yval = avepix[j,ccdtyp]+olevel[0,j,ccdtyp]+olevel[1,j,ccdtyp] $; Add the temperature pedestal back in to find new correlation using CCD operating temperature first
                  else yval = newavepix[j,ccdtyp] 
                      
              
@@ -134,7 +140,8 @@ for k=0,n_elements(type)-1 do begin
 ;Commented out for testing
 ;Store appro fits in arrays
              case 1 of
-                 ((type[k] eq 'FUV') and (j lt 2) and (labels[i] eq 'ITF1CCD1')): begin
+;                 ((type[k] eq 'FUV') and (j lt 2) and (labels[i] eq 'ITF1CCD1')): begin
+                 ((type[k] eq 'FUV') and (j lt 2) and (labels[i] eq 'BT06CBPX')): begin
                      fitpoly[j,*] = fitr ;FUV CCD1
                      real=1
                      ;store new ave pixel value
@@ -143,7 +150,8 @@ for k=0,n_elements(type)-1 do begin
                      if j eq 0 then c0 =[6.57168,0.15872] else c0 = [6.62957,0.15932]
                    
                  end
-                 ((type[k] eq 'FUV') and (j gt 1) and (labels[i] eq 'ITF2CCD2')): begin
+;                 ((type[k] eq 'FUV') and (j gt 1) and (labels[i] eq 'ITF2CCD2')): begin
+                 ((type[k] eq 'FUV') and (j gt 1) and (labels[i] eq 'BT06CBPX')): begin
                      fitpoly[j,*] = fitr ;FUV CCD2
                      real=1
                      ;store new ave pixel value
@@ -151,7 +159,8 @@ for k=0,n_elements(type)-1 do begin
                      ;Old temperature model
                      if j eq 2 then c0 =[6.48711,0.15713] else c0 = [6.69489,0.16202]
                  end
-                 ((type[k] eq 'NUV') and (j gt 1) and (labels[i] eq 'ITNUCCD3')): begin
+;                 ((type[k] eq 'NUV') and (j gt 1) and (labels[i] eq 'ITNUCCD3')): begin
+                 ((type[k] eq 'NUV') and (j gt 1) and (labels[i] eq 'BT06CBPX')): begin
                       fitpoly[j+4,*] = fitr ;NUV
                       real=1
                      ;store new ave pixel value
@@ -159,7 +168,8 @@ for k=0,n_elements(type)-1 do begin
                      ;Old temperature model
                      if j eq 2 then c0 =[6.4848,0.15895] else c0 = [6.4783,0.15938]
                  end
-                 ((type[k] eq 'NUV') and (j lt 2) and (labels[i] eq 'ITSJCCD4')): begin
+;                 ((type[k] eq 'NUV') and (j lt 2) and (labels[i] eq 'ITSJCCD4')): begin
+                 ((type[k] eq 'NUV') and (j lt 2) and (labels[i] eq 'BT06CBPX')): begin
                       fitpoly[j+4,*] = fitr ;SJI
                       real=1
                      ;store new ave pixel value
