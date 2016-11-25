@@ -1,4 +1,4 @@
-pro ave_sig,data,ave,sig,sigl=sigl,tol
+pro ave_sig,data,ave,sig,sigl=sigl,tol=tol
 
     if keyword_set(sigl) then sigl=sigl else sigl = 4.
     if keyword_set(tol)  then tol = tol else tol =0.01
