@@ -1,4 +1,4 @@
-pro ave_sig,data,ave,sig,sigl=sigl,tol=tol
+pro ave_sig,data,ave,sig,sigl=sigl,tol=tol,verbose=verbose
 
     if keyword_set(sigl) then sigl=sigl else sigl = 4.
     if keyword_set(tol)  then tol = tol else tol =0.01
@@ -19,6 +19,8 @@ pro ave_sig,data,ave,sig,sigl=sigl,tol=tol
 ; if you reject as many points as the toleralence  then exit and store mean
         if float(n_elements(good))/n_elements(data) le tol then tave =0
     endwhile
+
+    if keyword_set(verbose) then print,strcompress(n_elements(good))+'out of '+strcompress(n_elements(data))+' kept'
     
 
 end
