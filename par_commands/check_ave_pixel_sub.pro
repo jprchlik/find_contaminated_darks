@@ -1,4 +1,4 @@
-pro check_ave_pixel_sub,file,endfile,timfile,avepix,sigpix,temps,levels
+pro check_ave_pixel_sub,file,endfile,timfile,avepix,sigpix,temps,levels,writefile=writefile
 ;file is file name data is an array containing whether the ports passed or failed (1 is pass 0 is failed)
     compile_opt idl2
 ;    read_iris,file,index,data
@@ -46,6 +46,13 @@ pro check_ave_pixel_sub,file,endfile,timfile,avepix,sigpix,temps,levels
 
 ;remove calculated dark from data
     data = data-dark
+
+    odir = '/Volumes/Pegasus/jprchlik/iris/find_con_darks/calc_trend_darks/fits_files/'
+
+    ofil = strsplit(file,'/',/extract)
+    ofil = ofil[n_elements(ofil)-1]
+
+    if keyword_set(writefile) then writefits,odir+ofil,data,hdr
     
 ;split data into ports
     port1 = data[0:2071,0:547]
