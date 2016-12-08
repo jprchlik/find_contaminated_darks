@@ -48,7 +48,7 @@ pro dark_trend,sdir=sdir,pdir=pdir,simpleb=simpleb,logdir=logdir,outdir=outdir
         year = strmid(files[j],3,4)
         month = strmid(files[j],7,2)
 ;check ave pixel returns the average pixel value per dark integration minus the iris model dark, the RMS around the average, and the assumed temperatures for the background model
-        check_ave_pixel_sub,sdir+'/'+year+'/'+month+'/'+files[j],endfile,timfile,avepix1,sigpix1,temps,levels
+        check_ave_pixel_sub,sdir+'/'+year+'/'+month+'/'+files[j],endfile,timfile,avepix1,sigpix1,temps,levels,/writefile
         avepix[*,j] = avepix1
         sigpix[*,j] = sigpix1
         otemps[*,j] = temps
