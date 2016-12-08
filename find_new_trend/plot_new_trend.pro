@@ -232,6 +232,7 @@ for k=0,n_elements(type)-1 do begin
     get_binned_iris_dark_trend,nyval,jime,gropave,gropsig,groptim
 
     if type[k] eq 'FUV' then ylim = [-1,6] else ylim = [-1.0,1.5]
+    ylim = [-1.0,1.5]
 
 
 
