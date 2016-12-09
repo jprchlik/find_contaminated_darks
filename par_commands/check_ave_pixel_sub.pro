@@ -73,17 +73,20 @@ pro check_ave_pixel_sub,file,endfile,timfile,avepix,sigpix,temps,levels,writefil
 ;write data to file if keyword write set
     if keyword_set(writefile) then begin
         res = readfits(file,hdrd)
-        obstime = sxpar(hdrd,'OBS_TIME')
-        ins = sxpar(hdrd,'INSTRUME')
+        obstime = strcompress(sxpar(hdrd,'DATE_OBS'),/remove_all)
+        ins = strcompress(sxpar(hdrd,'INSTRUME'),/remove_all)
+        
         iris_dark_trend_fix,obstime,offsets,ins
 ;put data back together data into ports
-        data[0:2071,0:547] = port1-offsets[0] 
-        data[0:2071,548:*] = port2-offsets[1] 
-        data[2072:*,0:547] = port3-offsets[2] 
-        data[2072:*,548:*] = port4-offsets[3] 
 
+        port1 = port1-offsets[0] 
+        port2 = port2-offsets[1] 
+        port3 = port3-offsets[2] 
+        port4 = port4-offsets[3] 
 
-        writefits,odir+ofil,data,hdrd
+        rdata = [[port1,port2],[port3,port4]]
+
+        writefits,odir+ofil,rdata,hdrd
 
     endif
 
