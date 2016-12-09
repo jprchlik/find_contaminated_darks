@@ -52,7 +52,6 @@ pro check_ave_pixel_sub,file,endfile,timfile,avepix,sigpix,temps,levels,writefil
     ofil = strsplit(file,'/',/extract)
     ofil = ofil[n_elements(ofil)-1]
 
-    if keyword_set(writefile) then writefits,odir+ofil,data,hdr
     
 ;split data into ports
     port1 = data[0:2071,0:547]
@@ -70,5 +69,22 @@ pro check_ave_pixel_sub,file,endfile,timfile,avepix,sigpix,temps,levels,writefil
 ;put all sigma values and average values into one array
     avepix = [lave1,lave2,lave3,lave4]
     sigpix = [lsig1,lsig2,lsig3,lsig4]
+
+;write data to file if keyword write set
+    if keyword_set(writefile) then begin
+        res = readfits(file,hdrd)
+        obstime = sxpar(hdrd,'OBS_TIME')
+        ins = sxpar(hdrd,'INSTRUME')
+        iris_dark_trend_fix,obstime,offsets,ins
+;put data back together data into ports
+        data[0:2071,0:547] = port1-offsets[0] 
+        data[0:2071,548:*] = port2-offsets[1] 
+        data[2072:*,0:547] = port3-offsets[2] 
+        data[2072:*,548:*] = port4-offsets[3] 
+
+
+        writefits,odir+ofil,data,hdrd
+
+    endif
 
 end
