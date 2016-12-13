@@ -22,6 +22,8 @@ pro group_iris_darks,jime,newd,bin=bin
     ;Add first and last element values
     newd = [0,newd,n_elements(jime)]
 
+    print,[[jime[newd]],[newd]]
+
 
 end
 
@@ -113,6 +115,8 @@ pro get_binned_iris_dark_trend,nyval,jime,gropave,gropsig,groptim
 
     for i=1,n_elements(newd)-1 do begin
         grouparray = where((indices ge newd[i-1]) and (indices lt newd[i]))
+        print,'Number of darks = ',n_elements(grouparray)
+        if n_elements(grouparray) gt 1 then print,'Time span in days = ',(jime[grouparray[n_elements(grouparray)-1]]-jime[grouparray[0]])/(24.*3600.)
         
 
         for j=0,3 do begin
