@@ -4,7 +4,7 @@ loadct,12
 if keyword_set(sdir) then sdir=sdir else sdir='/data/alisdair/opabina/scratch/joan/iris/newdat/orbit/level0/simpleB/'
 if keyword_set(pdir) then pdir=pdir else pdir='plots/'
 if keyword_set(rest) then begin
-    restore,'alldark_ave_sig'
+    restore,'alldark_ave_sig.sav'
     time = basicf
     yval = avepix
 endif
@@ -155,7 +155,7 @@ for z=0,1 do begin
 
         ;save formatted plots for reading into steve's program
         
-        if type[i] eq 'NUV' then begin
+        if type[z] eq 'NUV' then begin
             sigmx = gropsig[*,2:*]
             fname = 'offset30n.dat'
             avni = gropave[*,2:*]
