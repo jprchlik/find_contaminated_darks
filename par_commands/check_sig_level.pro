@@ -55,6 +55,13 @@ pro check_sig_level,file,pass,endfile,timfile,total5,exptime
     badfrac = float(total5)/(n_elements(port1)+n_elements(port2)+n_elements(port3)+n_elements(port4))
     pass = badfrac lt passfrac
 
+;remove wavy readouts from simonatinous readout
+    if year+'/'+month eq '2014/09' then pass = 0
+
+;Check for blanks if more than 5 in entire CCD drop port
+    if n_elements(data[where(data le 0)]) gt 5 then pass = 0
+
+
 ;print data to output file sorted by processor
     print,endfile,' ',timfile,pass
 
