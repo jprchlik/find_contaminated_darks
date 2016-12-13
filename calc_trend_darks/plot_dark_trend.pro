@@ -1,8 +1,13 @@
-pro plot_dark_trend,time,yval,sdir=sdir,pdir=pdir
+pro plot_dark_trend,time,yval,sdir=sdir,pdir=pdir,rest=rest
 
 loadct,12
 if keyword_set(sdir) then sdir=sdir else sdir='/data/alisdair/opabina/scratch/joan/iris/newdat/orbit/level0/simpleB/'
 if keyword_set(pdir) then pdir=pdir else pdir='plots/'
+if keyword_set(rest) then begin
+    restore,'alldark_ave_sig'
+    time = basicf
+    yval = avepix
+endif
 
 type = ['NUV','FUV']
 for z=0,1 do begin
@@ -147,6 +152,28 @@ for z=0,1 do begin
         al_legend,['fit port1','fit port2','fit port3','fit port4'],psym=[0,0,0,0],colors=colors,linestyle=lines,box=0,/right,charsize=2.0
     
         write_png,pdir+'/'+type[z]+'_test.png',tvrd(/true)
+
+        ;save formatted plots for reading into steve's program
+        
+        if type[i] eq 'NUV' then begin
+            sigmx = gropsig[*,2:*]
+            fname = 'offset30n.dat'
+            avni = gropave[*,2:*]
+            tni = groptim[2:*]
+            xoff = [1.0e7,1.0e7,1.0e7,1.0e7]
+            yoff = [-0.30,-0.30,-0.25,-0.15]
+            save,sigmx,avni,tni,xoff,yoff,filename=fname
+         endif else begin
+            sigmx = gropsig[*,2:*]
+            fname = 'offset30f.dat'
+            avi = gropave[*,2:*]
+            ti = groptim[2:*]
+            xoff = [1.0e7,1.0e7,1.0e7,1.0e7]
+            yoff = [-0.25,-0.50,-1.80,-0.60]
+            save,sigmx,avi,ti,xoff,yoff,filename=fname
+         endelse
+
+
     
     
     ;    p.Save, "test.png",BORDER=10,$
