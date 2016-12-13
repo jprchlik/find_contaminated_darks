@@ -4,6 +4,7 @@ pro check_ave_pixel_sub,file,endfile,timfile,avepix,sigpix,temps,levels,writefil
 ;    read_iris,file,index,data
 ;read in iris data
     read_iris,file,hdr,data
+    print,file
 
 ;get file time 
     splfile = strsplit(file,'/',/extract)
@@ -43,9 +44,14 @@ pro check_ave_pixel_sub,file,endfile,timfile,avepix,sigpix,temps,levels,writefil
     
 ;give data to iris_prep_dark subtracts off temperature and base line dark model
     iris_make_dark,hdr,dark,temps,date_obs,temp_tab,levels
-
-;remove calculated dark from data
+;
+;;remove calculated dark from data
     data = data-dark
+   ;switch to iris prep dark per converation with steve (2016/12/13 J. Prchlik)
+;    iris_prep,hdr,data,ohdr,odata
+;    hdr = ohdr
+;    data = odata
+   
 
     odir = '/Volumes/Pegasus/jprchlik/iris/find_con_darks/calc_trend_darks/fits_files/'
 
@@ -86,7 +92,7 @@ pro check_ave_pixel_sub,file,endfile,timfile,avepix,sigpix,temps,levels,writefil
 
         rdata = [[port1,port2],[port3,port4]]
 
-        writefits,odir+ofil,rdata,hdrd
+        writefits,odir+ofil,rdata,hdr
 
     endif
 
