@@ -92,7 +92,7 @@ pro check_ave_pixel_sub,file,endfile,timfile,avepix,sigpix,temps,levels,writefil
 
         rdata = [[port1,port2],[port3,port4]]
 
-        writefits,odir+ofil,rdata,hdr
+        writefits,odir+ofil,rdata,hdrd
 
     endif
 
