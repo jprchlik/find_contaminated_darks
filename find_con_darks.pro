@@ -1,7 +1,7 @@
 pro find_con_darks,month,yeari,sdir=sdir,simpleb=simpleb,complexa=complexa,type=type,plotter=plotter,logdir=logdir,outdir=outdir
     compile_opt idl2
 ;;;;;;;;;;;;;;;;;;;;;;;;;
-;needs simpleb or complexa
+;needs simpleb or complexa keyword set
 ;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;look up directory structure which contain level0 darks
