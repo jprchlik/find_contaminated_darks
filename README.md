@@ -181,3 +181,5 @@ I include an example output from September, 2016, which we know is contaminated 
 
   NUV20160921_183052.fits   2016/09/21T18:30:52       1        69     30.02
 
+
+TO GET GOOGLE API for calendar follow in instructions at https://developers.google.com/google-apps/calendar/quickstart/python
