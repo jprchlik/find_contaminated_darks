@@ -26,7 +26,6 @@ class dark_times:
 #get lastest timeline version
         while check == True:
             inurl = self.irisweb.format(self.stime, v).replace(' ','0')
-            print inurl
             resp = requests.head(inurl)
             if resp.status_code != 200: check = False 
             else: v+=1
@@ -48,5 +47,27 @@ class dark_times:
 #get the last set of OBSIDs (only really useful for eclipse season)
         self.sta_dark = lines[-3][3:20]
         self.end_dark = lines[-1][3:20]
+
+        self.sta_dark_dt = self.create_dt_object(self.sta_dark)
+        self.end_dark_dt = self.create_dt_object(self.end_dark)
+
+        self.sta_dark_dt = self.sta_dark_dt-dt.timedelta(minutes=1)
+        self.end_dark_dt = self.end_dark_dt+dt.timedelta(minutes=1)
+
+#create datetime objects using doy in timeline
+    def create_dt_object(self,dtobj):
+        splt = dtobj.split(':')
+        obj = dt.datetime(int(splt[0]),1,1,int(splt[2]),int(splt[3]))+dt.timedelta(days=int(splt[1])-1) #convert doy to datetime obj
+        return obj
             
-    
+#set up JSOC query for darks
+    def dark_query(self):
+        fmt = '%Y.%m.%d_%H:%M'
+        self.qstr = 'iris.lev1[{0}_TAI-{1}_TAI][][? IMG_TYPE ~ "DARK" ?]'.format(self.sta_dark_dt.strftime(fmt),self.end_dark_dt.strftime(fmt)) 
+
+#run to completion
+
+    def run_all(self):
+        self.request_files()
+        self.get_start_end()
+        self.dark_query()
