@@ -1,7 +1,7 @@
 ####init api to parse Google calendar for calibration-as-run for Calib3: darks
 from __future__ import print_function
 import httplib2
-import os
+import os,sys
 
 from apiclient import discovery
 from oauth2client import client
@@ -46,7 +46,7 @@ def get_credentials():
             credentials = tools.run_flow(flow, store, flags)
         else: # Needed only for compatibility with Python 2.6
             credentials = tools.run(flow, store)
-        print('Storing credentials to ' + credential_path)
+        #print('Storing credentials to ' + credential_path)
     return credentials
 
 def main():
@@ -74,7 +74,7 @@ def main():
     span = 31
     now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
     onmonth = (datetime.datetime.utcnow()-datetime.timedelta(days=span)).isoformat()+'Z'
-    print('Getting days with darks')
+#    print('Getting days with darks')
     eventsResult = service.events().list(
         calendarId='27f4lqaadrbrp1nueps13qq2n0@group.calendar.google.com', timeMin=onmonth,timeMax=now, singleEvents=True, #IRIS calibration-as-run
         orderBy='startTime').execute()
@@ -83,13 +83,20 @@ def main():
 
     darks = 'Calib 3: Dark'.upper().replace(' ','').replace(':','')
 
-    if not events:
-        print('No darks found in last {0:3d}.'.format(span))
+#    if not events:
+#        print('No darks found in last {0:3d}.'.format(span))
+#set up so you only get the last event
+    found = False
     for event in events:
         start = event['start'].get('dateTime', event['start'].get('date'))
         eventstring = event['summary'].upper().replace(' ','').replace(':','')
-        if eventstring == darks:
-            print(start, event['summary'])
+        if ((eventstring == darks) | (eventstring == darks+'S')):
+            out = start.split('-')
+            out = out[1]+','+out[0]
+            found = True
+
+    if found: sys.stdout.write(out)
+     
 
 
 if __name__ == '__main__':
