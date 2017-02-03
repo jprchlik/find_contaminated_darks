@@ -12,3 +12,6 @@ plot_temp_offset*
 *new_trend
 plot_temps
 *dat
+*pyc
+*backup
+*json
