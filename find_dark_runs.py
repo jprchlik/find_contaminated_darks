@@ -9,6 +9,8 @@ from oauth2client import tools
 from oauth2client.file import Storage
 
 import datetime
+#get string to send to sswidl for dark files
+import get_dark_files as gdf
 
 try:
     import argparse
@@ -92,6 +94,8 @@ def main():
         eventstring = event['summary'].upper().replace(' ','').replace(':','')
         if ((eventstring == darks) | (eventstring == darks+'S')):
             out = start.split('-')
+            darks = gdf.dark_times(out[0]+'/'+out[1]+'/'+out[2])
+            darks.run_all() # download darks from jsoc
             out = out[1]+','+out[0]
             found = True
 
