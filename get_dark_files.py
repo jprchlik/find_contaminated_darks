@@ -70,7 +70,7 @@ class dark_times:
         #setup string to pass write to sswidl for download
         fmt = '%Y-%m-%dT%H:%M:%S'
         self.response = client.query(jsoc.Time(self.sta_dark_dt.strftime(fmt),self.end_dark_dt.strftime(fmt)),jsoc.Series('iris.lev1'),
-                                jsoc.Notify('jakub.prchlik@cfa.harvard.edu'))
+                                jsoc.Notify('jakub.prchlik@cfa.harvard.edu'),jsoc.Segment('image'))
   
         self.get_darks(client)
 
