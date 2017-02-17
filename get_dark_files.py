@@ -103,12 +103,17 @@ class dark_times:
         #make the download directory
         if self.simpleb:
             self.bdir = '/data/alisdair/IRIS_LEVEL1_DARKS/{0}/simpleB/'.format(self.otime.strftime('%Y/%m'))
+            self.ldir = '/data/alisdair/opabina/scratch/joan/iris/newdat/orbit/level0/simpleB/{0}/'.format(self.otime.strftime('%Y/%m'))
         else:
             self.bdir = '/data/alisdair/IRIS_LEVEL1_DARKS/{0}/complexA/'.format(self.otime.strftime('%Y/%m'))
+            self.ldir = '/data/alisdair/opabina/scratch/joan/iris/newdat/orbit/level0/complexA/{0}/'.format(self.otime.strftime('%Y/%m'))
 
         # check to make sure directory does not exist 
         if not os.path.exists(self.bdir):
             os.makedirs(self.bdir)
+        #also make level0 directory
+        if not os.path.exists(self.ldir):
+            os.makedirs(self.ldir)
 
         #get number of records
         index = np.arange(np.size(self.expt.urls.url))
