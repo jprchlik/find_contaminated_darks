@@ -66,44 +66,48 @@ class dark_times:
             
 #set up JSOC query for darks
     def dark_query(self):
-        from sunpy.net import jsoc
-        client = jsoc.JSOCClient()
+#use drms module to download from JSOC (https://pypi.python.org/pypi/drms)
+        import drms
+        client = drms.Client(email='jakub.prchlik@cfa.harvard.edu',verbose=False)
         fmt = '%Y.%m.%d_%H:%M'
         self.qstr = 'iris.lev1[{0}_TAI-{1}_TAI][][? IMG_TYPE ~ "DARK" ?]'.format(self.sta_dark_dt.strftime(fmt),self.end_dark_dt.strftime(fmt)) 
+        self.expt = client.export(self.qstr)
         #setup string to pass write to sswidl for download
-        fmt = '%Y-%m-%dT%H:%M:%S'
-        self.response = client.query(jsoc.Time(self.sta_dark_dt.strftime(fmt),self.end_dark_dt.strftime(fmt)),jsoc.Series('iris.lev1'),
-                                jsoc.Notify('jakub.prchlik@cfa.harvard.edu'),jsoc.Segment('image'))
-  
+###        fmt = '%Y-%m-%dT%H:%M:%S'
+###        self.response = client.query(jsoc.Time(self.sta_dark_dt.strftime(fmt),self.end_dark_dt.strftime(fmt)),jsoc.Series('iris.lev1'),
+###                                jsoc.Notify('jakub.prchlik@cfa.harvard.edu'),jsoc.Segment('image'))
+###  
         self.get_darks(client)
 
     def get_darks(self,client):
         
-        import time
-        wait = True
-
-        request = client.request_data(self.response)
-        waittime = 60.*5. #five minute wait to check on data completion
-        time.sleep(waittime) #
-
-        while wait:
-            stat = client.check_request(request)
-            if stat == 1:
-                temp.sleep(waittime)
-            elif stat == 0:
-                wait = False
-            elif stat > 1:
-                break #jump out of loop if you get an error
+####        import time
+####        wait = True
+####
+####        request = client.request_data(self.response)
+####        waittime = 60.*5. #five minute wait to check on data completion
+####        time.sleep(waittime) #
+####
+####        while wait:
+####            stat = client.check_request(request)
+####            if stat == 1:
+####                temp.sleep(waittime)
+####            elif stat == 0:
+####                wait = False
+####            elif stat > 1:
+####                break #jump out of loop if you get an error
         #make the download directory
         bdir = '/data/alisdair/IRIS_LEVEL1_DARKS/{0}/simpleB/'.format(self.otime.strftime('%Y/%m'))
-        try:
+        # check to make sure directory does not exist 
+        if not os.path.exists(bdir):
             os.makedirs(bdir)
-        except OSError:
-            time.sleep(1)
+
+        #Dowloand the data using drms
+        self.expt.download(bdir)
  
         #download the data
-        res = client.get_request(request,path=bdir,progress=True)
-        res.wait()
+####        res = client.get_request(request,path=bdir,progress=True)
+####        res.wait()
 
 #run to completion
 
