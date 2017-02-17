@@ -38,7 +38,6 @@ endelse
 
 if ng ne 0 then begin
    for j=0,ng-1 do begin
-      print,'HERE'
       filj=fil(ig(j))
       read_sdo,filj,indj,dj
       dj0=iris_lev120_darks(dj,indj)
