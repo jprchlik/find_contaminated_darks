@@ -8,15 +8,18 @@ import requests
 class dark_times:
 
 
-    def __init__(self,time,irisweb='http://iris.lmsal.com/health-safety/timeline/iris_tim_archive/IRIS_science_timeline_{0}.V{1:2d}.txt'):
+    def __init__(self,time,irisweb='http://iris.lmsal.com/health-safety/timeline/iris_tim_archive/IRIS_science_timeline_{0}.V{1:2d}.txt',simpleb=True,complexa=False):
 
 
 #web page location of IRIS timeline
         self.irisweb = irisweb.replace('IRIS',time+'/IRIS')
         self.otime = dt.datetime.strptime(time,'%Y/%m/%d')
         self.stime = self.otime.strftime('%Y%m%d')
-        self.obsid = 'OBSID=4202000003'
-        self.obsid = 'OBSID=4202000003'
+
+        if complexa:
+            self.obsid = 'OBSID=4203400000'
+        if simpleb:
+            self.obsid = 'OBSID=4202000003'
         
     def request_files(self):
 
@@ -66,7 +69,7 @@ class dark_times:
         from sunpy.net import jsoc
         client = jsoc.JSOCClient()
         fmt = '%Y.%m.%d_%H:%M'
-#        self.qstr = 'iris.lev1[{0}_TAI-{1}_TAI][][? IMG_TYPE ~ "DARK" ?]'.format(self.sta_dark_dt.strftime(fmt),self.end_dark_dt.strftime(fmt)) 
+        self.qstr = 'iris.lev1[{0}_TAI-{1}_TAI][][? IMG_TYPE ~ "DARK" ?]'.format(self.sta_dark_dt.strftime(fmt),self.end_dark_dt.strftime(fmt)) 
         #setup string to pass write to sswidl for download
         fmt = '%Y-%m-%dT%H:%M:%S'
         self.response = client.query(jsoc.Time(self.sta_dark_dt.strftime(fmt),self.end_dark_dt.strftime(fmt)),jsoc.Series('iris.lev1'),
@@ -92,10 +95,10 @@ class dark_times:
             elif stat > 1:
                 break #jump out of loop if you get an error
         #make the download directory
-        bdir = '/data/alisdair/IRIS_LEVEL_1_DARKS/{0}/simpleB/'.format(self.otime.strftime('%Y/%m'))
+        bdir = '/data/alisdair/IRIS_LEVEL1_DARKS/{0}/simpleB/'.format(self.otime.strftime('%Y/%m'))
         try:
             os.makedirs(bdir)
-        except IOError:
+        except OSError:
             time.sleep(1)
  
         #download the data
