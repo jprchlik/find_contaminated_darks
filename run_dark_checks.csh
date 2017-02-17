@@ -28,4 +28,10 @@ if (${dday} != '') then
     sswidl -e "dark_trend,/sim"
 else echo "NO NEW DARKS"
 
+
+#run the hot pixel routine when finished
+cd ../../IRIS_dark_and_hot_pixel/
+sswidl -e "hot_pixel_plot_wrapper"
+
+
 endif
