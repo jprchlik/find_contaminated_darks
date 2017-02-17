@@ -94,8 +94,8 @@ def main():
         eventstring = event['summary'].upper().replace(' ','').replace(':','')
         if ((eventstring == darks) | (eventstring == darks+'S')):
             out = start.split('-')
-            darks = gdf.dark_times(out[0]+'/'+out[1]+'/'+out[2])
-            darks.run_all() # download darks from jsoc
+#            darks = gdf.dark_times(out[0]+'/'+out[1]+'/'+out[2])
+#            darks.run_all() # download darks from jsoc
             out = out[1]+','+out[0]
             found = True
 
