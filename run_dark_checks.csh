@@ -6,6 +6,16 @@ source ${HOME}.cshrc.user
 #get printed date from dark in last 31 days
 set dday=`python find_dark_runs.py`
 echo ${dday}
+set iday=` echo ${dday} | sed 's/,/\//g'`
+
+#convert level1 darks to level0 darks for simpleb
+sswidl -e "do_lev1to0_darks,'"${iday}"/simpleB/','','',0,'dummydir/'"
+mv dummydir/*fits /data/alisdair/opabina/scratch/joan/iris/newdat/orbit/level0/simpleB/${iday}/
+#convert level1 darks to level0 darks for complexa
+sswidl -e "do_lev1to0_darks,'"${iday}"/complexA/','','',0,'dummydir/'"
+mv dummydir/*fits /data/alisdair/opabina/scratch/joan/iris/newdat/orbit/level0/complexA/${iday}/
+
+
 if (${dday} != '') then
 ##Find and remove sources with SAA or CME contamination
     sswidl -e "find_con_darks,"${dday}",type='NUV',logdir='log/',/plotter,outdir='txtout/',/sim"
