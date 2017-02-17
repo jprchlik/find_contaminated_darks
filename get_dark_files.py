@@ -3,18 +3,22 @@ import datetime as dt
 import numpy as np
 import urllib2
 import requests
+from multiprocessing import Pool
+from shutil import move
 
 
 class dark_times:
 
 
-    def __init__(self,time,irisweb='http://iris.lmsal.com/health-safety/timeline/iris_tim_archive/IRIS_science_timeline_{0}.V{1:2d}.txt',simpleb=True,complexa=False):
+    def __init__(self,time,irisweb='http://iris.lmsal.com/health-safety/timeline/iris_tim_archive/IRIS_science_timeline_{0}.V{1:2d}.txt',simpleb=False,complexa=False):
 
 
 #web page location of IRIS timeline
         self.irisweb = irisweb.replace('IRIS',time+'/IRIS')
         self.otime = dt.datetime.strptime(time,'%Y/%m/%d')
         self.stime = self.otime.strftime('%Y%m%d')
+        self.complexa = complexa
+        self.simpleb = simpleb
 
         if complexa:
             self.obsid = 'OBSID=4203400000'
@@ -97,19 +101,44 @@ class dark_times:
 ####            elif stat > 1:
 ####                break #jump out of loop if you get an error
         #make the download directory
-        bdir = '/data/alisdair/IRIS_LEVEL1_DARKS/{0}/simpleB/'.format(self.otime.strftime('%Y/%m'))
-        # check to make sure directory does not exist 
-        if not os.path.exists(bdir):
-            os.makedirs(bdir)
+        if self.simpleb:
+            self.bdir = '/data/alisdair/IRIS_LEVEL1_DARKS/{0}/simpleB/'.format(self.otime.strftime('%Y/%m'))
+        else:
+            self.bdir = '/data/alisdair/IRIS_LEVEL1_DARKS/{0}/complexA/'.format(self.otime.strftime('%Y/%m'))
 
-        #Dowloand the data using drms
-        self.expt.download(bdir)
+        # check to make sure directory does not exist 
+        if not os.path.exists(self.bdir):
+            os.makedirs(self.bdir)
+
+        #get number of records
+        index = np.arange(np.size(self.expt.urls.url))
+        #Dowloand the data using drms in par. (will fuss about mounted drive ocassionaly)
+        for ii in index: self.download_par(ii)
+#DRMS DOES NOT WORK IN PARALELL 
+####        pool = Pool(processes=4)
+####        outf = pool.map(self.download_par,index)
+####        pool.close()
+###        self.expt.download(bdir,1,fname_from_rec=True)
  
         #download the data
 ####        res = client.get_request(request,path=bdir,progress=True)
 ####        res.wait()
+#
+    def download_par(self,index):
+# get file from JSOC
+        outf = self.expt.download(self.bdir,index,fname_from_rec=True)
+#format output file 
+        fils = str(outf['download'].values[0])
+        fils = fils.split('/')[-1]
+        nout = fils[:14]+'-'+fils[14:16]+'-'+fils[16:24]+fils[26:]
+#create new file name in same as previous format
+        move(str(outf['download'].values[0]),self.bdir+nout)
+
+   
+
 
 #run to completion
+
 
     def run_all(self):
         self.request_files()
