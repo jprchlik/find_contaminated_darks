@@ -98,8 +98,8 @@ def main():
             darkd = gdf.dark_times(out[0]+'/'+out[1]+'/'+out[2],simpleb=True)
             darkd.run_all() # download darks from jsoc
 #get and download complexa darks
-#            darkd = gdf.dark_times(out[0]+'/'+out[1]+'/'+out[2],complexa=True)
-#            darkd.run_all() # download darks from jsoc
+            darkd = gdf.dark_times(out[0]+'/'+out[1]+'/'+out[2],complexa=True)
+            darkd.run_all() # download darks from jsoc
             out = out[1]+','+out[0]
             found = True
 
