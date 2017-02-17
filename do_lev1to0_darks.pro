@@ -22,7 +22,8 @@ fil=findfile(dir0+dir+'*.fits')
 ;fil=findfile('/Volumes/Pegasus/nschanch/iris/test/lev1/'+'*.fits')
 read_sdo,fil,ind,d,/nod
 
-if n_elements(t0)*n_elements(t1) ne 0 then begin
+print,n_elements(t0)*n_elements(t1)
+if n_elements(t0)*n_elements(t1) gt 1 then begin
    tim0=anytim(t0)
    tim1=anytim(t1)
    tobs=anytim(ind.date_obs)
@@ -37,6 +38,7 @@ endelse
 
 if ng ne 0 then begin
    for j=0,ng-1 do begin
+      print,'HERE'
       filj=fil(ig(j))
       read_sdo,filj,indj,dj
       dj0=iris_lev120_darks(dj,indj)
