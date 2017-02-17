@@ -6,7 +6,10 @@ source ${HOME}.cshrc.user
 #get printed date from dark in last 31 days
 set dday=`python find_dark_runs.py`
 echo ${dday}
-set iday=` echo ${dday} | sed 's/,/\//g'`
+set splt=( $dday:as/,/ / )
+set iday=`echo $splt[2]/$splt[1]`
+#set iday=`echo ${dday} | sed 's/,/\//g'`
+#echo ${iday}
 
 #convert level1 darks to level0 darks for simpleb
 sswidl -e "do_lev1to0_darks,'"${iday}"/simpleB/','','',0,'dummydir/'"
