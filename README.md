@@ -1,7 +1,21 @@
 #Long term dark analysis 
-UPDATE find_contaminated_darks now proceeds more automatically.
+For historical (i.e. human reasons) the directory structure hides the true function of this program.
+Primarily the directory now exists to test the long term trending of the IRIS pedestal dark level,
+which was first noticed to be discrepant from the launch model in ~June 2014.
 The main directory contains a c-shell script (run_dark_checks.csh), which runs a code series.
-The code series 
+The code series performs the following tasks.
+First, it finds the day of the observed darks by querying the google calibration-as-run calendar for IRIS dark runs in the last 25 days.
+Then it grabs the text of the timeline file for that day and searches for the simpleb and complexa OBSIDs (find_dark_runs.py). 
+Using the last set of observed dark times (set up for eclipse season, but will work in normal orbits),
+the dark files are download from JSOC using the drms module (get_dark_files.py)
+The code initially places the level1 dark files in /data/alisdair/IRIS_LEVEL1_DARKS/YYYY/MM/(simpleB or complexA; depending on OBSID)
+and renames the files to adhere to previous standards.
+
+Next, run_dark_checks converts the level1 files to level0 darks (do_lev1to0_darks.pro) for a given month and moves them to
+the level0 directory.
+Then the script checks for darks significantly affected by SAAs or CMEs (find_contaminated_darks.pro; i.e. too many 5 sigma hot pixels for a Gaussian distribution.).
+Next, download the temperature files for the day darks are observed plus +/- 1 day and format the output temperature file for IDL.
+Finally, compared the observed to the modeled dark pedestal trend.
 
 
 
@@ -16,9 +30,9 @@ You can specify the day in either 1 or 2 digits and the year in 2 or 4 digits.
 If only one year is specified then all months in a month array are assumed for that year.
 However, you want to span more than one year all months must be given a corresponding year array value.
 Below a few valid examples:
-find_con_darks,[4,5,6,7,8,9],16,/sim,type='FUV'_
-find_con_darks,09,2016,/simpleB,type='NUV'_
-find_con_darks,[8,09],[2015,16],/sim,type='FUV'_
+find_con_darks,[4,5,6,7,8,9],16,/sim,type='FUV' 
+find_con_darks,09,2016,/simpleB,type='NUV' _
+find_con_darks,[8,09],[2015,16],/sim,type='FUV' 
 
 The program finds contaminated darks by breaking each dark image into its four ports.
 Then it finds the number of pixels more than 5 sigma away from the mean.
