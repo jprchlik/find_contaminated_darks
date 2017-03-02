@@ -54,9 +54,10 @@ You may call it by the following commands in IDL.
 
 The program assumes the darks are located in /data/alisdair/IRIS_LEVEL1_DARKS/YYYY/MM,
 which is why the python program downloads the files there.
-The level 1 to level 0 conversion is small and mostly rotates the image using the sswidl function iris_lev120_darks.k
-
-
+The level 1 to level 0 conversion is small and mostly rotates the image using the sswidl function iris_lev120_darks.
+Currently, the program is set to output to a dummy directory because saving to a network directory from IDL can 
+cause hangs in my experience.
+Therefore, I create the files locally then immediately move them in the script.
 
 
 ##find_contaminated_darks
@@ -69,9 +70,10 @@ You can specify the day in either 1 or 2 digits and the year in 2 or 4 digits.
 If only one year is specified then all months in a month array are assumed for that year.
 However, you want to span more than one year all months must be given a corresponding year array value.
 Below a few valid examples:
-find_con_darks,[4,5,6,7,8,9],16,/sim,type='FUV' 
-find_con_darks,09,2016,/simpleB,type='NUV' _
-find_con_darks,[8,09],[2015,16],/sim,type='FUV' 
+
+>find_con_darks,[4,5,6,7,8,9],16,/sim,type='FUV' 
+>find_con_darks,09,2016,/simpleB,type='NUV' _
+>find_con_darks,[8,09],[2015,16],/sim,type='FUV' 
 
 The program finds contaminated darks by breaking each dark image into its four ports.
 Then it finds the number of pixels more than 5 sigma away from the mean.
@@ -125,6 +127,33 @@ I include an example output from September, 2016, which we know is contaminated 
   NUV20160921_182449.fits   2016/09/21T18:24:49       1        68      1.02
 
   NUV20160921_182506.fits   2016/09/21T18:25:06       1        48      5.02
+
+##temps/get_list_of_days.py
+This is a simple python script, which grabs the temperature information from Lockheed.
+It uses the files created by find_con_darks to find days darks were observed.
+Then the program checks to make the temperature information does not exist locally,
+and if it does not exist it downloads it.
+Finally, it formats the file to just the important temperatures so IDL calls it easily.
+
+
+##calc_trend_darks/dark_trend
+The final component is the plotting of the dark trend with the average dark values for a given month overplotted.
+The program to run the fix is dark_trend.pro and has a simple syntax:
+
+>dark_trend,/sim
+
+The program uses the SAA free darks found previously to look in the level0 directory for darks.
+Again, the program again assumes the level0 data is located on the given network drive,
+but that can be changed by setting the sdir keyword.
+After bundling all observations for a given month,
+it loops over all months meanwhile computing the average and sigma values over the whole chip
+in the program check_ave_pixel_sub, which is the workhorse of the program.
+Upon completion of finding the averages the program calls plot_dark_trend with the after pixel values
+and the observation times.
+Finally, the program saves the information to .sav and .txt files (alldark_ave_sig.sav and current_pixel_averages.txt).
+
+
+
 
 
 
