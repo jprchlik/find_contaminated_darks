@@ -11,6 +11,9 @@ set iday=`echo $splt[2]/$splt[1]`
 #set iday=`echo ${dday} | sed 's/,/\//g'`
 #echo ${iday}
 
+#make sure dummydir is empty
+rm dummydir/*
+
 #convert level1 darks to level0 darks for simpleb
 sswidl -e "do_lev1to0_darks,'"${iday}"/simpleB/','','',0,'dummydir/'"
 mv dummydir/*fits /data/alisdair/opabina/scratch/joan/iris/newdat/orbit/level0/simpleB/${iday}/
