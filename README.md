@@ -1,4 +1,4 @@
-# find_contaminated_darks
+#Long term dark analysis 
 UPDATE find_contaminated_darks now proceeds more automatically.
 The main directory contains a c-shell script (run_dark_checks.csh), which runs a code series.
 The code series 
@@ -6,6 +6,7 @@ The code series
 
 
 
+## find_contaminated_darks
 An IDL program which finds IRIS darks contaminated by SAA or CMEs.
 Must add current path to IDL_PATH in order for the program to run in parallel.
 If you don't then the program will fail saying it cannot find a specified function.
