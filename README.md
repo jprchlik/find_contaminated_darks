@@ -46,9 +46,15 @@ the program downloads the files and renames them according to a previous file na
 
 ##do_lev1to0_darks
 This is a legacy program, which uses sswidl libraries.
-You may call it by the following command in IDL.
+You may call it by the following commands in IDL.
 
 >do_lev1to0_darks,MM,YYYY,/simpleB,'0','dummydir/'
+
+>do_lev1to0_darks,MM,YYYY,/complexA,'0','dummydir/'
+
+The program assumes the darks are located in /data/alisdair/IRIS_LEVEL1_DARKS/YYYY/MM,
+which is why the python program downloads the files there.
+The level 1 to level 0 conversion is small and mostly rotates the image using the sswidl function iris_lev120_darks.k
 
 
 
