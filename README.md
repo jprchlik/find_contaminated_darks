@@ -138,19 +138,61 @@ Finally, it formats the file to just the important temperatures so IDL calls it 
 
 ##calc_trend_darks/dark_trend
 The final component is the plotting of the dark trend with the average dark values for a given month overplotted.
-The program to run the fix is dark_trend.pro and has a simple syntax:
+The program to run the fix is dark_trend.pro and has a simple syntax, which specifies whether to run the trend on the simpleB 
+(/simpleb) darks.
+An example follows:
 
->dark_trend,/sim
+full:
+
+>dark_trend,sdir=sdir,pdir=pdir,simpleb=simpleb,complexa=complexa,logdir=logdir,outdir=outdir
+
+usual:
+
+>dark_trend,/simpleb
 
 The program uses the SAA free darks found previously to look in the level0 directory for darks.
 Again, the program again assumes the level0 data is located on the given network drive,
 but that can be changed by setting the sdir keyword.
-After bundling all observations for a given month,
-it loops over all months meanwhile computing the average and sigma values over the whole chip
+After grouping all dark observations,
+it loops over all darks computing the average and sigma values over the whole chip
 in the program check_ave_pixel_sub, which is the workhorse of the program.
 Upon completion of finding the averages the program calls plot_dark_trend with the after pixel values
 and the observation times.
 Finally, the program saves the information to .sav and .txt files (alldark_ave_sig.sav and current_pixel_averages.txt).
+
+###par_commands/check_ave_pixel_sub.pro
+This program's primary function is subtracting the current dark model from the set of darks passed to the program.
+The syntax for check_ave_pixel_sub is as follows:
+
+>check_ave_pixel_sub,file,endfile,timfile,avepix,sigpix,temps,levels,writefile=writefile
+
+All parameters are set by default in dark_trend.pro, but for clarities sake they will be described here.
+file is the full path to a given dark observation (string),
+endfile is a formated file name which we will pass to plot_dark_trend (string),
+timfile is the file formatted for reading the Lockheed IRIS temperature data and is computed in the program (string),
+avepix is the average model subtracted dark pixel value returned by the program (4D vectory),
+sigpix is the 1 sigma variation in the average value (4D vector),
+temps is an array of temperatures used to derive the dark model (3x6 array),
+levels is an array of dark pedestal values computed from the long term trend (4D vector),
+and writefile is keyword which writes out the full dark-model dark-long term trend dark to a file. 
+
+
+###calc_dark_trend/plot_dark_trend.pro
+plot_dark_trend groups the average dark information and plots it as a function of time with the long term pedestal trend
+overplotted.
+Again everything is set by default if you use the dark_trend program,
+but the keywords and syntax are as follows:
+
+>plot_dark_trend,time,yval,sdir=sdir,pdir=pdir,rest=rest
+
+Where time is and array of file names returned by check_ave_pixel_sub in the endfile variable,
+yval is the average pixel values from check_ave_pixel_sub,
+sdir is the location of the simpleb darks with time information excluded (deprecated),
+pdir is the output plotting directory,
+and the rest keyword allows you to restore a previously save dark save file output by dark_trend.pro (alldark_ave_sig.sav).
+
+
+
 
 
 
