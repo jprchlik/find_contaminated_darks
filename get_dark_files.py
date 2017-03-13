@@ -27,6 +27,18 @@ class dark_times:
         
     def request_files(self):
 
+#First check that any time line exists for given day
+        searching = True
+        sb = 0 #searching backwards days to correct for weekend or multiday timelines
+        while searching:
+            self.stime =  (self.otime-dt.timedelta(days=sb)).strftime('%Y%m%d')
+            inurl = self.irisweb.format(self.stime,0).replace(' ','0') #searching for V00 file verision
+#leave loop if V00 is found
+            if resp.status_code != 200: searching =False
+            else sb += 1 #look one day back if timeline is missing
+            if sb >= 9: searching = False #dont look back more than 9 days
+        
+
 
         check = True
         v = 0 #timeline version
@@ -40,7 +52,13 @@ class dark_times:
 
 #get the last good V value so last version of timeline
         inurl = self.irisweb.format(self.stime, v-1).replace(' ','0')
-        res = urllib2.urlopen(inurl)
+        try:
+            res = urllib2.urlopen(inurl)
+        except urllib2.HTTPError: # weekend or multi day timeline
+            sb = 1 # search back for timeline day starting with minus 1 days
+            searching = True
+            while searching:
+           
         self.res = res
         self.timeline = res.read()
 
