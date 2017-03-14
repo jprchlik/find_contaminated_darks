@@ -36,7 +36,11 @@ class dark_times:
 #leave loop if V00 is found
             if resp.status_code != 200: searching =False
             else sb += 1 #look one day back if timeline is missing
-            if sb >= 9: searching = False #dont look back more than 9 days
+            if sb >= 9: 
+                searching = False #dont look back more than 9 days
+                print('FAILED TO FIND TIMELINE AFTER SEARCHING BACK 9 DAYS')#printing this will cause the c-shell script to fail too
+                sys.exit(1) # exit the python script
+            
         
 
 
