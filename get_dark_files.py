@@ -4,17 +4,19 @@ import numpy as np
 import urllib2
 import requests
 from multiprocessing import Pool
+import drms
 from shutil import move
 
 
 class dark_times:
 
 
-    def __init__(self,time,irisweb='http://iris.lmsal.com/health-safety/timeline/iris_tim_archive/IRIS_science_timeline_{0}.V{1:2d}.txt',simpleb=False,complexa=False):
+    def __init__(self,time,irisweb='http://iris.lmsal.com/health-safety/timeline/iris_tim_archive/{2}/IRIS_science_timeline_{0}.V{1:2d}.txt',simpleb=False,complexa=False):
 
 
 #web page location of IRIS timeline
-        self.irisweb = irisweb.replace('IRIS',time+'/IRIS')
+
+        self.irisweb = irisweb #.replace('IRIS',time+'/IRIS')
         self.otime = dt.datetime.strptime(time,'%Y/%m/%d')
         self.stime = self.otime.strftime('%Y%m%d')
         self.complexa = complexa
@@ -31,38 +33,34 @@ class dark_times:
         searching = True
         sb = 0 #searching backwards days to correct for weekend or multiday timelines
         while searching:
+#look in iris's timeline structure
             self.stime =  (self.otime-dt.timedelta(days=sb)).strftime('%Y%m%d')
-            inurl = self.irisweb.format(self.stime,0).replace(' ','0') #searching for V00 file verision
+            irispath = (self.otime-dt.timedelta(days=sb)).strftime('%Y/%m/%d')
+            inurl = self.irisweb.format(self.stime,0,irispath).replace(' ','0') #searching for V00 file verision
+            resp = requests.head(inurl)
 #leave loop if V00 is found
-            if resp.status_code != 200: searching =False
-            else sb += 1 #look one day back if timeline is missing
+            if resp.status_code == 200: searching =False
+            else: sb += 1 #look one day back if timeline is missing
             if sb >= 9: 
                 searching = False #dont look back more than 9 days
                 print('FAILED TO FIND TIMELINE AFTER SEARCHING BACK 9 DAYS')#printing this will cause the c-shell script to fail too
                 sys.exit(1) # exit the python script
             
-        
-
-
         check = True
         v = 0 #timeline version
 
 #get lastest timeline version
         while check == True:
-            inurl = self.irisweb.format(self.stime, v).replace(' ','0')
+            inurl = self.irisweb.format(self.stime, v,irispath).replace(' ','0')
             resp = requests.head(inurl)
-            if resp.status_code != 200: check = False 
+            if resp.status_code != 200: 
+                check = False 
+                v+=-1
+                inurl = self.irisweb.format(self.stime, v,irispath).replace(' ','0')
             else: v+=1
+#get the timeline file information for request timeline
+        res = urllib2.urlopen(inurl)
 
-#get the last good V value so last version of timeline
-        inurl = self.irisweb.format(self.stime, v-1).replace(' ','0')
-        try:
-            res = urllib2.urlopen(inurl)
-        except urllib2.HTTPError: # weekend or multi day timeline
-            sb = 1 # search back for timeline day starting with minus 1 days
-            searching = True
-            while searching:
-           
         self.res = res
         self.timeline = res.read()
 
@@ -93,7 +91,6 @@ class dark_times:
 #set up JSOC query for darks
     def dark_query(self):
 #use drms module to download from JSOC (https://pypi.python.org/pypi/drms)
-        import drms
         client = drms.Client(email='jakub.prchlik@cfa.harvard.edu',verbose=False)
         fmt = '%Y.%m.%d_%H:%M'
         self.qstr = 'iris.lev1[{0}_TAI-{1}_TAI][][? IMG_TYPE ~ "DARK" ?]'.format(self.sta_dark_dt.strftime(fmt),self.end_dark_dt.strftime(fmt)) 
@@ -138,7 +135,13 @@ class dark_times:
             os.makedirs(self.ldir)
 
         #get number of records
-        index = np.arange(np.size(self.expt.urls.url))
+        try:
+            index = np.arange(np.size(self.expt.urls.url))
+        except: #exit nicely if no records exist 
+            print("FILES DO NOT EXIST ON JSOC YET")
+            sys.exit(1)
+
+
         #Dowloand the data using drms in par. (will fuss about mounted drive ocassionaly)
         for ii in index: self.download_par(ii)
 #DRMS DOES NOT WORK IN PARALELL 
