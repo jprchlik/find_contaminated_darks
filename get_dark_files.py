@@ -43,7 +43,7 @@ class dark_times:
             else: sb += 1 #look one day back if timeline is missing
             if sb >= 9: 
                 searching = False #dont look back more than 9 days
-                print('FAILED TO FIND TIMELINE AFTER SEARCHING BACK 9 DAYS')#printing this will cause the c-shell script to fail too
+                sys.stdout.write('FAILED, IRIS timeline does not exist')#printing this will cause the c-shell script to fail too
                 sys.exit(1) # exit the python script
             
         check = True
@@ -138,7 +138,7 @@ class dark_times:
         try:
             index = np.arange(np.size(self.expt.urls.url))
         except: #exit nicely if no records exist 
-            print("FILES DO NOT EXIST ON JSOC YET")
+            sys.stdout.write("FAILED, No JSOC record exists")
             sys.exit(1)
 
 
