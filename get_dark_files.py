@@ -11,7 +11,7 @@ from shutil import move
 class dark_times:
 
 
-    def __init__(self,time,irisweb='http://iris.lmsal.com/health-safety/timeline/iris_tim_archive/{2}/IRIS_science_timeline_{0}.V{1:2d}.txt',simpleb=False,complexa=False):
+    def __init__(self,time,irisweb='http://iris.lmsal.com/health-safety/timeline/iris_tim_archive/{2}/IRIS_science_timeline_{0}.V{1:2d}.txt',simpleb=False,complexa=False,tol=50):
 
 
 #web page location of IRIS timeline
@@ -21,6 +21,8 @@ class dark_times:
         self.stime = self.otime.strftime('%Y%m%d')
         self.complexa = complexa
         self.simpleb = simpleb
+#Minimum number of dark files reqiured to run
+        self.tol = tol
 
         if complexa:
             self.obsid = 'OBSID=4203400000'
@@ -137,6 +139,10 @@ class dark_times:
         #get number of records
         try:
             index = np.arange(np.size(self.expt.urls.url))
+            if index[-1] < self.tol: #make sure to have at least 50 darks in archive before downloading
+                sys.stdout.write("FAILED, LESS THAN {0:2d} DARKS IN ARCHIVE".format(self.tol))
+                sys.exit(1)
+ 
         except: #exit nicely if no records exist 
             sys.stdout.write("FAILED, No JSOC record exists")
             sys.exit(1)
