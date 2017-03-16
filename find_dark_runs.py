@@ -104,6 +104,7 @@ def main():
             found = True
 
     if found: sys.stdout.write(out)
+    else: sys.stdout.write('FAILED, NO DARKS FOUND')
      
 
 
