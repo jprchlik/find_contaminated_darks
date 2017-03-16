@@ -2,6 +2,7 @@
 from __future__ import print_function
 import httplib2
 import os,sys
+from errno import errorcode
 
 from apiclient import discovery
 from oauth2client import client
@@ -85,6 +86,10 @@ def main():
 
     darks = 'Calib 3: Dark'.upper().replace(' ','').replace(':','')
 
+
+#variable to check whether all req. passed
+    outc = 0 #zero means all is good
+
 #    if not events:
 #        print('No darks found in last {0:3d}.'.format(span))
 #Check that you don't reprocesss/redownload recently processed darks
@@ -102,27 +107,53 @@ def main():
             checkd = out[0]+'/'+out[1]+'/'+out[2]+"\n"
             if checkd  in check: 
                 sys.stdout.write('FAILED, ALREADY PROCESSED THIS MONTHS DARKS')
-                sys.exit(1)
+                outc = 1
+                return outc
+#                sys.exit(1)
+
 #get and download simpleb darks
             darkd = gdf.dark_times(out[0]+'/'+out[1]+'/'+out[2],simpleb=True)
-            darkd.run_all() # download darks from jsoc
+#ERROR NICELY if download fails
+            try:
+                darkd.run_all() # download darks from jsoc
+            except:
+                outc = 1
+                return outc
+
 #get and download complexa darks
             darkd = gdf.dark_times(out[0]+'/'+out[1]+'/'+out[2],complexa=True)
-            darkd.run_all() # download darks from jsoc
+#ERROR NICELY if download fails
+            try:
+                darkd.run_all() # download darks from jsoc
+            except:
+                outc = 1
+                return outc
+
+
             out = out[1]+','+out[0]
             found = True
 #print MM/YYYY and add YYYY/MM/DD to dark file
-    if found: 
+    if ((found) & (outc == 0)): 
         sys.stdout.write(out)
         check.append(checkd)
         prev = open(darkf,'w')
         for k in check: prev.write(k)
         prev.close()
+        outc = 0
  
-    else: sys.stdout.write('FAILED, NO DARKS FOUND')
+    else: 
+        sys.stdout.write('FAILED, NO DARKS FOUND')
+        outc = 1
+#        sys.exit(1)
 
+    return outc #return output code
      
 
 
 if __name__ == '__main__':
-    main()
+    try:
+        outc = main()
+    except:
+        outc = 2
+    if outc > 1:
+        sys.stdout.write("FAILED, UNKNOWN REASON (PROBABLY CODING)")
