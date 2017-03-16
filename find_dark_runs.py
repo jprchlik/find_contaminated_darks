@@ -87,6 +87,10 @@ def main():
 
 #    if not events:
 #        print('No darks found in last {0:3d}.'.format(span))
+#Check that you don't reprocesss/redownload recently processed darks
+    darkf = "processed_dark_months"
+    prev = open(darkf,"r")
+    check = prev.readlines()
 #set up so you only get the last event
     found = False
     for event in events:
@@ -94,6 +98,11 @@ def main():
         eventstring = event['summary'].upper().replace(' ','').replace(':','')
         if ((eventstring == darks) | (eventstring == darks+'S')):
             out = start.split('-')
+# do the check to make sure the files are not already processed
+            checkd = out[0]+'/'+out[1]+'/'+out[2]+"\n"
+            if checkd  in check: 
+                sys.stdout.write('FAILED, ALREADY PROCESSED THIS MONTHS DARKS')
+                sys.exit(1)
 #get and download simpleb darks
             darkd = gdf.dark_times(out[0]+'/'+out[1]+'/'+out[2],simpleb=True)
             darkd.run_all() # download darks from jsoc
@@ -102,9 +111,16 @@ def main():
             darkd.run_all() # download darks from jsoc
             out = out[1]+','+out[0]
             found = True
-
-    if found: sys.stdout.write(out)
+#print MM/YYYY and add YYYY/MM/DD to dark file
+    if found: 
+        sys.stdout.write(out)
+        check.append(checkd)
+        prev = open(darkf,'w')
+        for k in check: prev.write(k)
+        prev.close()
+ 
     else: sys.stdout.write('FAILED, NO DARKS FOUND')
+
      
 
 
