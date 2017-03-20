@@ -147,9 +147,10 @@ class dark_times:
             sys.stdout.write("FAILED, No JSOC record exists")
             sys.exit(1)
 
-
-        #Dowloand the data using drms in par. (will fuss about mounted drive ocassionaly)
-        for ii in index: self.download_par(ii)
+#check to see if darks are already downloaded Added 2017/03/20
+        if len(glob.glob(self.bdir+'/*')) < self.tol:
+            #Dowloand the data using drms in par. (will fuss about mounted drive ocassionaly)
+            for ii in index: self.download_par(ii)
 #DRMS DOES NOT WORK IN PARALELL 
 ####        pool = Pool(processes=4)
 ####        outf = pool.map(self.download_par,index)
@@ -174,8 +175,6 @@ class dark_times:
 
 
 #run to completion
-
-
     def run_all(self):
         self.request_files()
         self.get_start_end()
