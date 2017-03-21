@@ -1,8 +1,20 @@
-#!/bin/csh
+#!/bin/tcsh
 #source in normal env variable from home
-setenv HOME "/home/jprchlik/"
-source ${HOME}.cshrc
-source ${HOME}.cshrc.user
+source $HOME/.cshrc
+source $HOME/.cshrc.user
+
+#create sswidl alias
+alias sswidl /proj/DataCenter/ssw/gen/setup/ssw_idl
+#Setup the SSWIDL environment
+# If you need to set SSW_INSTER, use the variable above. Otherwise, your 
+# SSWIDL environment will not build correctly after this line.
+setenv SSW /proj/DataCenter/ssw
+#SSWIDL settings
+#Set instrument and packages to be used after  $SSW_INSTR:
+setenv SSW_INSTR    "AIA IRIS"
+source $SSW/gen/setup/setup.ssw /quiet
+
+
 #get printed date from dark in last 31 days
 set dday=`python find_dark_runs.py`
 echo ${dday}
@@ -35,7 +47,7 @@ if ($splt[1] != 'FAILED') then
 
 
 #run the hot pixel routine when finished
-    cd ../../IRIS_dark_and_hot_pixel/
+    cd ${HOME}/pegasus/IRIS_dark_and_hot_pixel/
     sswidl -e "hot_pixel_plot_wrapper"
 else echo ${dday}
 
