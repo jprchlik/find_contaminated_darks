@@ -114,21 +114,21 @@ def main():
 #get and download simpleb darks
             darkd = gdf.dark_times(out[0]+'/'+out[1]+'/'+out[2],simpleb=True)
 #ERROR NICELY if download fails
-            try:
-                darkd.run_all() # download darks from jsoc
-            except:
-                outc = 1
-                return outc
-
+#            try:
+#                darkd.run_all() # download darks from jsoc
+#            except:
+#                outc = 1
+#                return outc
+#
 #get and download complexa darks
             darkd = gdf.dark_times(out[0]+'/'+out[1]+'/'+out[2],complexa=True)
 #ERROR NICELY if download fails
-            try:
-                darkd.run_all() # download darks from jsoc
-            except:
-                outc = 1
-                return outc
-
+#            try:
+#                darkd.run_all() # download darks from jsoc
+#            except:
+#                outc = 1
+#                return outc
+#
 
             out = out[1]+','+out[0]
             found = True
