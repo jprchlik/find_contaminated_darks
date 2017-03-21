@@ -6,6 +6,7 @@ import requests
 from multiprocessing import Pool
 import drms
 from shutil import move
+import glob
 
 
 class dark_times:
