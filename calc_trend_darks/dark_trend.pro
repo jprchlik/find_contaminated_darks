@@ -63,7 +63,7 @@ pro dark_trend,sdir=sdir,pdir=pdir,simpleb=simpleb,complexa=complexa,logdir=logd
     save,/variables,filename='alldark_ave_sig.sav'
 
 ;plot darks average over time
-    plot_dark_trend,basicf,avepix
+    plot_dark_trend,basicf,avepix,pplot=360.;wait 6 minutes so the plotting works(probably overkill but the cron has time
 
 ;output file
     fname = outdir+'current_pixel_averages.txt'

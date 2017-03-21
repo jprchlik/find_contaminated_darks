@@ -1,4 +1,4 @@
-pro plot_dark_trend,time,yval,sdir=sdir,pdir=pdir,rest=rest
+pro plot_dark_trend,time,yval,sdir=sdir,pdir=pdir,rest=rest,pplot=pplot
 
 loadct,12
 if keyword_set(sdir) then sdir=sdir else sdir='/data/alisdair/opabina/scratch/joan/iris/newdat/orbit/level0/simpleB/'
@@ -8,6 +8,9 @@ if keyword_set(rest) then begin
     time = basicf
     yval = avepix
 endif
+
+;plause for plotting when running in -e mode
+if keyword_set(pplot) then pplot = pplot else pplot = 0.0
 
 type = ['NUV','FUV']
 for z=0,1 do begin
@@ -152,6 +155,7 @@ for z=0,1 do begin
         al_legend,['fit port1','fit port2','fit port3','fit port4'],psym=[0,0,0,0],colors=colors,linestyle=lines,box=0,/right,charsize=2.0
     
         write_png,pdir+'/'+type[z]+'_test.png',tvrd(/true)
+        wait,pplot
 
         ;save formatted plots for reading into steve's program
         
