@@ -44,6 +44,8 @@ if ($splt[1] != 'FAILED') then
 ##    Now run so we get the current dark trend
     cd ../calc_trend_darks
     sswidl -e "dark_trend,/sim"
+## format the output for steve's progam
+    sswidl -e "format_for_steve"
 
 
 #run the hot pixel routine when finished
