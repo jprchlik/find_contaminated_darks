@@ -1,4 +1,5 @@
 
+;pro iris_dark_trend_fix, index, offsets,  progver = progver
 pro iris_dark_trend_fix, obstime, offsets,type,  progver = progver
 
 ; ============================================================================
@@ -10,7 +11,7 @@ pro iris_dark_trend_fix, obstime, offsets,type,  progver = progver
 ;
 ; NAME:
 ;
-;     TREND_FIX
+;     IRIS_DARK_TREND_FIX
 ;
 ; CATEGORY:
 ;
@@ -43,7 +44,7 @@ pro iris_dark_trend_fix, obstime, offsets,type,  progver = progver
 ;
 ;  EXAMPLE:
 ;
-;               trend_fitx index, offsets
+;               iris_dark_trend_fix index, offsets
 ;
 ;
 ; OPTIONAL INPUT KEYWORD PARAMETERS:
@@ -74,10 +75,14 @@ progver = 'v2016.Jan.10' ;--- (SSaar) V5 update of double sine model + linear
 ;                                       trend, P2=P1/2, data thru 11/15 
 progver = 'v2016.May.13' ;--- (SSaar) V6 update of double sine model + quad 
 ;                                       trend, P2=P1/2, data thru 05/16 
-progver = 'v2016.Oct.07' ;--- (SSaar) V7 update of 2 sine model + shifted quad 
-;                                       trend, P2=P1/2, data thru 09/16 
+progver = 'v2016.Oct.07' ;--- (SSaar) V7 update of 2 sine model + shifted quad
+;                                       trend, P2=P1/2, data thru 09/16
+progver = 'v2016.Nov.14' ;--- (SSaar) V8 same as V7, fixed indexing bug
+;
 progver = 'v2016.Dec.28' ;--- (SSaar) V9 update (NUV only) of double sine model
-;                                       +linear trend, P2=P1/2, data thru 12/15
+;                                       +quad trend, P2=P1/2, data thru 12/16
+progver = 'v2017.Apr.07' ;--- (SSaar) V10 update of double sine model
+;                                       +quad trend, P2=P1/2, data thru 03/17
 ;
 ;
 ;
@@ -89,43 +94,40 @@ progver = 'v2016.Dec.28' ;--- (SSaar) V9 update (NUV only) of double sine model
 ;ins = index.instrume ne 'FUV'
 ins = type ne 'FUV'
 
-ii=indgen(4)
-k=ii + ins*4                    
+k=indgen(4)  + ins*4                          
+
 
 fuv1=[0.163 ,  0.0800 ,3.18e+07 ,   0.397  ,  0.259, 2.25e-08, $
-  7.60e-16  , -0.340043]
-fuv2=[0.257 ,   0.230, 3.11100e+07 ,   0.355  ,  0.890, 2.81e-08, $
-  3.47e-16  , -0.475306]
+  7.60e-16  , -0.3232  ]
+fuv2=[0.257 ,   0.230 ,3.11100e+07 ,   0.355  ,  0.890, 2.81e-08, $
+  3.47e-16  , -0.4723 ]
 fuv3=[1.26100  ,   1.43500 ,3.16500e+07  ,  0.332   ,-0.107 ,3.20e-08, $
-  9.57e-16  , -0.658716 ]
-fuv4=[ 0.219,    0.175, 3.15e+07,    0.385 ,   0.95500,  1.41e-08, $
-  1.03e-15  , -0.395319]
+  9.57e-16  , -0.6785 ]
+fuv4=[ 0.219,    0.175, 3.15e+07,    0.385 ,   0.95500,  1.507e-08, $
+  1.066e-15  , -0.4582]
 
 nuv1=[0.419 ,  0.4955,  3.135e+07,   0.2756,   -0.161,  2.893e-09, $
     6.71e-17,  -0.0459519 ]
 nuv2=[0.526,  0.615,  3.125e+07,  0.270,  0.824, -5.479e-12, $
     1.345e-16,    0.0387826  ]
-nuv3=[  0.195,     0.211,   3.208e+07,  0.326,  0.949,  1.015e-08,  $
-    6.278e-17,   -0.0876936 ]
-;nuv3=[ 0.200,  0.1749,  3.208e+07,  0.288,  0.961,  9.213e-09, $
-;    6.454e-17,   -0.0473535 ]
-nuv4=[ 0.322,   0.410,   3.144e+07,   0.2816,  0.846,  6.439e-09, $
-    1.147e-16,   -0.0811310  ]
+nuv3=[  0.217,     0.233,   3.208e+07,  0.370,  0.983,  8.427e-09,  $
+    3.004e-16,   -0.0533 ]
+nuv4=[ 0.362,   0.437,   3.144e+07,   0.3027,  0.859,  4.73155e-09, $
+    3.67756e-16,   -0.04390  ]
 
 
-     
 
 if ins eq 0 then begin                     ; if FUV, load up variables
    amp1=[fuv1(0),fuv2(0),fuv3(0),fuv4(0)]   ; amp of variation with period p1
    amp2=[fuv1(1),fuv2(1),fuv3(1),fuv4(1)]  ; amp of variation with period p1/2
    p1=[fuv1(2),fuv2(2),fuv3(2),fuv4(2)]    ; period of main variation [s]
-   phi1=[fuv1(3),fuv2(3),fuv3(3),fuv4(3)]  ; phase offset for p=p1 variation 
+   phi1=[fuv1(3),fuv2(3),fuv3(3),fuv4(3)]  ; phase offset for p=p1 variation
    phi2=[fuv1(4),fuv2(4),fuv3(4),fuv4(4)]  ; phase offset for p=p1/2 variation
    trend=[fuv1(5),fuv2(5),fuv3(5),fuv4(5)] ; linear long-term trend
    quad=[fuv1(6),fuv2(6),fuv3(6),fuv4(6)]  ;  quadratic term
    off=[fuv1(7),fuv2(7),fuv3(7),fuv4(7)]   ; offset constant
    dtq0 = 5e7                               ; start time, quad term
-endif else begin                          ; if NUV/SJI 
+endif else begin                          ; if NUV/SJI
    amp1=[nuv1(0),nuv2(0),nuv3(0),nuv4(0)]
    amp2=[nuv1(1),nuv2(1),nuv3(1),nuv4(1)]
    p1=[nuv1(2),nuv2(2),nuv3(2),nuv4(2)]
@@ -149,10 +151,13 @@ t=anytim(obstime)
 c=2*!pi
 
 
-dt0 = t - t0[k]
-dtq = (dt0 - dtq0) > 0.     ; timeline for quad term, not present t<dtq0
 
-; add it all together: A1 *sin (t/p) + A2 * sin (2*t/p)  + a quadratic trend 
+dt0 = t - t0[k]
+dtq = (dt0 - dtq0) > 0.     ; timeline for quad term, not present dt0<dtq0
+
+
+; add it together: 
+;  A1 *sin(t/p +phi1) + A2 *sin (2*t/p +phi2) + B*t + C*((t-tq)>0)^2   
 
 
 offsets = amp1 *sin(c*(dt0/p1 + phi1)) +  $
