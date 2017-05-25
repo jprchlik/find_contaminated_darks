@@ -33,8 +33,8 @@ class fit_dark:
         self.t0dict['nuv4'] = 1090037185.
 
         self.dtq0 = {}
-        self.dtq0['fuv'] = 0.e7
-        self.dtq0['nuv'] = 0.e7
+        self.dtq0['fuv'] = -1.e7
+        self.dtq0['nuv'] = -1.e7
 
 
     #function to fit
@@ -79,6 +79,11 @@ class fit_dark:
            ax.plot(ptim+toff,self.offset(ptim,*popt),'r--',label='fit')
            ax.scatter(time,port[:,i],color='black')
            ax.errorbar(time,port[:,i],yerr=errs[:,i],color='black',fmt='o')
+
+
+           var = np.sqrt(np.sum((port[:,i]-self.offset(dt0,*popt))**2.)/float(dt0.size))
+           ax.text(time.min(),8,r'$\sigma$(fit) = {0:6.5f}'.format(var))
+           ax.set_ylim([-5.,10.])
            ax.set_xlabel('Epoch Time [s]',fontsize=18)
            ax.set_ylabel('Counts [ADU]',fontsize=18)
            fancy_plot(ax)
