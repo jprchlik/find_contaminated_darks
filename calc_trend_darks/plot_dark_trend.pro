@@ -161,7 +161,7 @@ for z=0,1 do begin
         
         if type[z] eq 'NUV' then begin
             sigmx = gropsig[*,2:*]
-            fname = 'offset30n.dat'
+            fname = 'offset30nj.dat'
             avni = gropave[*,2:*]
             tni = groptim[2:*]
             xoff = [1.0e7,1.0e7,1.0e7,1.0e7]
@@ -169,7 +169,7 @@ for z=0,1 do begin
             save,sigmx,avni,tni,xoff,yoff,filename=fname
          endif else begin
             sigmx = gropsig[*,2:*]
-            fname = 'offset30f.dat'
+            fname = 'offset30fj.dat'
             avi = gropave[*,2:*]
             ti = groptim[2:*]
             xoff = [1.0e7,1.0e7,1.0e7,1.0e7]
@@ -183,4 +183,5 @@ for z=0,1 do begin
     ;    p.Save, "test.png",BORDER=10,$
     ;        RESOLUTION=300,/TRANSPARENT
 endfor
+format_for_steve
 end
