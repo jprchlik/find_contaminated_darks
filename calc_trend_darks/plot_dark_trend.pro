@@ -108,7 +108,8 @@ for z=0,1 do begin
         offsets = fltarr(4,n_elements(spanarray))
         for i=0,n_elements(spanarray)-1 do begin
             CALDAT,spanarray[i],mon,day,year
-            indat = strcompress(year,/remove_all)+'/'+strcompress(mon,/remove_all)+'/'+strcompress(day,/remove_all) 
+            fmtst = '(I4,"/",I02,"/",I02,"T",I02,":",I02,":",I02)'
+            indat = string(year,mon,day,0,0,0,format=fmtst)
             iris_dark_trend_fix,indat,doffsets,type[z]
             offsets[*,i] = doffsets
         endfor
