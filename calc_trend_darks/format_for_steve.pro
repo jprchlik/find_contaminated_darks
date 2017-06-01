@@ -67,16 +67,19 @@ pro format_for_steve
 ; Create date span line for plot fit
 ;Then put in format that iris_dark_trend_fix uses
        spanarray = TIMEGEN(spanday,START=time[0]/24./3600.)+normal
+       tpanarray = fltarr(n_elements(spanarray))
        offsets = fltarr(4,n_elements(spanarray))
         for j=0,n_elements(spanarray)-1 do begin
             CALDAT,spanarray[j],mon,day,year
-            indat = strcompress(year,/remove_all)+'/'+strcompress(mon,/remove_all)+'/'+strcompress(day,/remove_all)
-           
+            fmtst = '(I4,"/",I02,"/",I02,"T",I02,":",I02,":",I02)'
+            indat = string(year,mon,day,0,0,0,format=fmtst)
+            tpanarray[j] = anytim(indat)
             iris_dark_trend_fix,indat,doffsets,type[i]
             offsets[*,j] = doffsets
         endfor
 
 ;put span array back into jime day reference
+        upanarray = double(anytim(tpanarray))
         spanarray = spanarray-normal
         spanarray = spanarray*24.*3600.
 
@@ -110,7 +113,7 @@ pro format_for_steve
             errplot,groptim,port-porte,port+porte,color=color[j],thick=2
    ;overplot long term trend
    ;        oplot,groptim,groptrd[i,*],color=color[i],psym=0,linestyle=lines[i]
-            oplot,spanarray,offsets[j,*],color=color[j],psym=0,linestyle=lines[j],thick=3
+            oplot,upanarray,offsets[j,*],color=color[j],psym=0,linestyle=lines[j],thick=3
 
         endfor
 
