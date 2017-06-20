@@ -120,7 +120,7 @@ pro format_for_steve
         al_legend,['port1','port2','port3','port4'],psym=syms,colors=color,linestyle=[0,0,0,0],box=0,/top,charsize=2.0
         al_legend,['fit port1','fit port2','fit port3','fit port4'],psym=[0,0,0,0],colors=colors,linestyle=lines,box=0,/right,charsize=2.0
 
-        write_png,pdir+'/'+type[i]+'_test.png',tvrd(/true)
+        write_png,pdir+'/'+type[i]+'_test2.png',tvrd(/true)
 
 
     endfor
