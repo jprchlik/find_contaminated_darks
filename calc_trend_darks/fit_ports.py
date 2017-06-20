@@ -12,11 +12,12 @@ from fancy_plot import fancy_plot
 
 class fit_dark:
 
-    def __init__(self,ptype='nuv',startd=datetime(1979,1,1,0,0,0),jdate=datetime(2012,1,1,0,0,0),show=False):
+    def __init__(self,ptype='nuv',startd=datetime(1979,1,1,0,0,0),jdate=datetime(2012,1,1,0,0,0),show=False,cut=False):
         self.ptype = ptype.lower()
         self.startd = startd
         self.show = show
         self.jdate = (jdate-startd).total_seconds()
+        self.cut = cut
 
         self.gdict = {}
         self.gdict['fuv1']=np.array([0.163    ,   0.397 ,3.18e+07    ,  0.0800   ,  0.259  ,  2.25e-08   ,  7.60e-16   , -0.3232  ])
@@ -47,12 +48,17 @@ class fit_dark:
         self.t0dict['nuv4'] = 1090037185.
 
         self.dtq0 = {}
-        self.dtq0['fuv'] = -1.e7
-        self.dtq0['nuv'] = -1.e7
+        self.dtq0['fuv'] = 5.e7
+        self.dtq0['nuv'] = 7.e7
 
 
     #function to fit
     def offset(self,dt0,amp1,phi1,p1,amp2,phi2,trend,quad,off):
+        c = 2.*np.pi
+        dtq = dt0-self.dtq0[self.ptype]
+        dtq[dtq < 0.] = 0.
+        return (amp1*np.sin(c*(dt0/p1+phi1)))+(amp2*np.sin(c*(dt0/(p1/2.)+phi2)))+(trend*(dt0))+(quad*(dtq**2.))+(off)
+    def var_amp_offset(self,dt0,amp1,phi1,p1,amp2,phi2,trend,quad,off):
         c = 2.*np.pi
         return (amp1*np.sin(c*(dt0/p1+phi1)))+(amp2*np.sin(c*(dt0/(p1/2.)+phi2)))+(trend*(dt0))+(quad*(dt0**2.))+(off)
 
@@ -73,10 +79,11 @@ class fit_dark:
         errs = dat['sigmx']
 
         #cut spurious point from fit
-        good, = np.where((time <= 1.175e+09) | (time >= 1.180e+09))
-        time = time[good]
-        port = port[good,:]
-        errs = errs[good,:]
+        if self.cut:
+            good, = np.where((time <= 1.175e+09) | (time >= 1.180e+09))
+            time = time[good]
+            port = port[good,:]
+            errs = errs[good,:]
     
           
         print '      {0:10},{3:10},{2:15},{1:10},{4:10},{5:20},{6:20},{7:10}'.format('Amp1','Phi1','P1','Amp2','Phi2','Trend','Quad','Offset')
