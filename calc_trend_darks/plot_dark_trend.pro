@@ -99,12 +99,12 @@ for z=0,1 do begin
        
         endfor 
 ;get number of days which span observations
-        spanday = jime[n_elements(jime)-1]-jime[0]
+        spanday = jime[n_elements(jime)-1]
 
 
 ; Create date span line for plot fit
 ;Then put in format that iris_dark_trend_fix uses
-        spanarray = TIMEGEN(spanday,START=jime[0])+JULDAY(1,1,2012,0,0,0)
+        spanarray = TIMEGEN(spanday,START=0)+JULDAY(1,1,2012,0,0,0)
         offsets = fltarr(4,n_elements(spanarray))
         for i=0,n_elements(spanarray)-1 do begin
             CALDAT,spanarray[i],mon,day,year
@@ -128,7 +128,7 @@ for z=0,1 do begin
    ;set up the plot 
         utplot,[0,0],[0,0],'1-jan-12',ytitle="Average Offset Dark-Model [ADU]",title=type[z]+' Dark Pixel Evolution',$
             XSTYLE=1,$;timerange=['24-aug-16,05:59:00','24-aug-16,8:00:00'],$
-            xrange=[min(jime)-3*240.*3600.,max(jime)+3*240.*3600.],$
+            xrange=[min(jime)-400.*24.*3600.,max(jime)+3*240.*3600.],$
             /nodata,yrange=[-5,9],background=cgColor('white'),color=0,$
             charthick=3,charsize=2.5,xminor=12,xtitle='Year [20XX]' ;yrange=[80,120]
     
@@ -149,6 +149,19 @@ for z=0,1 do begin
    ;overplot long term trend
    ;        oplot,groptim,groptrd[i,*],color=color[i],psym=0,linestyle=lines[i]
             oplot,spanarray,offsets[i,*],color=color[i],psym=0,linestyle=lines[i],thick=3
+
+            last = n_elements(offsets[0,*])-1
+            olast = offsets[i,temporary(last)] ; last model point
+            last = n_elements(port)-1
+            elast = port[last]
+            mdiff = abs(elast-olast) ;measured difference
+            print, mdiff
+       
+          
+           ;Out string fmt
+            pfmt = '("Meas.-Mod. ",A3,"port ",I1," = ",F6.4)'
+            pstr = string([type[z],i+1,mdiff],format=pfmt)
+            print, pstr
         
         endfor
     
@@ -161,20 +174,29 @@ for z=0,1 do begin
         ;save formatted plots for reading into steve's program
         
         if type[z] eq 'NUV' then begin
-            sigmx = gropsig[*,2:*]
+            sigmx = gropsig;[*,2:*]
             fname = 'offset30nj.dat'
-            avni = gropave[*,2:*]
-            tni = groptim[2:*]
+            avni = gropave;[*,2:*]
+            tni = groptim;[2:*]
             xoff = [1.0e7,1.0e7,1.0e7,1.0e7]
             yoff = [-0.30,-0.30,-0.25,-0.15]
+            soff = median(sigmx)+fltarr(4)
+            sigmx = [[soff],[temporary(sigmx)]]
+            avni  = [[yoff],[temporary(avni)]]
+            tni   = [1.0e7,temporary(tni)]
+
             save,sigmx,avni,tni,xoff,yoff,filename=fname
          endif else begin
-            sigmx = gropsig[*,2:*]
+            sigmx = gropsig;[*,2:*]
             fname = 'offset30fj.dat'
-            avi = gropave[*,2:*]
-            ti = groptim[2:*]
+            avi = gropave;[*,2:*]
+            ti = groptim;[2:*]
             xoff = [1.0e7,1.0e7,1.0e7,1.0e7]
             yoff = [-0.25,-0.50,-1.80,-0.60]
+            soff = median(sigmx)+fltarr(4)
+            sigmx = [[soff],[temporary(sigmx)]]
+            avi  = [[yoff],[temporary(avi)]]
+            ti   = [1.0e7,temporary(ti)]
             save,sigmx,avi,ti,xoff,yoff,filename=fname
          endelse
 
