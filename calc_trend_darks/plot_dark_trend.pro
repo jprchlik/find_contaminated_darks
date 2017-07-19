@@ -1,5 +1,7 @@
 pro plot_dark_trend,time,yval,sdir=sdir,pdir=pdir,rest=rest,pplot=pplot
 
+set_plot,'Z'
+device,decomposed=0,set_pixel_depth=24,set_resolution=[1000,750]
 loadct,12
 if keyword_set(sdir) then sdir=sdir else sdir='/data/alisdair/opabina/scratch/joan/iris/newdat/orbit/level0/simpleB/'
 if keyword_set(pdir) then pdir=pdir else pdir='plots/'
@@ -129,7 +131,7 @@ for z=0,1 do begin
         utplot,[0,0],[0,0],'1-jan-12',ytitle="Average Offset Dark-Model [ADU]",title=type[z]+' Dark Pixel Evolution',$
             XSTYLE=1,$;timerange=['24-aug-16,05:59:00','24-aug-16,8:00:00'],$
             xrange=[min(jime)-400.*24.*3600.,max(jime)+3*240.*3600.],$
-            /nodata,yrange=[-5,9],background=cgColor('white'),color=0,$
+            /nodata,yrange=[-5,15],background=cgColor('white'),color=0,$
             charthick=3,charsize=2.5,xminor=12,xtitle='Year [20XX]' ;yrange=[80,120]
     
     
@@ -144,11 +146,11 @@ for z=0,1 do begin
     ;        oplot,jime,port,psym=syms[i],color=color[i]
             port = gropave[i,*]
             porte = gropsig[i,*]
-            oplot,groptim,port,psym=syms[i],color=color[i],thick=2
-            errplot,groptim,port-porte,port+porte,color=color[i],thick=2
+            oplot,groptim,port,psym=syms[i],color=color[i],thick=3
+            errplot,groptim,port-porte,port+porte,color=color[i],thick=3
    ;overplot long term trend
    ;        oplot,groptim,groptrd[i,*],color=color[i],psym=0,linestyle=lines[i]
-            oplot,spanarray,offsets[i,*],color=color[i],psym=0,linestyle=lines[i],thick=3
+            oplot,spanarray,offsets[i,*],color=color[i],psym=0,linestyle=lines[i],thick=4
 
             last = n_elements(offsets[0,*])-1
             olast = offsets[i,temporary(last)] ; last model point
@@ -160,6 +162,7 @@ for z=0,1 do begin
           
            ;Out string fmt
             pfmt = '("Meas.-Mod. ",A3,"port ",I1," = ",F6.4)'
+            print,type[z]
             pstr = string([type[z],i+1,mdiff],format=pfmt)
             print, pstr
         
