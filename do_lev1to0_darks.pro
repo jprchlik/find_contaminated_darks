@@ -14,6 +14,7 @@
 ;-
 
 pro do_lev1to0_darks,dir,t0,t1,typ,odir
+set_plot,'Z'
 
 dir0='/data/alisdair/IRIS_LEVEL1_DARKS/'
 
