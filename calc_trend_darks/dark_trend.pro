@@ -1,5 +1,6 @@
 pro dark_trend,sdir=sdir,pdir=pdir,simpleb=simpleb,complexa=complexa,logdir=logdir,outdir=outdir
 ;create a plot containing the average dark value as a function of time
+    set_plot,'Z'
     compile_opt idl2
 
 
