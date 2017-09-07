@@ -3,6 +3,8 @@
 source $HOME/.cshrc
 source $HOME/.cshrc.user
 
+#Set up display 
+#setenv DISPLAY olethros.cfa.harvard.edu:0.0
 #create sswidl alias
 alias sswidl /proj/DataCenter/ssw/gen/setup/ssw_idl
 #Setup the SSWIDL environment
