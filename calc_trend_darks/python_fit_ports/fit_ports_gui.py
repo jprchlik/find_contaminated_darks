@@ -74,7 +74,7 @@ class gui_dark(Tk.Frame):
         self.FigureWindow()
         self.initUI()
         self.iris_dark_set()
-        #self.iris_dark_plot()
+        self.iris_dark_plot()
 
 
 
@@ -94,6 +94,13 @@ class gui_dark(Tk.Frame):
         self.wplot = {}
         self.wplot['fuv'] = self.a[1]
         self.wplot['nuv'] = self.a[0]
+
+        #set title and axis labels
+        for i in self.wplot.keys(): 
+            self.wplot[i].set_title(i.upper())
+            self.wplot[i].set_xlabel('Offset Time [s]')
+            self.wplot[i].set_ylabel('Pedestal Offset [ADU]')
+   
 
 #Create window for the plot
         self.canvas = FigureCanvasTkAgg(self.f,master=self)
@@ -191,6 +198,11 @@ class gui_dark(Tk.Frame):
         from scipy.io import readsav
         #Possible types of IRIS ports
         ptype = ['fuv','nuv']
+
+        #colors associated with each port
+        colors = ['red','blue','teal','black']
+        #symbols associated with each port
+        symbol = ['o','s','D','^']
     #format name of file to read
         self.fdata = {}
         for i in ptype: 
@@ -204,14 +216,33 @@ class gui_dark(Tk.Frame):
             time = dat['t{0}i'.format(aval)] #seconds since Jan. 1st 1979
             port = dat['av{0}i'.format(aval)]
             errs = dat['sigmx']
+
+
             #loop over all ports
             for j in range(port.shape[1]):
                 toff = self.t0dict['{0}{1:1d}'.format(i.lower(),j+1)] 
                 dt0 = time - toff#- 31556926.#makes times identical to the values taken in iris_trend_fix
+                #store in dictionary [time,measured value, 1 sigma uncertainty]
+                self.fdata['{0}{1:1d}'.format(i,j+1)] = [dt0,port[:,j],errs[:,j],colors[j],symbol[j]]
 
-            #store in dictionary [time,measured value, 1 sigma uncertainty]
-            self.fdata[i] = [dt0,port,errs]
+    #plot the best fit data
+    def iris_dark_plot(self):
+       
+        #plot data for all IRIS dark remaining pedestals
+        for i in self.fdata.keys():
+            #Get plot associated with each port
+            ax = self.wplot[i[:-1]] 
+            #Put data in temp array
+            dat = self.fdata[i]
 
+            #plot each port
+            ax.scatter(dat[0],dat[1],color=dat[3],marker=dat[4],label=i)
+            ax.errorbar(dat[0],dat[1],yerr=dat[2],color=dat[3],fmt=dat[4],label=None)
+
+
+        #add legend
+        for i in self.wplot.keys():
+            self.wplot[i].legend(loc='upper left',frameon=False)
 
 
 
