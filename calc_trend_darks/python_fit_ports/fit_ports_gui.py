@@ -206,19 +206,19 @@ class gui_dark(Tk.Frame):
                 inp_min = Tk.StringVar(value='{0:10}'.format(self.gdict[i+'_min'][c]))
    
                 #create input text
-                self.ivar[self.plis[c]+'_min'] = Tk.Entry(frame,textvariable=inp_min,width=12)
-                self.ivar[self.plis[c]+'_med'] = Tk.Entry(frame,textvariable=inp_val,width=12)
-                self.ivar[self.plis[c]+'_max'] = Tk.Entry(frame,textvariable=inp_max,width=12)
+                self.ivar[i+'_'+self.plis[c]+'_min'] = Tk.Entry(frame,textvariable=inp_min,width=12)
+                self.ivar[i+'_'+self.plis[c]+'_med'] = Tk.Entry(frame,textvariable=inp_val,width=12)
+                self.ivar[i+'_'+self.plis[c]+'_max'] = Tk.Entry(frame,textvariable=inp_max,width=12)
 
                 #place on grid
-                self.ivar[self.plis[c]+'_min'].grid(row=3*r+1,column=c+col+2)
-                self.ivar[self.plis[c]+'_med'].grid(row=3*r+2,column=c+col+2)
-                self.ivar[self.plis[c]+'_max'].grid(row=3*r+3,column=c+col+2)
+                self.ivar[i+'_'+self.plis[c]+'_min'].grid(row=3*r+1,column=c+col+2)
+                self.ivar[i+'_'+self.plis[c]+'_med'].grid(row=3*r+2,column=c+col+2)
+                self.ivar[i+'_'+self.plis[c]+'_max'].grid(row=3*r+3,column=c+col+2)
 
                 #bind input to return event
-                self.ivar[self.plis[c]+'_min'].bind("<Return>",self.iris_param)
-                self.ivar[self.plis[c]+'_med'].bind("<Return>",self.iris_param)
-                self.ivar[self.plis[c]+'_max'].bind("<Return>",self.iris_param)
+                self.ivar[i+'_'+self.plis[c]+'_min'].bind("<Return>",self.iris_param)
+                self.ivar[i+'_'+self.plis[c]+'_med'].bind("<Return>",self.iris_param)
+                self.ivar[i+'_'+self.plis[c]+'_max'].bind("<Return>",self.iris_param)
 
 
     #Update parameters in gdict base on best fit values
@@ -231,9 +231,9 @@ class gui_dark(Tk.Frame):
         for m,i in enumerate(self.b_keys):
             #loop over all parameters and update values
             for c,j in enumerate(self.gdict[i]):
-               self.gdict[i][c] = float(self.ivar[self.plis[c]+'_med'].get()) 
-               self.gdict[i+'_min'][c] = float(self.ivar[self.plis[c]+'_min'].get()) 
-               self.gdict[i+'_max'][c] = float(self.ivar[self.plis[c]+'_max'].get()) 
+               self.gdict[i+'_'+i][c] = float(self.ivar[self.plis[c]+'_med'].get()) 
+               self.gdict[i+'_'+i+'_min'][c] = float(self.ivar[self.plis[c]+'_min'].get()) 
+               self.gdict[i+'_'+i+'_max'][c] = float(self.ivar[self.plis[c]+'_max'].get()) 
 
 
     #Update shown parameters base on new best fit
@@ -242,8 +242,18 @@ class gui_dark(Tk.Frame):
         for m,i in enumerate(self.b_keys):
             #loop over all parameters and update values
             for c,j in enumerate(self.gdict[i]):
-               self.ivar[self.plis[c]+'_med'].value =  self.gdict[i][c]
-                
+               self.ivar[i+'_'+self.plis[c]+'_med'].delete(0,'end')
+
+               #set formatting based on output value
+               if abs(self.gdict[i][c]) < .001:
+                   dfmt = '{0:10.5e}'
+               elif abs(self.gdict[i][c]) > 10000.:
+                   dfmt = '{0:10.1f}'
+               else:
+                   dfmt = '{0:10.5f}'
+
+               #update in text box
+               self.ivar[i+'_'+self.plis[c]+'_med'].insert(0,dfmt.format(self.gdict[i][c]))
          
     #set up data for plotting 
     def iris_dark_set(self):
@@ -280,7 +290,11 @@ class gui_dark(Tk.Frame):
     #plot the best fit data
     def iris_dark_plot(self):
         #clear the plot axes 
-        for i in self.wplot.keys(): self.wplot[i].clear()
+        for i in self.wplot.keys(): 
+            self.wplot[i].clear()
+            self.wplot[i].set_title(i.upper())
+            self.wplot[i].set_xlabel('Offset Time [s]')
+            self.wplot[i].set_ylabel('Pedestal Offset [ADU]')
 
 
         #best fit lines
@@ -366,10 +380,10 @@ class gui_dark(Tk.Frame):
             #update with new fit values
             self.gdict[i] = popt
         
-            #update parameters in the box
-            self.iris_show()
-            #update plots
-            self.iris_dark_plot()
+        #update parameters in the box
+        self.iris_show()
+        #update plots
+        self.iris_dark_plot()
             
 
 
