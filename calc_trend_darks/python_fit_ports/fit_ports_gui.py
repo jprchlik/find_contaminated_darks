@@ -30,16 +30,7 @@ class gui_dark(Tk.Frame):
 
         #dictionary of initial Guess parameters (Manually update with the previous version of trend fix 
         self.gdict = {}
-        #conversion from idl to python is {0,3,2,1,4,5,6,7}
-        #self.gdict['fuv1'] = [ 0.13676  , 0.57852  ,  3.4355e+07 , 0.11199     , 0.53048  ,  2.337e-08   ,  6.981e-16   , -0.35432 ]
-        #self.gdict['fuv2'] = [ 0.26720  , 0.37567  ,  3.1565e+07 , 0.20045     , 0.89111  ,  2.868e-08   ,  4.003e-16   , -0.56086 ]
-        #self.gdict['fuv3'] = [ 1.50775  , 0.31094  ,  3.1505e+07 , 1.71743     , -0.12981 ,  2.169e-08   ,  1.319e-15   , -0.37175 ]
-        #self.gdict['fuv4'] = [ 0.23718  , 0.35511  ,  3.1155e+07 , 0.18892     , 0.86652  ,  1.398e-08   ,  1.091e-15   , -0.40907 ]
-        #self.gdict['nuv1'] = [ 0.55083  , 0.32558  ,  3.1788e+07 , 0.54792     , -0.08227 ,  3.116e-09   ,  2.823e-16   , -0.13231 ]
-        #self.gdict['nuv2'] = [ 0.71724  , 0.32991  ,  3.1847e+07 , 0.69646     , 0.92275  ,  1.788e-09   ,  3.599e-16   , -0.15109 ]
-        #self.gdict['nuv3'] = [ 0.26202  , 0.32890  ,  3.1702e+07 , 0.25259     , 0.91326  ,  9.521e-09   ,  3.424e-16   , -0.09947 ]
-        #self.gdict['nuv4'] = [ 0.41113  , 0.31998  ,  3.1648e+07 , 0.45427     , 0.90299  ,  6.874e-09   ,  3.887e-16   , -0.16182 ]
-        #conversion from idl to python is {0,1,2,3,4,5,6,7}
+        #conversion from idl iris_make_dark to python is {0,1,2,3,4,5,6,7}
         self.gdict['fuv1'] = [ 0.13676  , 0.11199     ,  3.4355e+07 , 0.57852  , 0.53048  ,  2.337e-08   ,  6.981e-16   , -0.35432 ]
         self.gdict['fuv2'] = [ 0.26720  , 0.20045     ,  3.1565e+07 , 0.37567  , 0.89111  ,  2.868e-08   ,  4.003e-16   , -0.56086 ]
         self.gdict['fuv3'] = [ 1.50775  , 1.71743     ,  3.1505e+07 , 0.31094  , -0.12981 ,  2.169e-08   ,  1.319e-15   , -0.37175 ]
@@ -158,6 +149,16 @@ class gui_dark(Tk.Frame):
         refitButton = Tk.Button(self,text="Refit",command=self.refit)
         refitButton.pack(side=Tk.RIGHT,padx=5,pady=5)
 
+
+        #list of port to refit
+        self.refit_list = []
+        #set up check boxes for which ports to refit
+        self.check_box = {}
+        for i in self.b_keys:
+            self.check_box[i+'_val'] = Tk.IntVar()
+            self.check_box[i] = Tk.Checkbutton(master=self,text=i.upper(),variable=self.check_box[i+'_val'],onvalue=1,offvalue=0,command=self.refit_list_com)
+            self.check_box[i].pack(side=Tk.LEFT,padx=5,pady=5)
+
         #dictionary containing variable descriptors 
         self.dscr = {}
         #dictionary of variables containing the Tkinter values for parameters
@@ -222,7 +223,7 @@ class gui_dark(Tk.Frame):
 
 
     #Update parameters in gdict base on best fit values
-    def iris_param(self):
+    def iris_param(self,onenter):
         #release cursor from entry box and back to the figure
         #needs to be done otherwise key strokes will not work
         self.f.canvas._tkcanvas.focus_set()
@@ -231,9 +232,9 @@ class gui_dark(Tk.Frame):
         for m,i in enumerate(self.b_keys):
             #loop over all parameters and update values
             for c,j in enumerate(self.gdict[i]):
-               self.gdict[i+'_'+i][c] = float(self.ivar[self.plis[c]+'_med'].get()) 
-               self.gdict[i+'_'+i+'_min'][c] = float(self.ivar[self.plis[c]+'_min'].get()) 
-               self.gdict[i+'_'+i+'_max'][c] = float(self.ivar[self.plis[c]+'_max'].get()) 
+               self.gdict[i][c] = float(self.ivar[i+'_'+self.plis[c]+'_med'].get()) 
+               self.gdict[i+'_min'][c] = float(self.ivar[i+'_'+self.plis[c]+'_min'].get()) 
+               self.gdict[i+'_max'][c] = float(self.ivar[i+'_'+self.plis[c]+'_max'].get()) 
 
 
     #Update shown parameters base on new best fit
@@ -254,6 +255,8 @@ class gui_dark(Tk.Frame):
 
                #update in text box
                self.ivar[i+'_'+self.plis[c]+'_med'].insert(0,dfmt.format(self.gdict[i][c]))
+
+
          
     #set up data for plotting 
     def iris_dark_set(self):
@@ -364,10 +367,29 @@ class gui_dark(Tk.Frame):
         for i in self.b_keys:
             print '{0}=[{1:^10.5f},{2:^10.5f},{3:^15.4e},{4:^10.5f},{5:^10.5f},{6:^20.9e},{7:^20.9e},{8:^10.5f}]'.format(i,*self.gdict[i])
 
+
+    #refit list
+    def refit_list_com(self):
+        self.f.canvas._tkcanvas.focus_set()
+        #check which boxes are checked 
+        for i in self.b_keys:
+            #if checked and not in list update the list 
+            if ((self.check_box[i+'_val'].get() == 1) and (i not in self.refit_list)):
+                self.refit_list.append(i)
+            #if checked and already in the list continue 
+            elif ((self.check_box[i+'_val'].get() == 1) and (i in self.refit_list)):
+                continue
+            #if not checked remove from list and deselect
+            elif ((self.check_box[i+'_val'].get() == 0) and (i in self.refit_list)):
+                self.refit_list.remove(i)
+                self.check_box[i].deselect()
+            #if not checked and not in list do nothing
+            else: continue
+
     #Refit the model
     def refit(self):
-        #refit for every model 
-        for i in self.b_keys:
+        #refit for every model in refit list
+        for i in self.refit_list:
             guess = self.gdict[i]
             mins  = self.gdict[i+'_min']
             maxs  = self.gdict[i+'_max']
