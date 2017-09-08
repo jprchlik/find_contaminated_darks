@@ -92,8 +92,8 @@ class gui_dark(Tk.Frame):
         self.f,self.a = plt.subplots(ncols=2,figsize=(8*aratio,8*aratio*.5),sharey=True)
 #Separate the two plotting windows fuv and nuv
         self.wplot = {}
-        self.wplot['fuv'] = self.a[1]
-        self.wplot['nuv'] = self.a[0]
+        self.wplot['fuv'] = self.a[0]
+        self.wplot['nuv'] = self.a[1]
 
         #set title and axis labels
         for i in self.wplot.keys(): 
@@ -154,12 +154,14 @@ class gui_dark(Tk.Frame):
             #crate FUV descriptors 
             Tk.Label(frame,textvariable=Tk.StringVar(value=i),height=1,width=5).grid(row=0,column=c+2)
             #crate NUV descriptors 
-            Tk.Label(frame,textvariable=Tk.StringVar(value=i),height=1,width=5).grid(row=0,column=c+4+len(self.plis))
+            Tk.Label(frame,textvariable=Tk.StringVar(value=i),height=1,width=5).grid(row=0,column=c+5+len(self.plis))
 
         #top left (FUV) descriptor
         Tk.Label(frame,textvariable=Tk.StringVar(value='PORT'),height=1,width=5).grid(row=0,column=0)
         #top NUV descriptor which is two after the length of the parameters array
-        Tk.Label(frame,textvariable=Tk.StringVar(value='PORT'),height=1,width=5).grid(row=0,column=len(self.plis)+2)
+        Tk.Label(frame,textvariable=Tk.StringVar(value='PORT'),height=1,width=5).grid(row=0,column=len(self.plis)+3)
+        #Add a column to separate  NUV and FUV
+        Tk.Label(frame,textvariable=Tk.StringVar(value='  '),height=1,width=5).grid(row=0,column=len(self.plis)+2)
        # loop over string containing all the gdict keys (i.e. port names)
         for m,i in enumerate(self.b_keys):
             txt = Tk.StringVar()
@@ -168,7 +170,7 @@ class gui_dark(Tk.Frame):
             #If NUV Put in the second column
             if 'nuv' in i:  
                 r = int(i.replace('nuv',''))-1
-                col = len(self.gdict[i])+2
+                col = len(self.gdict[i])+3
             #If FUV put in the first column
             else:
                 col = 0
@@ -227,6 +229,9 @@ class gui_dark(Tk.Frame):
 
     #plot the best fit data
     def iris_dark_plot(self):
+
+        #best fit lines
+        self.bline = {}
        
         #plot data for all IRIS dark remaining pedestals
         for i in self.fdata.keys():
@@ -235,14 +240,33 @@ class gui_dark(Tk.Frame):
             #Put data in temp array
             dat = self.fdata[i]
 
+            #plot best fit line
+            self.bfit(i)
+
             #plot each port
             ax.scatter(dat[0],dat[1],color=dat[3],marker=dat[4],label=i)
             ax.errorbar(dat[0],dat[1],yerr=dat[2],color=dat[3],fmt=dat[4],label=None)
-
+ 
 
         #add legend
         for i in self.wplot.keys():
             self.wplot[i].legend(loc='upper left',frameon=False)
+
+    #plot the currently used best fit line
+    def bfit(self,port):
+        #current dark time plus a few hours
+        ptim = np.linspace(self.fdata[port][0].min(),self.fdata[port][0].max()+1e3,500)
+        #plot values currently in gdict for best fit values (store in dictionary for updating line)
+        self.bline[port] = self.wplot[port[:-1]].plot(ptim,self.offset(ptim,port[:-1],*self.gdict[port]),color=self.fdata[port][3],label=None)  
+
+
+    #Pedestal offset model
+    def offset(self,dt0,ptype,amp1,phi1,p1,amp2,phi2,trend,quad,off):
+        c = 2.*np.pi
+        dtq = dt0-self.dtq0[ptype]
+        #do not add quadratic term before start time
+        dtq[dtq < 0.] = 0.
+        return (amp1*np.sin(c*(dt0/p1+phi1)))+(amp2*np.sin(c*(dt0/(p1/2.)+phi2)))+(trend*(dt0))+(quad*(dtq**2.))+(off)
 
 
 
