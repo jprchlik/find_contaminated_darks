@@ -23,6 +23,7 @@ else:
     import tkinter as Tk
 
 
+
 class gui_dark(Tk.Frame):
 
     def __init__(self,parent):
@@ -399,8 +400,21 @@ class gui_dark(Tk.Frame):
             self.ptype = i[:-1]
             popt, pcov = curve_fit(self.offset,dt0,port,p0=guess,sigma=errs,bounds=(mins,maxs)) 
 
-            #update with new fit values
-            self.gdict[i] = popt
+
+ 
+            #temporary line plot
+            ptim = np.linspace(self.fdata[i][0].min(),self.fdata[i][0].max()+1e3,500)
+            t_line = self.wplot[i[:-1]].plot(ptim,self.offset(ptim,*self.gdict[i]),'--',color=self.fdata[i][3]) 
+            self.canvas.draw()
+
+            #Ask if you should update the new parameter for a given fit
+            if box.askyesno('Update','Should the Dark Trend Update for {0} (dashed line)?'.format(i):
+                #update with new fit values
+                self.gdict[i] = popt
+
+            #remove temp line
+            t_line.remove()
+            self.canvas.draw()
         
         #update parameters in the box
         self.iris_show()
