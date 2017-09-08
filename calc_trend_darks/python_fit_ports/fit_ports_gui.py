@@ -39,6 +39,23 @@ class gui_dark(Tk.Frame):
         self.gdict['nuv3'] = [ 0.26202  , 0.32890  ,  3.1702e+07 , 0.25259     , 0.91326  ,  9.521e-09   ,  3.424e-16   , -0.09947 ]
         self.gdict['nuv4'] = [ 0.41113  , 0.31998  ,  3.1648e+07 , 0.45427     , 0.90299  ,  6.874e-09   ,  3.887e-16   , -0.16182 ]
 
+
+        #dictionary of time offsets (i.e. start times in IDL anytim format)
+        self.t0dict =  {}
+        self.t0dict['fuv1'] = 1090654728.
+        self.t0dict['fuv2'] = 1089963933.
+        self.t0dict['fuv3'] = 1090041516.
+        self.t0dict['fuv4'] = 1090041516.
+        self.t0dict['nuv1'] = 1090037115. 
+        self.t0dict['nuv2'] = 1090037115.
+        self.t0dict['nuv3'] = 1090037185.
+        self.t0dict['nuv4'] = 1090037185.
+
+        #dictionary of when to start the quadratic term for the fit
+        self.dtq0 = {}
+        self.dtq0['fuv'] = 5.e7
+        self.dtq0['nuv'] = 7.e7
+
         #basic set of keys
         self.b_keys = sorted(self.gdict.keys())
         #add min and max parameters (Default no restriction)
@@ -56,7 +73,7 @@ class gui_dark(Tk.Frame):
         self.centerWindow()
         self.FigureWindow()
         self.initUI()
-        #self.iris_dark_set()
+        self.iris_dark_set()
         #self.iris_dark_plot()
 
 
@@ -72,10 +89,11 @@ class gui_dark(Tk.Frame):
 
         aratio = float(x)/float(y)
 #Create the figure
-        self.f,self.a = plt.subplots(ncols=2,figsize=(8*aratio,8*aratio*.5))
+        self.f,self.a = plt.subplots(ncols=2,figsize=(8*aratio,8*aratio*.5),sharey=True)
 #Separate the two plotting windows fuv and nuv
-        self.fv = self.a[1]
-        self.nv = self.a[0]
+        self.wplot = {}
+        self.wplot['fuv'] = self.a[1]
+        self.wplot['nuv'] = self.a[0]
 
 #Create window for the plot
         self.canvas = FigureCanvasTkAgg(self.f,master=self)
@@ -168,21 +186,31 @@ class gui_dark(Tk.Frame):
                 self.ivar[self.plis[c]+'_max'] = Tk.Entry(frame,textvariable=inp_max,width=12).grid(row=3*r+3,column=c+col+2)
                 
          
-            #self.dscr[i].pack(side=Tk.TOP)
-            #loop over all elements in key
-            ##for c,j in enumerate(self.gdict[i]):
+    #set up data for plotting 
+    def iris_dark_set(self):
+        from scipy.io import readsav
+        #Possible types of IRIS ports
+        ptype = ['fuv','nuv']
+    #format name of file to read
+        self.fdata = {}
+        for i in ptype: 
+            fname = '../offset30{0}.dat'.format(i.lower()[0])
+            #read in trend values for given ccd
+            dat = readsav(fname)
+            #correct for different variable name formats
+            aval = '' 
+            if i == 'nuv': aval = 'n'
+            #put readsav arrays in defining variables
+            time = dat['t{0}i'.format(aval)] #seconds since Jan. 1st 1979
+            port = dat['av{0}i'.format(aval)]
+            errs = dat['sigmx']
+            #loop over all ports
+            for i in range(port.shape[1]):
+                toff = self.t0dict['{0}{1:1d}'.format(ptype.lower(),i+1)] 
+                dt0 = time - toff#- 31556926.#makes times identical to the values taken in iris_trend_fix
 
-#set up Submenu
-#        menubar = Tk.Menu(self.parent)
-#        self.parent.config(menu=menubar)
-#
-#        fileMenu = Tk.Menu(menubar)
-#        subMenu = Tk.Menu(fileMenu)
-##create another item in menu
-#        fileMenu.add_separator()
-#
-#        fileMenu.add_command(label='Exit',underline=0,command=self.onExit)
-#
+            #store in dictionary [time,measured value, 1 sigma uncertainty]
+            self.fdata[i] = [dt0,port,errs]
 
 
 
