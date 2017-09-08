@@ -13,6 +13,7 @@ import numpy as np
 import sys
 import matplotlib.pyplot as plt
 from datetime import datetime
+from scipy.optimize import curve_fit
 
 
 #check the python version to use one Tkinter syntax or another
@@ -132,7 +133,7 @@ class gui_dark(Tk.Frame):
 #Initialize the GUI
     def initUI(self):
 #set up the title 
-        self.parent.title("Fit IRIS DARK PEDESTAL")
+        self.parent.title("FIT IRIS DARK PEDESTAL")
 
 #create frame for parameters
         frame = Tk.Frame(self,relief=Tk.RAISED,borderwidth=1)
@@ -140,9 +141,13 @@ class gui_dark(Tk.Frame):
 
         self.pack(fill=Tk.BOTH,expand=1)
 
-#set up okay and quit buttons
+#set up print, refit, and quit buttons
         quitButton = Tk.Button(self,text="Quit",command=self.onExit)
         quitButton.pack(side=Tk.RIGHT,padx=5,pady=5)
+        printButton = Tk.Button(self,text="Print",command=self.Print)
+        printButton.pack(side=Tk.RIGHT,padx=5,pady=5)
+        refitButton = Tk.Button(self,text="Refit",command=self.refit)
+        refitButton.pack(side=Tk.RIGHT,padx=5,pady=5)
 
         #dictionary containing variable descriptors 
         self.dscr = {}
@@ -190,9 +195,45 @@ class gui_dark(Tk.Frame):
                 inp_val = Tk.StringVar(value='{0:10}'.format(j))
                 inp_max = Tk.StringVar(value='{0:10}'.format(self.gdict[i+'_max'][c]))
                 inp_min = Tk.StringVar(value='{0:10}'.format(self.gdict[i+'_min'][c]))
-                self.ivar[self.plis[c]+'_min'] = Tk.Entry(frame,textvariable=inp_min,width=12).grid(row=3*r+1,column=c+col+2)
-                self.ivar[self.plis[c]+'_med'] = Tk.Entry(frame,textvariable=inp_val,width=12).grid(row=3*r+2,column=c+col+2)
-                self.ivar[self.plis[c]+'_max'] = Tk.Entry(frame,textvariable=inp_max,width=12).grid(row=3*r+3,column=c+col+2)
+   
+                #create input text
+                self.ivar[self.plis[c]+'_min'] = Tk.Entry(frame,textvariable=inp_min,width=12)
+                self.ivar[self.plis[c]+'_med'] = Tk.Entry(frame,textvariable=inp_val,width=12)
+                self.ivar[self.plis[c]+'_max'] = Tk.Entry(frame,textvariable=inp_max,width=12)
+
+                #place on grid
+                self.ivar[self.plis[c]+'_min'].grid(row=3*r+1,column=c+col+2)
+                self.ivar[self.plis[c]+'_med'].grid(row=3*r+2,column=c+col+2)
+                self.ivar[self.plis[c]+'_max'].grid(row=3*r+3,column=c+col+2)
+
+                #bind input to return event
+                self.ivar[self.plis[c]+'_min'].bind("<Return>",self.iris_param)
+                self.ivar[self.plis[c]+'_med'].bind("<Return>",self.iris_param)
+                self.ivar[self.plis[c]+'_max'].bind("<Return>",self.iris_param)
+
+
+    #Update parameters in gdict base on best fit values
+    def iris_param(self):
+        #release cursor from entry box and back to the figure
+        #needs to be done otherwise key strokes will not work
+        self.f.canvas._tkcanvas.focus_set()
+
+       # loop over string containing all the gdict keys (i.e. port names)
+        for m,i in enumerate(self.b_keys):
+            #loop over all parameters and update values
+            for c,j in enumerate(self.gdict[i]):
+               self.gdict[i][c] = float(self.ivar[self.plis[c]+'_med'].get()) 
+               self.gdict[i+'_min'][c] = float(self.ivar[self.plis[c]+'_min'].get()) 
+               self.gdict[i+'_max'][c] = float(self.ivar[self.plis[c]+'_max'].get()) 
+
+
+    #Update shown parameters base on new best fit
+    def iris_show(self):
+       # loop over string containing all the gdict keys (i.e. port names)
+        for m,i in enumerate(self.b_keys):
+            #loop over all parameters and update values
+            for c,j in enumerate(self.gdict[i]):
+               self.ivar[self.plis[c]+'_med'].value =  self.gdict[i][c]
                 
          
     #set up data for plotting 
@@ -229,6 +270,9 @@ class gui_dark(Tk.Frame):
 
     #plot the best fit data
     def iris_dark_plot(self):
+        #clear the plot axes 
+        for i in self.wplot.keys(): self.wplot[i].clear()
+
 
         #best fit lines
         self.bline = {}
@@ -242,6 +286,9 @@ class gui_dark(Tk.Frame):
             #Put data in temp array
             dat = self.fdata[i]
 
+            #set ptype attribute for curvefit and offset model 
+            self.ptype = i[:-1]
+
             #get variance in best fit model
             var = self.get_var(i)
             #get offset in last data point
@@ -251,7 +298,7 @@ class gui_dark(Tk.Frame):
             #current dark time plus a few hours
             ptim = np.linspace(self.fdata[i][0].min(),self.fdata[i][0].max()+1e3,500)
             #plot values currently in gdict for best fit values (store in dictionary for updating line)
-            self.bline[i] = self.wplot[i[:-1]].plot(ptim,self.offset(ptim,i[:-1],*self.gdict[i]),color=self.fdata[i][3],label='{0}($\sigma$) = {1:3.2f}'.format(i,var)) 
+            self.bline[i] = self.wplot[i[:-1]].plot(ptim,self.offset(ptim,*self.gdict[i]),color=self.fdata[i][3],label='{0}($\sigma$) = {1:3.2f}'.format(i,var)) 
 
             #plot each port
             self.sdata[i] = ax.scatter(dat[0],dat[1],color=dat[3],marker=dat[4],label='{0}(last) = {1:3.2f}'.format(i,last))
@@ -262,14 +309,16 @@ class gui_dark(Tk.Frame):
         for i in self.wplot.keys():
             self.wplot[i].legend(loc='upper left',frameon=False)
 
+        self.canvas.draw()
+
 
     #get variance in the model
     def get_var(self,port):
-        var = np.sqrt(np.sum((self.fdata[port][1]-self.offset(self.fdata[port][0],port[:-1],*self.gdict[port]))**2.)/float(len(self.fdata[port][0])))
+        var = np.sqrt(np.sum((self.fdata[port][1]-self.offset(self.fdata[port][0],*self.gdict[port]))**2.)/float(len(self.fdata[port][0])))
         return var
     #get variance in the model
     def get_last(self,port):
-        last = np.sqrt(((self.fdata[port][1]-self.offset(self.fdata[port][0],port[:-1],*self.gdict[port]))**2.))[-1]
+        last = np.sqrt(((self.fdata[port][1]-self.offset(self.fdata[port][0],*self.gdict[port]))**2.))[-1]
         return last
 
     #plot the currently used best fit line
@@ -278,13 +327,41 @@ class gui_dark(Tk.Frame):
 
 
     #Pedestal offset model
-    def offset(self,dt0,ptype,amp1,phi1,p1,amp2,phi2,trend,quad,off):
+    def offset(self,dt0,amp1,phi1,p1,amp2,phi2,trend,quad,off):
         c = 2.*np.pi
-        dtq = dt0-self.dtq0[ptype]
+        dtq = dt0-self.dtq0[self.ptype]
         #do not add quadratic term before start time
         dtq[dtq < 0.] = 0.
         return (amp1*np.sin(c*(dt0/p1+phi1)))+(amp2*np.sin(c*(dt0/(p1/2.)+phi2)))+(trend*(dt0))+(quad*(dtq**2.))+(off)
 
+
+    #print data to terminal
+    def Print(self):
+        print '      {0:10},{3:10},{2:15},{1:10},{4:10},{5:20},{6:20},{7:10}'.format('Amp1','Phi1','P1','Amp2','Phi2','Trend','Quad','Offset')
+        for i in self.b_keys:
+            print '{0}=[{1:^10.5f},{4:^10.5f},{3:^15.4e},{2:^10.5f},{5:^10.5f},{6:^20.9e},{7:^20.9e},{8:^10.5f}]'.format(i,*self.gdict[i])
+
+    #Refit the model
+    def refit(self):
+        #refit for every model 
+        for i in self.b_keys:
+            guess = self.gdict[i]
+            mins  = self.gdict[i+'_min']
+            maxs  = self.gdict[i+'_max']
+            dt0   = self.fdata[i][0]
+            port  = self.fdata[i][1]
+            errs  = self.fdata[i][2]
+            self.ptype = i[:-1]
+            popt, pcov = curve_fit(self.offset,dt0,port,p0=guess,sigma=errs,bounds=(mins,maxs)) 
+
+            #update with new fit values
+            self.gdict[i] = popt
+        
+            #update parameters in the box
+            self.iris_show()
+            #update plots
+            self.iris_dark_plot()
+            
 
 
 #Exits the program
