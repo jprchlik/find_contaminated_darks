@@ -232,6 +232,8 @@ class gui_dark(Tk.Frame):
 
         #best fit lines
         self.bline = {}
+        #data scatter
+        self.sdata = {}
        
         #plot data for all IRIS dark remaining pedestals
         for i in self.fdata.keys():
@@ -240,11 +242,19 @@ class gui_dark(Tk.Frame):
             #Put data in temp array
             dat = self.fdata[i]
 
-            #plot best fit line
-            self.bfit(i)
+            #get variance in best fit model
+            var = self.get_var(i)
+            #get offset in last data point
+            last = self.get_last(i)
+
+            #Uploaded best fit
+            #current dark time plus a few hours
+            ptim = np.linspace(self.fdata[i][0].min(),self.fdata[i][0].max()+1e3,500)
+            #plot values currently in gdict for best fit values (store in dictionary for updating line)
+            self.bline[i] = self.wplot[i[:-1]].plot(ptim,self.offset(ptim,i[:-1],*self.gdict[i]),color=self.fdata[i][3],label='{0}($\sigma$) = {1:3.2f}'.format(i,var)) 
 
             #plot each port
-            ax.scatter(dat[0],dat[1],color=dat[3],marker=dat[4],label=i)
+            self.sdata[i] = ax.scatter(dat[0],dat[1],color=dat[3],marker=dat[4],label='{0}(last) = {1:3.2f}'.format(i,last))
             ax.errorbar(dat[0],dat[1],yerr=dat[2],color=dat[3],fmt=dat[4],label=None)
  
 
@@ -252,12 +262,19 @@ class gui_dark(Tk.Frame):
         for i in self.wplot.keys():
             self.wplot[i].legend(loc='upper left',frameon=False)
 
+
+    #get variance in the model
+    def get_var(self,port):
+        var = np.sqrt(np.sum((self.fdata[port][1]-self.offset(self.fdata[port][0],port[:-1],*self.gdict[port]))**2.)/float(len(self.fdata[port][0])))
+        return var
+    #get variance in the model
+    def get_last(self,port):
+        last = np.sqrt(((self.fdata[port][1]-self.offset(self.fdata[port][0],port[:-1],*self.gdict[port]))**2.))[-1]
+        return last
+
     #plot the currently used best fit line
     def bfit(self,port):
-        #current dark time plus a few hours
-        ptim = np.linspace(self.fdata[port][0].min(),self.fdata[port][0].max()+1e3,500)
-        #plot values currently in gdict for best fit values (store in dictionary for updating line)
-        self.bline[port] = self.wplot[port[:-1]].plot(ptim,self.offset(ptim,port[:-1],*self.gdict[port]),color=self.fdata[port][3],label=None)  
+        self.bline[port]
 
 
     #Pedestal offset model
