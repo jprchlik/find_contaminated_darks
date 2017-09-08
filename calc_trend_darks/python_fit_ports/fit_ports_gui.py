@@ -317,15 +317,15 @@ class gui_dark(Tk.Frame):
             self.ptype = i[:-1]
 
             #get variance in best fit model
-            var = self.get_var(i)
+            var = self.get_var(i,self.gdict[i])
             #get offset in last data point
-            last = self.get_last(i)
+            last = self.get_last(i,self.gdict[i])
 
             #Uploaded best fit
             #current dark time plus a few hours
             ptim = np.linspace(self.fdata[i][0].min(),self.fdata[i][0].max()+1e3,500)
             #plot values currently in gdict for best fit values (store in dictionary for updating line)
-            self.bline[i] = self.wplot[i[:-1]].plot(ptim,self.offset(ptim,*self.gdict[i]),color=self.fdata[i][3],label='{0}($\sigma$) = {1:3.2f}'.format(i,var)) 
+            self.bline[i] = self.wplot[i[:-1]].plot(ptim,self.offset(ptim,*self.gdict[i]),color=self.fdata[i][3],label='{0}(Unc.) = {1:3.2f}'.format(i,var)) 
 
             #plot each port
             self.sdata[i] = ax.scatter(dat[0],dat[1],color=dat[3],marker=dat[4],label='{0}(last) = {1:3.2f}'.format(i,last))
@@ -340,12 +340,12 @@ class gui_dark(Tk.Frame):
 
 
     #get variance in the model
-    def get_var(self,port):
-        var = np.sqrt(np.sum((self.fdata[port][1]-self.offset(self.fdata[port][0],*self.gdict[port]))**2.)/float(len(self.fdata[port][0])))
+    def get_var(self,port,parm):
+        var = np.sqrt(np.sum((self.fdata[port][1]-self.offset(self.fdata[port][0],*parm))**2.)/float(len(self.fdata[port][0])))
         return var
     #get variance in the model
-    def get_last(self,port):
-        last = np.sqrt(((self.fdata[port][1]-self.offset(self.fdata[port][0],*self.gdict[port]))**2.))[-1]
+    def get_last(self,port,parm):
+        last = np.sqrt(((self.fdata[port][1]-self.offset(self.fdata[port][0],*parm))**2.))[-1]
         return last
 
     #plot the currently used best fit line
@@ -404,11 +404,16 @@ class gui_dark(Tk.Frame):
  
             #temporary line plot
             ptim = np.linspace(self.fdata[i][0].min(),self.fdata[i][0].max()+1e3,500)
-            t_line = self.wplot[i[:-1]].plot(ptim,self.offset(ptim,*self.gdict[i]),'--',color=self.fdata[i][3]) 
+            t_line, = self.wplot[i[:-1]].plot(ptim,self.offset(ptim,*popt),'--',color=self.fdata[i][3]) 
             self.canvas.draw()
+           
+            #get model variance 
+            old_var = self.get_var(i,self.gdict[i])
+            new_var = self.get_var(i,popt)
 
             #Ask if you should update the new parameter for a given fit
-            if box.askyesno('Update','Should the Dark Trend Update for {0} (dashed line)?'.format(i):
+            if box.askyesno('Update','Should the Dark Trend Update for {0} (dashed line)?\n $\sigma$(old,new) = ({1:3.2f},{2:3.2f})'.format(i.upper(),old_var,new_var)):
+                                      
                 #update with new fit values
                 self.gdict[i] = popt
 
