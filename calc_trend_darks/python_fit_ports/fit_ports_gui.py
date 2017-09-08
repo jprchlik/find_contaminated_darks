@@ -46,6 +46,9 @@ class gui_dark(Tk.Frame):
             self.gdict[i+'_min'] = [-np.inf]*len(self.gdict[i])
             self.gdict[i+'_max'] = [ np.inf]*len(self.gdict[i])
 
+        #list for parameters in order
+        self.plis = ['Amp1','Phi1','P1','Amp2','Phi2','Trend','Quad','Offset']
+
         #create parent variable
         self.parent = parent
 
@@ -91,7 +94,7 @@ class gui_dark(Tk.Frame):
 
 #Create window in center of screen
     def centerWindow(self):
-        self.w = 2800
+        self.w = 1800
         self.h = 1200
         sw = self.parent.winfo_screenwidth()
         sh = self.parent.winfo_screenheight()
@@ -116,8 +119,6 @@ class gui_dark(Tk.Frame):
         quitButton = Tk.Button(self,text="Quit",command=self.onExit)
         quitButton.pack(side=Tk.RIGHT,padx=5,pady=5)
 
-        #list for parameters 
-        self.plis = ['Amp1','Phi1','P1','Amp2','Phi2','Trend','Quad','Offset']
         #dictionary containing variable descriptors 
         self.dscr = {}
         #dictionary of variables containing the Tkinter values for parameters
@@ -125,30 +126,46 @@ class gui_dark(Tk.Frame):
 
         #create column for list
         for c,i in enumerate(self.plis): 
-            Tk.Label(frame,textvariable=Tk.StringVar(value=i),height=1,width=5).grid(row=0,column=c+1)
+            #crate FUV descriptors 
+            Tk.Label(frame,textvariable=Tk.StringVar(value=i),height=1,width=5).grid(row=0,column=c+2)
+            #crate NUV descriptors 
+            Tk.Label(frame,textvariable=Tk.StringVar(value=i),height=1,width=5).grid(row=0,column=c+4+len(self.plis))
 
-        #top left descriptor
+        #top left (FUV) descriptor
         Tk.Label(frame,textvariable=Tk.StringVar(value='PORT'),height=1,width=5).grid(row=0,column=0)
+        #top NUV descriptor which is two after the length of the parameters array
+        Tk.Label(frame,textvariable=Tk.StringVar(value='PORT'),height=1,width=5).grid(row=0,column=len(self.plis)+2)
        # loop over string containing all the gdict keys (i.e. port names)
         for m,i in enumerate(self.b_keys):
             txt = Tk.StringVar()
             txt.set(i.upper())
-            print 'nuv' in i
-            if 'nuv' in i:  r = m+8
-            else: r = m
-            self.dscr[i] = Tk.Label(frame,textvariable=txt,height=1,width=5).grid(row=3*r+1,column=0)
-            self.dscr[i+'_min'] = Tk.Label(frame,textvariable=Tk.StringVar(value='min'),height=1,width=5).grid(row=3*r+1,column=1)
-            self.dscr[i+'_med'] = Tk.Label(frame,textvariable=Tk.StringVar(value='med'),height=1,width=5).grid(row=3*r+2,column=1)
-            self.dscr[i+'_max'] = Tk.Label(frame,textvariable=Tk.StringVar(value='max'),height=1,width=5).grid(row=3*r+3,column=1)
+
+            #If NUV Put in the second column
+            if 'nuv' in i:  
+                r = int(i.replace('nuv',''))-1
+                col = len(self.gdict[i])+2
+            #If FUV put in the first column
+            else:
+                col = 0
+                r = int(i.replace('fuv',''))-1
+     
+            #create min and max labels
+            self.dscr[i+'_min'] = Tk.Label(frame,textvariable=Tk.StringVar(value='min'),height=1,width=5).grid(row=3*r+1,column=col+1)
+            self.dscr[i+'_med'] = Tk.Label(frame,textvariable=Tk.StringVar(value='med'),height=1,width=5).grid(row=3*r+2,column=col+1)
+            self.dscr[i+'_max'] = Tk.Label(frame,textvariable=Tk.StringVar(value='max'),height=1,width=5).grid(row=3*r+3,column=col+1)
+
+            #Text Describing the particular port
+            self.dscr[i] = Tk.Label(frame,textvariable=txt,height=1,width=5).grid(row=3*r+1,column=col)
+           
             
             #loop over all columns (parameters) for each port
             for c,j in enumerate(self.gdict[i]):
                 inp_val = Tk.StringVar(value='{0:10}'.format(j))
                 inp_max = Tk.StringVar(value='{0:10}'.format(self.gdict[i+'_max'][c]))
                 inp_min = Tk.StringVar(value='{0:10}'.format(self.gdict[i+'_min'][c]))
-                self.ivar[self.plis[c]+'_min'] = Tk.Entry(frame,textvariable=inp_min).grid(row=3*r+1,column=c+2)
-                self.ivar[self.plis[c]+'_med'] = Tk.Entry(frame,textvariable=inp_val).grid(row=3*r+2,column=c+2)
-                self.ivar[self.plis[c]+'_max'] = Tk.Entry(frame,textvariable=inp_max).grid(row=3*r+3,column=c+2)
+                self.ivar[self.plis[c]+'_min'] = Tk.Entry(frame,textvariable=inp_min,width=12).grid(row=3*r+1,column=c+col+2)
+                self.ivar[self.plis[c]+'_med'] = Tk.Entry(frame,textvariable=inp_val,width=12).grid(row=3*r+2,column=c+col+2)
+                self.ivar[self.plis[c]+'_max'] = Tk.Entry(frame,textvariable=inp_max,width=12).grid(row=3*r+3,column=c+col+2)
                 
          
             #self.dscr[i].pack(side=Tk.TOP)
