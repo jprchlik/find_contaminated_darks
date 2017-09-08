@@ -205,8 +205,8 @@ class gui_dark(Tk.Frame):
             port = dat['av{0}i'.format(aval)]
             errs = dat['sigmx']
             #loop over all ports
-            for i in range(port.shape[1]):
-                toff = self.t0dict['{0}{1:1d}'.format(ptype.lower(),i+1)] 
+            for j in range(port.shape[1]):
+                toff = self.t0dict['{0}{1:1d}'.format(i.lower(),j+1)] 
                 dt0 = time - toff#- 31556926.#makes times identical to the values taken in iris_trend_fix
 
             #store in dictionary [time,measured value, 1 sigma uncertainty]
