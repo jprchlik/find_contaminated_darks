@@ -31,14 +31,23 @@ class gui_dark(Tk.Frame):
         #dictionary of initial Guess parameters (Manually update with the previous version of trend fix 
         self.gdict = {}
         #conversion from idl to python is {0,3,2,1,4,5,6,7}
-        self.gdict['fuv1'] = [ 0.13676  , 0.57852  ,  3.4355e+07 , 0.11199     , 0.53048  ,  2.337e-08   ,  6.981e-16   , -0.35432 ]
-        self.gdict['fuv2'] = [ 0.26720  , 0.37567  ,  3.1565e+07 , 0.20045     , 0.89111  ,  2.868e-08   ,  4.003e-16   , -0.56086 ]
-        self.gdict['fuv3'] = [ 1.50775  , 0.31094  ,  3.1505e+07 , 1.71743     , -0.12981 ,  2.169e-08   ,  1.319e-15   , -0.37175 ]
-        self.gdict['fuv4'] = [ 0.23718  , 0.35511  ,  3.1155e+07 , 0.18892     , 0.86652  ,  1.398e-08   ,  1.091e-15   , -0.40907 ]
-        self.gdict['nuv1'] = [ 0.55083  , 0.32558  ,  3.1788e+07 , 0.54792     , -0.08227 ,  3.116e-09   ,  2.823e-16   , -0.13231 ]
-        self.gdict['nuv2'] = [ 0.71724  , 0.32991  ,  3.1847e+07 , 0.69646     , 0.92275  ,  1.788e-09   ,  3.599e-16   , -0.15109 ]
-        self.gdict['nuv3'] = [ 0.26202  , 0.32890  ,  3.1702e+07 , 0.25259     , 0.91326  ,  9.521e-09   ,  3.424e-16   , -0.09947 ]
-        self.gdict['nuv4'] = [ 0.41113  , 0.31998  ,  3.1648e+07 , 0.45427     , 0.90299  ,  6.874e-09   ,  3.887e-16   , -0.16182 ]
+        #self.gdict['fuv1'] = [ 0.13676  , 0.57852  ,  3.4355e+07 , 0.11199     , 0.53048  ,  2.337e-08   ,  6.981e-16   , -0.35432 ]
+        #self.gdict['fuv2'] = [ 0.26720  , 0.37567  ,  3.1565e+07 , 0.20045     , 0.89111  ,  2.868e-08   ,  4.003e-16   , -0.56086 ]
+        #self.gdict['fuv3'] = [ 1.50775  , 0.31094  ,  3.1505e+07 , 1.71743     , -0.12981 ,  2.169e-08   ,  1.319e-15   , -0.37175 ]
+        #self.gdict['fuv4'] = [ 0.23718  , 0.35511  ,  3.1155e+07 , 0.18892     , 0.86652  ,  1.398e-08   ,  1.091e-15   , -0.40907 ]
+        #self.gdict['nuv1'] = [ 0.55083  , 0.32558  ,  3.1788e+07 , 0.54792     , -0.08227 ,  3.116e-09   ,  2.823e-16   , -0.13231 ]
+        #self.gdict['nuv2'] = [ 0.71724  , 0.32991  ,  3.1847e+07 , 0.69646     , 0.92275  ,  1.788e-09   ,  3.599e-16   , -0.15109 ]
+        #self.gdict['nuv3'] = [ 0.26202  , 0.32890  ,  3.1702e+07 , 0.25259     , 0.91326  ,  9.521e-09   ,  3.424e-16   , -0.09947 ]
+        #self.gdict['nuv4'] = [ 0.41113  , 0.31998  ,  3.1648e+07 , 0.45427     , 0.90299  ,  6.874e-09   ,  3.887e-16   , -0.16182 ]
+        #conversion from idl to python is {0,1,2,3,4,5,6,7}
+        self.gdict['fuv1'] = [ 0.13676  , 0.11199     ,  3.4355e+07 , 0.57852  , 0.53048  ,  2.337e-08   ,  6.981e-16   , -0.35432 ]
+        self.gdict['fuv2'] = [ 0.26720  , 0.20045     ,  3.1565e+07 , 0.37567  , 0.89111  ,  2.868e-08   ,  4.003e-16   , -0.56086 ]
+        self.gdict['fuv3'] = [ 1.50775  , 1.71743     ,  3.1505e+07 , 0.31094  , -0.12981 ,  2.169e-08   ,  1.319e-15   , -0.37175 ]
+        self.gdict['fuv4'] = [ 0.23718  , 0.18892     ,  3.1155e+07 , 0.35511  , 0.86652  ,  1.398e-08   ,  1.091e-15   , -0.40907 ]
+        self.gdict['nuv1'] = [ 0.55083  , 0.54792     ,  3.1788e+07 , 0.32558  , -0.08227 ,  3.116e-09   ,  2.823e-16   , -0.13231 ]
+        self.gdict['nuv2'] = [ 0.71724  , 0.69646     ,  3.1847e+07 , 0.32991  , 0.92275  ,  1.788e-09   ,  3.599e-16   , -0.15109 ]
+        self.gdict['nuv3'] = [ 0.26202  , 0.25259     ,  3.1702e+07 , 0.32890  , 0.91326  ,  9.521e-09   ,  3.424e-16   , -0.09947 ]
+        self.gdict['nuv4'] = [ 0.41113  , 0.45427     ,  3.1648e+07 , 0.31998  , 0.90299  ,  6.874e-09   ,  3.887e-16   , -0.16182 ]
 
 
         #dictionary of time offsets (i.e. start times in IDL anytim format)
@@ -65,7 +74,7 @@ class gui_dark(Tk.Frame):
             self.gdict[i+'_max'] = [ np.inf]*len(self.gdict[i])
 
         #list for parameters in order
-        self.plis = ['Amp1','Phi1','P1','Amp2','Phi2','Trend','Quad','Offset']
+        self.plis = ['Amp1','Amp2','P1','Phi1','Phi2','Trend','Quad','Offset']
 
         #create parent variable
         self.parent = parent
@@ -327,7 +336,7 @@ class gui_dark(Tk.Frame):
 
 
     #Pedestal offset model
-    def offset(self,dt0,amp1,phi1,p1,amp2,phi2,trend,quad,off):
+    def offset(self,dt0,amp1,amp2,p1,phi1,phi2,trend,quad,off):
         c = 2.*np.pi
         dtq = dt0-self.dtq0[self.ptype]
         #do not add quadratic term before start time
@@ -337,9 +346,9 @@ class gui_dark(Tk.Frame):
 
     #print data to terminal
     def Print(self):
-        print '      {0:10},{3:10},{2:15},{1:10},{4:10},{5:20},{6:20},{7:10}'.format('Amp1','Phi1','P1','Amp2','Phi2','Trend','Quad','Offset')
+        print '      {0:10},{1:10},{2:15},{3:10},{4:10},{5:20},{6:20},{7:10}'.format('Amp1','Amp2','P1','Phi1','Phi2','Trend','Quad','Offset')
         for i in self.b_keys:
-            print '{0}=[{1:^10.5f},{4:^10.5f},{3:^15.4e},{2:^10.5f},{5:^10.5f},{6:^20.9e},{7:^20.9e},{8:^10.5f}]'.format(i,*self.gdict[i])
+            print '{0}=[{1:^10.5f},{2:^10.5f},{3:^15.4e},{4:^10.5f},{5:^10.5f},{6:^20.9e},{7:^20.9e},{8:^10.5f}]'.format(i,*self.gdict[i])
 
     #Refit the model
     def refit(self):
