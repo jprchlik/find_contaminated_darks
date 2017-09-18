@@ -27,6 +27,11 @@ else:
 class gui_dark(Tk.Frame):
 
     def __init__(self,parent):
+        """
+        Program to fit the long term evolution of the IRIS pedestal. 
+
+
+        """
         Tk.Frame.__init__(self,parent,background='white') #create initial frame with white background
 
         #dictionary of initial Guess parameters (Manually update with the previous version of trend fix 
