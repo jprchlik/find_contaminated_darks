@@ -74,7 +74,7 @@ def main():
 #      if not page_token:
 #        break
 
-    span = 31
+    span = 15
     now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
     onmonth = (datetime.datetime.utcnow()-datetime.timedelta(days=span)).isoformat()+'Z'
 #    print('Getting days with darks')
