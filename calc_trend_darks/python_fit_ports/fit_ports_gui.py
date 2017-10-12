@@ -37,14 +37,24 @@ class gui_dark(Tk.Frame):
         #dictionary of initial Guess parameters (Manually update with the previous version of trend fix 
         self.gdict = {}
         #conversion from idl iris_make_dark to python is {0,1,2,3,4,5,6,7}
-        self.gdict['fuv1'] = [ 0.13676  , 0.11199     ,  3.4355e+07 , 0.57852  , 0.53048  ,  2.337e-08   ,  6.981e-16   , -0.35432 ]
-        self.gdict['fuv2'] = [ 0.26720  , 0.20045     ,  3.1565e+07 , 0.37567  , 0.89111  ,  2.868e-08   ,  4.003e-16   , -0.56086 ]
-        self.gdict['fuv3'] = [ 1.50775  , 1.71743     ,  3.1505e+07 , 0.31094  , -0.12981 ,  2.169e-08   ,  1.319e-15   , -0.37175 ]
-        self.gdict['fuv4'] = [ 0.23718  , 0.18892     ,  3.1155e+07 , 0.35511  , 0.86652  ,  1.398e-08   ,  1.091e-15   , -0.40907 ]
-        self.gdict['nuv1'] = [ 0.55083  , 0.54792     ,  3.1788e+07 , 0.32558  , -0.08227 ,  3.116e-09   ,  2.823e-16   , -0.13231 ]
-        self.gdict['nuv2'] = [ 0.71724  , 0.69646     ,  3.1847e+07 , 0.32991  , 0.92275  ,  1.788e-09   ,  3.599e-16   , -0.15109 ]
-        self.gdict['nuv3'] = [ 0.26202  , 0.25259     ,  3.1702e+07 , 0.32890  , 0.91326  ,  9.521e-09   ,  3.424e-16   , -0.09947 ]
-        self.gdict['nuv4'] = [ 0.41113  , 0.45427     ,  3.1648e+07 , 0.31998  , 0.90299  ,  6.874e-09   ,  3.887e-16   , -0.16182 ]
+        #Add time dependent evolution of one of the sin peaks
+        #Added P2 for testing
+        ##self.gdict['fuv1'] = [ 0.13676  , 0.11199     ,  3.4355e+07 , 1.0 , 0.57852  , 0.53048  ,  2.337e-08   ,  6.981e-16   , -0.35432 ]
+        ##self.gdict['fuv2'] = [ 0.26720  , 0.20045     ,  3.1565e+07 , 1.0 , 0.37567  , 0.89111  ,  2.868e-08   ,  4.003e-16   , -0.56086 ]
+        ##self.gdict['fuv3'] = [ 1.50775  , 1.71743     ,  3.1505e+07 , 1.0 , 0.31094  , -0.12981 ,  2.169e-08   ,  1.319e-15   , -0.37175 ]
+        ##self.gdict['fuv4'] = [ 0.23718  , 0.18892     ,  3.1155e+07 , 1.0 , 0.35511  , 0.86652  ,  1.398e-08   ,  1.091e-15   , -0.40907 ]
+        ##self.gdict['nuv1'] = [ 0.55083  , 0.54792     ,  3.1788e+07 , 1.0 , 0.32558  , -0.08227 ,  3.116e-09   ,  2.823e-16   , -0.13231 ]
+        ##self.gdict['nuv2'] = [ 0.71724  , 0.69646     ,  3.1847e+07 , 1.0 , 0.32991  , 0.92275  ,  1.788e-09   ,  3.599e-16   , -0.15109 ]
+        ##self.gdict['nuv3'] = [ 0.26202  , 0.25259     ,  3.1702e+07 , 1.0 , 0.32890  , 0.91326  ,  9.521e-09   ,  3.424e-16   , -0.09947 ]
+        ##self.gdict['nuv4'] = [ 0.41113  , 0.45427     ,  3.1648e+07 , 1.0 , 0.31998  , 0.90299  ,  6.874e-09   ,  3.887e-16   , -0.16182 ]
+        self.gdict['fuv1'] = [ 0.13676  , 0.11199     ,  3.4355e+07  , 0.57852  , 0.53048  ,  2.337e-08   ,  6.981e-16   , -0.35432 ]
+        self.gdict['fuv2'] = [ 0.26720  , 0.20045     ,  3.1565e+07  , 0.37567  , 0.89111  ,  2.868e-08   ,  4.003e-16   , -0.56086 ]
+        self.gdict['fuv3'] = [ 1.50775  , 1.71743     ,  3.1505e+07  , 0.31094  , -0.12981 ,  2.169e-08   ,  1.319e-15   , -0.37175 ]
+        self.gdict['fuv4'] = [ 0.23718  , 0.18892     ,  3.1155e+07  , 0.35511  , 0.86652  ,  1.398e-08   ,  1.091e-15   , -0.40907 ]
+        self.gdict['nuv1'] = [ 0.55083  , 0.54792     ,  3.1788e+07  , 0.32558  , -0.08227 ,  3.116e-09   ,  2.823e-16   , -0.13231 ]
+        self.gdict['nuv2'] = [ 0.71724  , 0.69646     ,  3.1847e+07  , 0.32991  , 0.92275  ,  1.788e-09   ,  3.599e-16   , -0.15109 ]
+        self.gdict['nuv3'] = [ 0.26202  , 0.25259     ,  3.1702e+07  , 0.32890  , 0.91326  ,  9.521e-09   ,  3.424e-16   , -0.09947 ]
+        self.gdict['nuv4'] = [ 0.41113  , 0.45427     ,  3.1648e+07  , 0.31998  , 0.90299  ,  6.874e-09   ,  3.887e-16   , -0.16182 ]
 
 
 
@@ -76,6 +86,8 @@ class gui_dark(Tk.Frame):
 
         #list for parameters in order
         self.plis = ['Amp1','Amp2','P1','Phi1','Phi2','Trend','Quad','Offset']
+        #add P2 for testing
+        #self.plis = ['Amp1','Amp2','P1','P2','Phi1','Phi2','Trend','Quad','Offset']
 
         #create parent variable
         self.parent = parent
@@ -229,9 +241,9 @@ class gui_dark(Tk.Frame):
                 self.ivar[i+'_'+self.plis[c]+'_max'].grid(row=3*r+3,column=c+col+2)
 
                 #bind input to return event
-                self.ivar[i+'_'+self.plis[c]+'_min'].bind("<Return>",self.iris_param)
-                self.ivar[i+'_'+self.plis[c]+'_med'].bind("<Return>",self.iris_param)
-                self.ivar[i+'_'+self.plis[c]+'_max'].bind("<Return>",self.iris_param)
+                self.ivar[i+'_'+self.plis[c]+'_min'].bind("<Return>",self.get_iris_param)
+                self.ivar[i+'_'+self.plis[c]+'_med'].bind("<Return>",self.get_iris_param)
+                self.ivar[i+'_'+self.plis[c]+'_max'].bind("<Return>",self.get_iris_param)
 
 
     #update the port values in the GUI
@@ -243,25 +255,25 @@ class gui_dark(Tk.Frame):
            inp_min = '{0:10}'.format(self.gdict[i+'_min'][c])
    
            #create input text
-           self.ivar[i+'_'+self.plis[c]+'_min'].set(inp_min)
+           #self.ivar[i+'_'+self.plis[c]+'_min'].set(inp_min)
            self.ivar[i+'_'+self.plis[c]+'_med'].set(inp_val)
-           self.ivar[i+'_'+self.plis[c]+'_max'].set(inp_max)
+           #self.ivar[i+'_'+self.plis[c]+'_max'].set(inp_max)
 
 
 
     #Update parameters in gdict base on best fit values
-    def iris_param(self,onenter):
+    def get_iris_param(self,onenter):
         #release cursor from entry box and back to the figure
         #needs to be done otherwise key strokes will not work
         self.f.canvas._tkcanvas.focus_set()
 
        # loop over string containing all the gdict keys (i.e. port names)
         for m,i in enumerate(self.b_keys):
-            #loop over all parameters and update values
+            #loop over all parameters and update values (remove all white space before converting to float
             for c,j in enumerate(self.gdict[i]):
-               self.gdict[i][c] = float(self.ivar[i+'_'+self.plis[c]+'_med'].get()) 
-               self.gdict[i+'_min'][c] = float(self.ivar[i+'_'+self.plis[c]+'_min'].get()) 
-               self.gdict[i+'_max'][c] = float(self.ivar[i+'_'+self.plis[c]+'_max'].get()) 
+               self.gdict[i][c] = float(self.ivar[i+'_'+self.plis[c]+'_med'].get().replace(' ','')) 
+               self.gdict[i+'_min'][c] = float(self.ivar[i+'_'+self.plis[c]+'_min'].get().replace(' ','')) 
+               self.gdict[i+'_max'][c] = float(self.ivar[i+'_'+self.plis[c]+'_max'].get().replace(' ','')) 
 
 
     #Update shown parameters base on new best fit
@@ -277,10 +289,13 @@ class gui_dark(Tk.Frame):
                    dfmt = '{0:10.5e}'
                elif abs(self.gdict[i][c]) > 10000.:
                    dfmt = '{0:10.1f}'
+               elif abs(self.gdict[i][c]) == 0:
+                   dfmt = '{0:10d}'
                else:
                    dfmt = '{0:10.5f}'
 
                #update in text box
+               #self.ivar[i+'_'+self.plis[c]+'_med'].insert(0,dfmt.format(self.gdict[i][c]))
                self.ivar[i+'_'+self.plis[c]+'_med'].insert(0,dfmt.format(self.gdict[i][c]))
 
 
@@ -385,7 +400,9 @@ class gui_dark(Tk.Frame):
         dtq = dt0-self.dtq0[self.ptype]
         #do not add quadratic term before start time
         dtq[dtq < 0.] = 0.
+        #trying to remove 6 month period because it is not the same thing (one is eclipse the other is orbital)
         return (amp1*np.sin(c*(dt0/p1+phi1)))+(amp2*np.sin(c*(dt0/(p1/2.)+phi2)))+(trend*(dt0))+(quad*(dtq**2.))+(off)
+        #return (amp1*(np.sin(c*(dt0/(2.*p1)+phi1)))**2.)+(amp2*(np.sin(c*(dt0/(2.*p1/2.)+phi2))**2))+(trend*(dt0))+(quad*(dtq**2.))+(p2*(dt0**3.))+(off)
 
 
     #print data to terminal
@@ -442,6 +459,7 @@ class gui_dark(Tk.Frame):
                                       
                 #update with new fit values
                 self.gdict[i] = popt
+                #update strings in GUI
 
             #remove temp line
             t_line.remove()
@@ -449,13 +467,15 @@ class gui_dark(Tk.Frame):
         
         #update parameters in the box
         self.iris_show()
+        #self.update_port_vals()
         #update plots
         self.iris_dark_plot()
             
     #resets parameter guesses
     def reset(self):
         self.gdict = self.idict.copy()
-        self.update_port_vals()
+        self.iris_show()
+        #self.update_port_vals()
 
 
 #Exits the program
