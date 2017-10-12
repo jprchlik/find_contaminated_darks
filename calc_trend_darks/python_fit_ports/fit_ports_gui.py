@@ -47,6 +47,7 @@ class gui_dark(Tk.Frame):
         self.gdict['nuv4'] = [ 0.41113  , 0.45427     ,  3.1648e+07 , 0.31998  , 0.90299  ,  6.874e-09   ,  3.887e-16   , -0.16182 ]
 
 
+
         #dictionary of time offsets (i.e. start times in IDL anytim format)
         self.t0dict =  {}
         self.t0dict['fuv1'] = 1090654728.
@@ -69,6 +70,9 @@ class gui_dark(Tk.Frame):
         for i in self.b_keys:
             self.gdict[i+'_min'] = [-np.inf]*len(self.gdict[i])
             self.gdict[i+'_max'] = [ np.inf]*len(self.gdict[i])
+
+        #set up initial dictionary of guesses
+        self.idict = self.gdict.copy()
 
         #list for parameters in order
         self.plis = ['Amp1','Amp2','P1','Phi1','Phi2','Trend','Quad','Offset']
@@ -154,6 +158,8 @@ class gui_dark(Tk.Frame):
         printButton.pack(side=Tk.RIGHT,padx=5,pady=5)
         refitButton = Tk.Button(self,text="Refit",command=self.refit)
         refitButton.pack(side=Tk.RIGHT,padx=5,pady=5)
+        resetButton = Tk.Button(self,text="Reset",command=self.reset)
+        resetButton.pack(side=Tk.RIGHT,padx=5,pady=5)
 
 
         #list of port to refit
@@ -226,6 +232,21 @@ class gui_dark(Tk.Frame):
                 self.ivar[i+'_'+self.plis[c]+'_min'].bind("<Return>",self.iris_param)
                 self.ivar[i+'_'+self.plis[c]+'_med'].bind("<Return>",self.iris_param)
                 self.ivar[i+'_'+self.plis[c]+'_max'].bind("<Return>",self.iris_param)
+
+
+    #update the port values in the GUI
+    def update_port_vals(self):
+       #loop over all columns (parameters) for each port
+       for c,j in enumerate(self.gdict[i]):
+           inp_val = '{0:10}'.format(j)
+           inp_max = '{0:10}'.format(self.gdict[i+'_max'][c])
+           inp_min = '{0:10}'.format(self.gdict[i+'_min'][c])
+   
+           #create input text
+           self.ivar[i+'_'+self.plis[c]+'_min'].set(inp_min)
+           self.ivar[i+'_'+self.plis[c]+'_med'].set(inp_val)
+           self.ivar[i+'_'+self.plis[c]+'_max'].set(inp_max)
+
 
 
     #Update parameters in gdict base on best fit values
@@ -431,6 +452,10 @@ class gui_dark(Tk.Frame):
         #update plots
         self.iris_dark_plot()
             
+    #resets parameter guesses
+    def reset(self):
+        self.gdict = self.idict.copy()
+        self.update_port_vals()
 
 
 #Exits the program
