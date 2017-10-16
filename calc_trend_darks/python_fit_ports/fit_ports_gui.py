@@ -173,6 +173,15 @@ class gui_dark(Tk.Frame):
         resetButton = Tk.Button(self,text="Reset",command=self.reset)
         resetButton.pack(side=Tk.RIGHT,padx=5,pady=5)
 
+        #set up percent variation box (maximum allowed variation in parameters)
+        inp_lab_per = Tk.Label(self,textvariable=Tk.StringVar(value='% Range'),height=1,width=10)
+        inp_lab_per.pack(side=Tk.RIGHT,padx=5,pady=5)
+
+        inp_val_per = Tk.StringVar(value='{0:10}'.format(np.inf))
+        self.val_per = Tk.Entry(self,textvariable=inp_val_per,width=12)
+        self.val_per.bind("<Return>",self.set_limt_param)
+ 
+
 
         #list of port to refit
         self.refit_list = []
@@ -259,6 +268,20 @@ class gui_dark(Tk.Frame):
            self.ivar[i+'_'+self.plis[c]+'_med'].set(inp_val)
            #self.ivar[i+'_'+self.plis[c]+'_max'].set(inp_max)
 
+
+    #Update parameters in gdict with percentage limit
+    def set_limt_param(self,onenter):
+        #release cursor from entry box and back to the figure
+        #needs to be done otherwise key strokes will not work
+        self.f.canvas._tkcanvas.focus_set()
+
+       # loop over string containing all the gdict keys (i.e. port names)
+        for m,i in enumerate(self.b_keys):
+            #loop over all parameters and update values (remove all white space before converting to float
+            for c,j in enumerate(self.gdict[i]):
+               self.gdict[i][c] = float(self.ivar[i+'_'+self.plis[c]+'_med'].get().replace(' ','')) 
+               self.gdict[i+'_min'][c] = self.gdict[i][c]*
+               self.gdict[i+'_max'][c] = self.gdict[i][c]*
 
 
     #Update parameters in gdict base on best fit values
