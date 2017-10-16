@@ -441,7 +441,7 @@ class gui_dark(Tk.Frame):
             port  = self.fdata[i][1]
             errs  = self.fdata[i][2]
             self.ptype = i[:-1]
-            popt, pcov = curve_fit(self.offset,dt0,port,p0=guess,sigma=errs,bounds=(mins,maxs)) 
+            popt, pcov = curve_fit(self.offset,dt0,port,p0=guess,sigma=errs,bounds=(mins,maxs),xtol=1e-10) 
 
 
  
