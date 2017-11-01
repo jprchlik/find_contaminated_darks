@@ -92,8 +92,15 @@ class gui_dark(Tk.Frame):
         #set up initial dictionary of guesses
         self.idict = self.gdict.copy()
 
+        #initialize scaling limit variable
+        self.sc_limit = None
+
         #list for parameters in order
         self.plis = ['Amp1','Amp2','P1','Phi1','Phi2','Trend','Quad','Offset']
+        #add parameter code corresponding to position
+        self.p_code = {}
+        for j,i in enumerate(self.plis): self.p_code['{0:1d}'.format(j)] = i
+
         #add P2 for testing
         #self.plis = ['Amp1','Amp2','P1','P2','Phi1','Phi2','Trend','Quad','Offset']
 
@@ -194,12 +201,27 @@ class gui_dark(Tk.Frame):
 
         #list of port to refit
         self.refit_list = []
+
         #set up check boxes for which ports to refit
         self.check_box = {}
         for i in self.b_keys:
             self.check_box[i+'_val'] = Tk.IntVar()
             self.check_box[i] = Tk.Checkbutton(master=self,text=i.upper(),variable=self.check_box[i+'_val'],onvalue=1,offvalue=0,command=self.refit_list_com)
             self.check_box[i].pack(side=Tk.LEFT,padx=5,pady=5)
+
+        #set up box showing which parameters to freeze
+        inp_lab_per = Tk.Label(self,textvariable=Tk.StringVar(value='Freeze Checked Par. = '),height=1,width=20)
+        inp_lab_per.pack(side=Tk.LEFT,padx=5,pady=5)
+
+        #list of parameters to freeze
+        self.freeze_list = []
+        #set up check boxes for which parameter to freeze
+        self.freeze_box = {}
+        for i in self.plis:
+            self.freeze_box[i+'_val'] = Tk.IntVar()
+            self.freeze_box[i] = Tk.Checkbutton(master=self,text=i.upper(),variable=self.freeze_box[i+'_val'],onvalue=1,offvalue=0,command=self.freeze_list_com)
+            self.freeze_box[i].pack(side=Tk.LEFT,padx=5,pady=5)
+
 
         #dictionary containing variable descriptors 
         self.dscr = {}
@@ -291,8 +313,10 @@ class gui_dark(Tk.Frame):
         for m,i in enumerate(self.b_keys):
             #loop over all parameters and update values (remove all white space before converting to float
             for c,j in enumerate(self.gdict[i]):
-               self.gdict[i+'_min'][c] = self.gdict[i][c]-np.abs(self.sc_limit*self.gdict[i][c])
-               self.gdict[i+'_max'][c] = self.gdict[i][c]+np.abs(self.sc_limit*self.gdict[i][c])
+               #skip frozen parameters
+               if self.p_code['{0:1d}'.format(c)] not in self.freeze_list: 
+                   self.gdict[i+'_min'][c] = self.gdict[i][c]-np.abs(self.sc_limit*self.gdict[i][c])
+                   self.gdict[i+'_max'][c] = self.gdict[i][c]+np.abs(self.sc_limit*self.gdict[i][c])
 
 
         #update parameters shown in the boxes
@@ -474,6 +498,46 @@ class gui_dark(Tk.Frame):
             #if not checked and not in list do nothing
             else: continue
 
+    #parameter freeze list
+    def freeze_list_com(self):
+        #allows you to get back to the main part of the GUI
+        self.f.canvas._tkcanvas.focus_set()
+
+        #freeze limit percentage
+        self.fr_limit = 0.000001
+
+        #check which boxes are checked and use array locattion to update limits
+        for m,i in enumerate(self.plis):
+            #if checked and not in list update the list 
+            if ((self.freeze_box[i+'_val'].get() == 1) and (i not in self.freeze_list)):
+                self.freeze_list.append(i)
+                #set selected limit to 0.0001* of primary value
+                for j in self.b_keys:
+                    self.gdict[j+'_min'][m] = self.gdict[j][m]-np.abs(self.fr_limit*self.gdict[j][m])
+                    self.gdict[j+'_max'][m] = self.gdict[j][m]+np.abs(self.fr_limit*self.gdict[j][m])
+            #if freezeed and already in the list continue 
+            elif ((self.freeze_box[i+'_val'].get() == 1) and (i in self.freeze_list)):
+                continue
+            #if not freezeed remove from list and deselect
+            elif ((self.freeze_box[i+'_val'].get() == 0) and (i in self.freeze_list)):
+                self.freeze_list.remove(i)
+                self.freeze_box[i].deselect()
+
+
+                #set to global limit if sc_limit is set
+                if isinstance(self.sc_limit,float):
+                    for j in self.b_keys:
+                        self.gdict[j+'_min'][m] = self.gdict[j][m]-np.abs(self.sc_limit*self.gdict[j][m])
+                        self.gdict[j+'_max'][m] = self.gdict[j][m]+np.abs(self.sc_limit*self.gdict[j][m])
+                else: 
+                    #set unselected limit to infinity
+                    for j in self.b_keys: self.gdict[j+'_min'][m],self.gdict[j+'_max'][m] = -np.inf,np.inf
+            #if not freezeed and not in list do nothing
+            else: continue
+
+        self.iris_show() 
+
+
     #Refit the model
     def refit(self):
         #refit for every model in refit list
@@ -499,7 +563,7 @@ class gui_dark(Tk.Frame):
             new_var = self.get_var(i,popt)
 
             #Ask if you should update the new parameter for a given fit
-            if box.askyesno('Update','Should the Dark Trend Update for {0} (dashed line)?\n $\sigma$(old,new) = ({1:3.2f},{2:3.2f})'.format(i.upper(),old_var,new_var)):
+            if box.askyesno('Update','Should the Dark Trend Update for {0} (dashed line)?\n $\sigma$(old,new) = ({1:5.4f},{2:5.4f})'.format(i.upper(),old_var,new_var)):
                                       
                 #update with new fit values
                 self.gdict[i] = popt
