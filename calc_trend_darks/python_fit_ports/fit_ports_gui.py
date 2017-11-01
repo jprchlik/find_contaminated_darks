@@ -47,14 +47,22 @@ class gui_dark(Tk.Frame):
         ##self.gdict['nuv2'] = [ 0.71724  , 0.69646     ,  3.1847e+07 , 1.0 , 0.32991  , 0.92275  ,  1.788e-09   ,  3.599e-16   , -0.15109 ]
         ##self.gdict['nuv3'] = [ 0.26202  , 0.25259     ,  3.1702e+07 , 1.0 , 0.32890  , 0.91326  ,  9.521e-09   ,  3.424e-16   , -0.09947 ]
         ##self.gdict['nuv4'] = [ 0.41113  , 0.45427     ,  3.1648e+07 , 1.0 , 0.31998  , 0.90299  ,  6.874e-09   ,  3.887e-16   , -0.16182 ]
-        self.gdict['fuv1'] = [ 0.13676  , 0.11199     ,  3.4355e+07  , 0.57852  , 0.53048  ,  2.337e-08   ,  6.981e-16   , -0.35432 ]
-        self.gdict['fuv2'] = [ 0.26720  , 0.20045     ,  3.1565e+07  , 0.37567  , 0.89111  ,  2.868e-08   ,  4.003e-16   , -0.56086 ]
-        self.gdict['fuv3'] = [ 1.50775  , 1.71743     ,  3.1505e+07  , 0.31094  , -0.12981 ,  2.169e-08   ,  1.319e-15   , -0.37175 ]
-        self.gdict['fuv4'] = [ 0.23718  , 0.18892     ,  3.1155e+07  , 0.35511  , 0.86652  ,  1.398e-08   ,  1.091e-15   , -0.40907 ]
-        self.gdict['nuv1'] = [ 0.55083  , 0.54792     ,  3.1788e+07  , 0.32558  , -0.08227 ,  3.116e-09   ,  2.823e-16   , -0.13231 ]
-        self.gdict['nuv2'] = [ 0.71724  , 0.69646     ,  3.1847e+07  , 0.32991  , 0.92275  ,  1.788e-09   ,  3.599e-16   , -0.15109 ]
-        self.gdict['nuv3'] = [ 0.26202  , 0.25259     ,  3.1702e+07  , 0.32890  , 0.91326  ,  9.521e-09   ,  3.424e-16   , -0.09947 ]
-        self.gdict['nuv4'] = [ 0.41113  , 0.45427     ,  3.1648e+07  , 0.31998  , 0.90299  ,  6.874e-09   ,  3.887e-16   , -0.16182 ]
+        #self.gdict['fuv1'] = [ 0.13676  , 0.11199     ,  3.4355e+07  , 0.57852  , 0.53048  ,  2.337e-08   ,  6.981e-16   , -0.35432 ]
+        #self.gdict['fuv2'] = [ 0.26720  , 0.20045     ,  3.1565e+07  , 0.37567  , 0.89111  ,  2.868e-08   ,  4.003e-16   , -0.56086 ]
+        #self.gdict['fuv3'] = [ 1.50775  , 1.71743     ,  3.1505e+07  , 0.31094  , -0.12981 ,  2.169e-08   ,  1.319e-15   , -0.37175 ]
+        #self.gdict['fuv4'] = [ 0.23718  , 0.18892     ,  3.1155e+07  , 0.35511  , 0.86652  ,  1.398e-08   ,  1.091e-15   , -0.40907 ]
+        #self.gdict['nuv1'] = [ 0.55083  , 0.54792     ,  3.1788e+07  , 0.32558  , -0.08227 ,  3.116e-09   ,  2.823e-16   , -0.13231 ]
+        #self.gdict['nuv2'] = [ 0.71724  , 0.69646     ,  3.1847e+07  , 0.32991  , 0.92275  ,  1.788e-09   ,  3.599e-16   , -0.15109 ]
+        #self.gdict['nuv3'] = [ 0.26202  , 0.25259     ,  3.1702e+07  , 0.32890  , 0.91326  ,  9.521e-09   ,  3.424e-16   , -0.09947 ]
+        #self.gdict['nuv4'] = [ 0.41113  , 0.45427     ,  3.1648e+07  , 0.31998  , 0.90299  ,  6.874e-09   ,  3.887e-16   , -0.16182 ]
+        self.gdict['fuv1'] = [  0.189662 , 0.0178533, 3.15070e+07  , 0.445460    , 0.104290 ,  2.925e-08   ,  5.473e-16  , -0.598880]
+        self.gdict['fuv2'] = [ 0.26720   , 0.20045  , 3.1565e+07   , 0.37567     , 0.89111  , 2.868e-08    ,  4.003e-16  , -0.56086 ]
+        self.gdict['fuv3'] = [1.48098    , 1.45770  , 3.15160e+07  , 0.333684    , 0.872832 , 2.856e-08    ,  1.151e-15  , -0.582085]
+        self.gdict['fuv4'] = [0.310112   , 0.132660 , 3.13800e+07  , 0.418674    , 0.951970 , 1.8805e-08   ,  9.618e-16  , -0.612558]
+        self.gdict['nuv1'] = [ 0.55083   , 0.54792  , 3.1788e+07   , 0.32558     , -0.08227 ,  3.116e-09   ,  2.823e-16  , -0.13231 ]
+        self.gdict['nuv2'] = [ 0.71724   , 0.69646  , 3.1847e+07   , 0.32991     , 0.92275  ,  1.788e-09   ,  3.599e-16  , -0.15109 ]
+        self.gdict['nuv3'] = [ 0.26202   , 0.25259  , 3.1702e+07   , 0.32890     , 0.91326  ,  9.521e-09   ,  3.424e-16  , -0.09947 ]
+        self.gdict['nuv4'] = [ 0.41113   , 0.45427  , 3.1648e+07   , 0.31998     , 0.90299  ,  6.874e-09   ,  3.887e-16  , -0.16182 ]
 
 
 
@@ -180,6 +188,7 @@ class gui_dark(Tk.Frame):
         inp_val_per = Tk.StringVar(value='{0:10}'.format(np.inf))
         self.val_per = Tk.Entry(self,textvariable=inp_val_per,width=12)
         self.val_per.bind("<Return>",self.set_limt_param)
+        self.val_per.pack(side=Tk.RIGHT,padx=1,pady=5)
  
 
 
@@ -275,13 +284,21 @@ class gui_dark(Tk.Frame):
         #needs to be done otherwise key strokes will not work
         self.f.canvas._tkcanvas.focus_set()
 
+        #scale parameters value
+        self.sc_limit = float(self.val_per.get().replace(' ',''))/100.
+
        # loop over string containing all the gdict keys (i.e. port names)
         for m,i in enumerate(self.b_keys):
             #loop over all parameters and update values (remove all white space before converting to float
             for c,j in enumerate(self.gdict[i]):
-               self.gdict[i][c] = float(self.ivar[i+'_'+self.plis[c]+'_med'].get().replace(' ','')) 
-               self.gdict[i+'_min'][c] = self.gdict[i][c]*
-               self.gdict[i+'_max'][c] = self.gdict[i][c]*
+               self.gdict[i+'_min'][c] = self.gdict[i][c]-np.abs(self.sc_limit*self.gdict[i][c])
+               self.gdict[i+'_max'][c] = self.gdict[i][c]+np.abs(self.sc_limit*self.gdict[i][c])
+
+
+        #update parameters shown in the boxes
+        self.iris_show()
+
+
 
 
     #Update parameters in gdict base on best fit values
@@ -305,7 +322,9 @@ class gui_dark(Tk.Frame):
         for m,i in enumerate(self.b_keys):
             #loop over all parameters and update values
             for c,j in enumerate(self.gdict[i]):
+               self.ivar[i+'_'+self.plis[c]+'_min'].delete(0,'end')
                self.ivar[i+'_'+self.plis[c]+'_med'].delete(0,'end')
+               self.ivar[i+'_'+self.plis[c]+'_max'].delete(0,'end')
 
                #set formatting based on output value
                if abs(self.gdict[i][c]) < .001:
@@ -319,7 +338,9 @@ class gui_dark(Tk.Frame):
 
                #update in text box
                #self.ivar[i+'_'+self.plis[c]+'_med'].insert(0,dfmt.format(self.gdict[i][c]))
+               self.ivar[i+'_'+self.plis[c]+'_min'].insert(0,dfmt.format(self.gdict[i+'_min'][c]))
                self.ivar[i+'_'+self.plis[c]+'_med'].insert(0,dfmt.format(self.gdict[i][c]))
+               self.ivar[i+'_'+self.plis[c]+'_max'].insert(0,dfmt.format(self.gdict[i+'_max'][c]))
 
 
          
