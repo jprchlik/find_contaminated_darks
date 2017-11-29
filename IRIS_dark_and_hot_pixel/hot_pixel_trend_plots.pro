@@ -26,7 +26,7 @@ if not keyword_set(outdir) then begin
 endif
 
 ;if not keyword_set(folder) then folder='/Volumes/Churchill/nschanch/iris/Hot_pixel_sav_files/5sigma_cutoff/'
-if not keyword_set(folder) then folder='/Volumes/Pegasus/jprchlik/IRIS_dark_and_hot_pixel/Hot_pixel_sav_files/5sigma_cutoff/'
+if not keyword_set(folder) then folder='Hot_pixel_sav_files/5sigma_cutoff/'
 
 if not keyword_set(type) then type='FUV'
 ;TODO: fix this so it automatically has every year since 2014. 
