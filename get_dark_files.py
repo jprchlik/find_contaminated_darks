@@ -148,8 +148,9 @@ class dark_times:
             sys.stdout.write("FAILED, No JSOC record exists")
             sys.exit(1)
 
-#check to see if darks are already downloaded Added 2017/03/20
-        if len(glob.glob(self.bdir+'/*')) < self.tol:
+        #check to see if darks are already downloaded Added 2017/03/20
+        #make sure the downloaded files are on the same day added 2017/12/05 (J. Prchlik)
+        if len(glob.glob(self.bdir+'/iris.lev1.{0}*.fits'.format(self.otime.strftime('%Y-%m-%d')))) < self.tol:
             #Dowloand the data using drms in par. (will fuss about mounted drive ocassionaly)
             for ii in index: self.download_par(ii)
 #DRMS DOES NOT WORK IN PARALELL 
