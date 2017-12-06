@@ -62,8 +62,9 @@ for ii=0, n_elements(year_list)-1 do begin
                 if iday[pp] eq 1 then begin
                     ;loop for days that only change by 1 and remove them from day array
                     checkd = uint(days)-uint(days[pp])
-                    baddou = where(checkd eq 1)
-                    iday[baddou] = 0
+                    baddou = where(checkd eq 1,counts)
+                   
+                    if counts gt 0 then iday[baddou] = 0
                 endif
             endfor
 
