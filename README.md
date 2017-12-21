@@ -119,7 +119,8 @@ I include an example output from September, 2016, which we know is contaminated 
 |  NUV20160921_182449.fits  | 2016/09/21T18:24:49  |     1   |     68  |    1.02 |
 |  NUV20160921_182506.fits  | 2016/09/21T18:25:06  |     1   |     48  |    5.02 |
 
-##temps/get_list_of_days.py
+temps/get_list_of_days.py
+-------------------------
 This is a simple python script, which grabs the temperature information from Lockheed.
 It uses the files created by find_con_darks to find days darks were observed.
 Then the program checks to make the temperature information does not exist locally,
@@ -127,7 +128,8 @@ and if it does not exist it downloads it.
 Finally, it formats the file to just the important temperatures so IDL calls it easily.
 
 
-##calc_trend_darks/dark_trend
+calc_trend_darks/dark_trend
+---------------------------
 The final component is the plotting of the dark trend with the average dark values for a given month overplotted.
 The program to run the fix is dark_trend.pro and has a simple syntax, which specifies whether to run the trend on the simpleB 
 (/simpleb) darks.
@@ -151,7 +153,8 @@ Upon completion of finding the averages the program calls plot_dark_trend with t
 and the observation times.
 Finally, the program saves the information to .sav and .txt files (alldark_ave_sig.sav and current_pixel_averages.txt).
 
-###par_commands/check_ave_pixel_sub.pro
+par_commands/check_ave_pixel_sub.pro
+------------------------------------
 This program's primary function is subtracting the current dark model from the set of darks passed to the program.
 The syntax for check_ave_pixel_sub is as follows:
 
@@ -168,7 +171,8 @@ levels is an array of dark pedestal values computed from the long term trend (4D
 and writefile is keyword which writes out the full dark-model dark-long term trend dark to a file. 
 
 
-###calc_dark_trend/plot_dark_trend.pro
+calc_dark_trend/plot_dark_trend.pro
+-----------------------------------
 plot_dark_trend groups the average dark information and plots it as a function of time with the long term pedestal trend
 overplotted.
 Again everything is set by default if you use the dark_trend program,
