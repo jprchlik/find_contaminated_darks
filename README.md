@@ -29,14 +29,14 @@ Currently, the job runs on my CfA machine by the following cronjob (crontab -e):
 
 My process_darks.csh looks like the following:
 
->#/bin/tcsh
->setenv PYTHONPATH /PathToMyPythonLibrary/personaladditions/code/python
->alias python /PathToMyPythonExe/anaconda2/bin/python
->setenv /PathToMyCondaPythonLibrary/lib/python2.7/site-packages:${PYTHONPATH}
->source $HOME/.cshrc
->source $HOME/.cshrc.user
->cd /MyPegasusDirectory/iris/find_con_darks/
->./run_dark_checks.csh
+>#/bin/tcsh  
+>setenv PYTHONPATH /PathToMyPythonLibrary/personaladditions/code/python  
+>alias python /PathToMyPythonExe/anaconda2/bin/python  
+>setenv /PathToMyCondaPythonLibrary/lib/python2.7/site-packages:${PYTHONPATH}  
+>source $HOME/.cshrc  
+>source $HOME/.cshrc.user  
+>cd /MyPegasusDirectory/iris/find_con_darks/  
+>./run_dark_checks.csh  
 
 
 run_dark_checks.csh
