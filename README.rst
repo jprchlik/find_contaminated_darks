@@ -1,4 +1,4 @@
-#Long term dark analysis 
+#Long term dark analysis#  
 For historical (i.e. human reasons) the directory structure hides the true function of this program.
 Primarily the directory now exists to test the long term trending of the IRIS pedestal dark level,
 which was first noticed to be discrepant from the launch model in ~June 2014.
