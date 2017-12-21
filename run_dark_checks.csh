@@ -50,7 +50,7 @@ if ($splt[1] != 'FAILED') then
 
 
 #run the hot pixel routine when finished
-    cd ${HOME}/pegasus/iris/find_con_darks/IRIS_dark_and_hot_pixel/
+    cd ../IRIS_dark_and_hot_pixel/
     sswidl -e "hot_pixel_plot_wrapper"
 else echo ${dday}
 
