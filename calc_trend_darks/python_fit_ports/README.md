@@ -34,7 +34,7 @@ A file containing a list of initial parameters for the long term pedestal offset
 The format is the same as the format printed by fit_ports_gui.py (e.g. below).
 
 
->       Amp1      ,Amp2      ,P1             ,Phi1      ,Phi2      ,Trend               ,Quad                ,Offset    
+\>     Amp1      ,Amp2      ,P1             ,Phi1      ,Phi2      ,Trend               ,Quad                ,Offset    
 >fuv1=[ 0.16210  , 0.02622  ,  3.1504e+07   , 0.41599  , 0.09384  ,  2.819499502e-08   ,  5.705285157e-16   , -0.56933 ]  
 >fuv2=[ 0.25704  , 0.19422  ,  3.1568e+07   , 0.37571  , 0.89102  ,  2.832588907e-08   ,  4.108370809e-16   , -0.54180 ]  
 >fuv3=[ 1.46520  , 1.62863  ,  3.1522e+07   , 0.33362  , 0.87265  ,  2.618708232e-08   ,  1.219050166e-15   , -0.60404 ]  
