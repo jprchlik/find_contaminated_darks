@@ -23,7 +23,8 @@ Finally, compared the observed to the modeled dark pedestal trend.
 (Bonus the hot_pixel_plot_wrapper is included at the end of the script and based on my directory structure.
 I should just integrate into the main code because it solves a similar problem).
 
-##run_dark_checks.csh
+run_dark_checks.csh
+-------------------
 The c-shell file is a wrapper combining the IDL and python portions of the program.
 In order to run the script from your machine you will need to do a few things.
 First, is make this script executable by typing chmod a+x run_dark_checks.csh.
@@ -32,12 +33,14 @@ Finally, you need to follow instructions at https://developers.google.com/google
 to get google calendar API for your email address.
 
 
-##find_dark_runs.py
+find_dark_runs.py
+-----------------
 This program requires the google calendar API referenced above,
 but other than that is quite simple.
 The program searches the calendar for the string calib3:darks and sends the day to get_dark_files.py and the year,month to c-shell script.
 
-##get_dark_files.py
+get_dark_files.py
+-----------------
 This program is the work horse for obtaining the darks from JSOC.
 It takes the time from find_dark_runs.py and whether you are seeking complexA or simpleB darks (find_dark_runs asks for both).
 The program then gets the timeline text from Lockheed, which it parses to find start and stop times for OBSIDs corresponding to the selected dark.
@@ -45,7 +48,9 @@ Next, it uses the time frame found in the timeline to query JSOC iris level1 usi
 Once the JSOC query finishes, 
 the program downloads the files and renames them according to a previous file naming convention for convince.
 
-##do_lev1to0_darks
+do_lev1to0_darks
+----------------
+This program is the work horse for obtaining the darks from JSOC.
 This is a legacy program, which uses sswidl libraries.
 You may call it by the following commands in IDL.
 
@@ -61,7 +66,8 @@ cause hangs in my experience.
 Therefore, I create the files locally then immediately move them in the script.
 
 
-##find_contaminated_darks
+find_contaminated_darks
+----------------
 An IDL program which finds IRIS darks contaminated by SAA or CMEs.
 Must add current path to IDL_PATH in order for the program to run in parallel.
 If you don't then the program will fail saying it cannot find a specified function.
@@ -91,43 +97,27 @@ So far the Gaussian fraction prediects 12 months are contaminated by SAAs, since
 I include an example output from September, 2016, which we know is contaminated by SAA from 18:09:11 to 18:26:12.
  What we find is the SAA only contributed significantly from 18:14:49 to 18:20:52.
 
-#2016/09 Number Pass = 68 (90.6667%)
-                     file                  time    pass    total5   exptime
+2016/09 Number Pass = 68 (90.6667%)
 
-
-  NUV20160921_180506.fits   2016/09/21T18:05:06       1        20      5.02
-
-  NUV20160921_180552.fits   2016/09/21T18:05:52       1        30     30.02
-
-  NUV20160921_180937.fits   2016/09/21T18:09:37       1        10      0.05
-
-  NUV20160921_180949.fits   2016/09/21T18:09:49       1         8      1.02
-
-  NUV20160921_181006.fits   2016/09/21T18:10:06       1        26      5.02
-
-  NUV20160921_181052.fits   2016/09/21T18:10:52       1        25     30.02
-
-  NUV20160921_181437.fits   2016/09/21T18:14:37       1        41      0.05
-
-  NUV20160921_181449.fits   2016/09/21T18:14:49       0       251      1.02
-
-  NUV20160921_181506.fits   2016/09/21T18:15:06       0       207      5.02
-
-  NUV20160921_181552.fits   2016/09/21T18:15:52       0       185     30.02
-
-  NUV20160921_181937.fits   2016/09/21T18:19:37       0       640      0.05
-
-  NUV20160921_181949.fits   2016/09/21T18:19:49       0      1319      1.02
-
-  NUV20160921_182006.fits   2016/09/21T18:20:06       0       667      5.02
-
-  NUV20160921_182052.fits   2016/09/21T18:20:52       0       260     30.02
-
-  NUV20160921_182437.fits   2016/09/21T18:24:37       1        35      0.05
-
-  NUV20160921_182449.fits   2016/09/21T18:24:49       1        68      1.02
-
-  NUV20160921_182506.fits   2016/09/21T18:25:06       1        48      5.02
+|                     file  |                time  |  pass   | total5  | exptime |
+| ------------------------- |--------------------- | ------- | ------- | ------- |
+|  NUV20160921_180506.fits  | 2016/09/21T18:05:06  |     1   |     20  |    5.02 |
+|  NUV20160921_180552.fits  | 2016/09/21T18:05:52  |     1   |     30  |   30.02 |
+|  NUV20160921_180937.fits  | 2016/09/21T18:09:37  |     1   |     10  |    0.05 |
+|  NUV20160921_180949.fits  | 2016/09/21T18:09:49  |     1   |      8  |    1.02 |
+|  NUV20160921_181006.fits  | 2016/09/21T18:10:06  |     1   |     26  |    5.02 |
+|  NUV20160921_181052.fits  | 2016/09/21T18:10:52  |     1   |     25  |   30.02 |
+|  NUV20160921_181437.fits  | 2016/09/21T18:14:37  |     1   |     41  |    0.05 |
+|  NUV20160921_181449.fits  | 2016/09/21T18:14:49  |     0   |    251  |    1.02 |
+|  NUV20160921_181506.fits  | 2016/09/21T18:15:06  |     0   |    207  |    5.02 |
+|  NUV20160921_181552.fits  | 2016/09/21T18:15:52  |     0   |    185  |   30.02 |
+|  NUV20160921_181937.fits  | 2016/09/21T18:19:37  |     0   |    640  |    0.05 |
+|  NUV20160921_181949.fits  | 2016/09/21T18:19:49  |     0   |   1319  |    1.02 |
+|  NUV20160921_182006.fits  | 2016/09/21T18:20:06  |     0   |    667  |    5.02 |
+|  NUV20160921_182052.fits  | 2016/09/21T18:20:52  |     0   |    260  |   30.02 |
+|  NUV20160921_182437.fits  | 2016/09/21T18:24:37  |     1   |     35  |    0.05 |
+|  NUV20160921_182449.fits  | 2016/09/21T18:24:49  |     1   |     68  |    1.02 |
+|  NUV20160921_182506.fits  | 2016/09/21T18:25:06  |     1   |     48  |    5.02 |
 
 ##temps/get_list_of_days.py
 This is a simple python script, which grabs the temperature information from Lockheed.
