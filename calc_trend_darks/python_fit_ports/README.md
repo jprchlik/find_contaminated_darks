@@ -26,15 +26,27 @@ The model pedestal parameters' for CCD type and port are below their respective 
 the med row for each parameter is the maximum and minimum range to search for new parameters. The parameter range maybe 
 set automatically by usieng the % Range text box in the bottom right of the gui.
 
-
-Selecting port and freezing parameters  
+When observed trend in a port consistently does not look like the model is the only reason to use the GUI.  
+Fortunately, deviations from the trend do not happen to all ports at the same time.
+Therefore, you are often only refitting a few port every three months,
+which is why the GUI allow you to select the ports you want to refit.
+Furthermore, the parameters not all parameters need refit every recalibration,
+ which is why the GUI allows you to dynamic freeze some parameters. In the example below I only 
+wanted to refit FUV port 3 for the Amplitude of the sin function. 
+Selecting port and freezing parameters example below:   
 [![IMAGE ALT TEXT HERE](http://img.youtube.com/vi/v3VH7uBjTJw/0.jpg)](http://www.youtube.com/watch?v=v3VH7uBjTJw)
 
-Setting parameter range:  
+In the above example using an infinite range worked well. Frequently, using an unrestricted range causes the 
+program to find nonoptimal minimums. Therefore, I included a range box in the lower right. The range box
+sets the minimum and maximum allowed value for all thawed parameters. Of course this example did not benefit from
+a restricted range, but it is an outlier not the norm.
+Setting parameter range example below:  
 [![IMAGE ALT TEXT HERE](http://img.youtube.com/vi/1Nu14eoA0ww/0.jpg)](http://www.youtube.com/watch?v=1Nu14eoA0ww)
 
-
-Printing new parameters:  
+Finally, you will want to efficiently save new parameters. The GUI has the print button for that.
+The print button print the new parameter values in a format for the iris_trend_fix program, as well as,
+the initial_parameters.txt file.
+Printing new parameters example below:  
 [![IMAGE ALT TEXT HERE](http://img.youtube.com/vi/jC0AbvZRth8/0.jpg)](http://www.youtube.com/watch?v=jC0AbvZRth8)
 
 
