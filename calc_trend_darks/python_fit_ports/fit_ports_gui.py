@@ -55,16 +55,58 @@ class gui_dark(Tk.Frame):
         #self.gdict['nuv2'] = [ 0.71724  , 0.69646     ,  3.1847e+07  , 0.32991  , 0.92275  ,  1.788e-09   ,  3.599e-16   , -0.15109 ]
         #self.gdict['nuv3'] = [ 0.26202  , 0.25259     ,  3.1702e+07  , 0.32890  , 0.91326  ,  9.521e-09   ,  3.424e-16   , -0.09947 ]
         #self.gdict['nuv4'] = [ 0.41113  , 0.45427     ,  3.1648e+07  , 0.31998  , 0.90299  ,  6.874e-09   ,  3.887e-16   , -0.16182 ]
-        self.gdict['fuv1'] = [  0.189662 , 0.0178533, 3.15070e+07  , 0.445460    , 0.104290 ,  2.925e-08   ,  5.473e-16  , -0.598880]
-        self.gdict['fuv2'] = [ 0.26720   , 0.20045  , 3.1565e+07   , 0.37567     , 0.89111  , 2.868e-08    ,  4.003e-16  , -0.56086 ]
-        self.gdict['fuv3'] = [1.48098    , 1.45770  , 3.15160e+07  , 0.333684    , 0.872832 , 2.856e-08    ,  1.151e-15  , -0.582085]
-        self.gdict['fuv4'] = [0.310112   , 0.132660 , 3.13800e+07  , 0.418674    , 0.951970 , 1.8805e-08   ,  9.618e-16  , -0.612558]
-        self.gdict['nuv1'] = [ 0.55083   , 0.54792  , 3.1788e+07   , 0.32558     , -0.08227 ,  3.116e-09   ,  2.823e-16  , -0.13231 ]
-        self.gdict['nuv2'] = [ 0.71724   , 0.69646  , 3.1847e+07   , 0.32991     , 0.92275  ,  1.788e-09   ,  3.599e-16  , -0.15109 ]
-        self.gdict['nuv3'] = [ 0.26202   , 0.25259  , 3.1702e+07   , 0.32890     , 0.91326  ,  9.521e-09   ,  3.424e-16  , -0.09947 ]
-        self.gdict['nuv4'] = [ 0.41113   , 0.45427  , 3.1648e+07   , 0.31998     , 0.90299  ,  6.874e-09   ,  3.887e-16  , -0.16182 ]
+        #commented out to test new parameters 2017/12/06
+        #self.gdict['fuv1'] = [ 0.189662 , 0.0178533, 3.15070e+07  , 0.445460    , 0.104290 ,  2.925e-08   ,  5.473e-16  , -0.598880]
+        #self.gdict['fuv2'] = [ 0.26720  , 0.20045  , 3.1565e+07   , 0.37567     , 0.89111  , 2.868e-08    ,  4.003e-16  , -0.56086 ]
+        #self.gdict['fuv3'] = [ 1.48098  , 1.45770  , 3.15160e+07  , 0.333684    , 0.872832 , 2.856e-08    ,  1.151e-15  , -0.582085]
+        #self.gdict['fuv4'] = [ 0.310112 , 0.132660 , 3.13800e+07  , 0.418674    , 0.951970 , 1.8805e-08   ,  9.618e-16  , -0.612558]
+        #self.gdict['nuv1'] = [ 0.55083  , 0.54792  , 3.1788e+07   , 0.32558     , -0.08227 ,  3.116e-09   ,  2.823e-16  , -0.13231 ]
+        #self.gdict['nuv2'] = [ 0.71724  , 0.69646  , 3.1847e+07   , 0.32991     , 0.92275  ,  1.788e-09   ,  3.599e-16  , -0.15109 ]
+        #self.gdict['nuv3'] = [ 0.26202  , 0.25259  , 3.1702e+07   , 0.32890     , 0.91326  ,  9.521e-09   ,  3.424e-16  , -0.09947 ]
+        #self.gdict['nuv4'] = [ 0.41113  , 0.45427  , 3.1648e+07   , 0.31998     , 0.90299  ,  6.874e-09   ,  3.887e-16  , -0.16182 ]
+        #New parameters 2017/12/06
+        #self.gdict['fuv1']=[ -0.18966 , -0.01785 ,  3.1507e+07   , 0.44546  , 0.10429  ,  2.925000000e-08   ,  5.473000000e-16   , -0.59888 ]
+        #self.gdict['fuv2']=[ -0.26720 , -0.20045 ,  3.1565e+07   , 0.37567  , 0.89111  ,  2.868000000e-08   ,  4.003000000e-16   , -0.56086 ]
+        #self.gdict['fuv3']=[ -3.31362 , -3.13384 ,  3.1447e+07   , 0.80595  , 0.03397  ,  2.915039795e-08   ,  1.132137520e-15   , 2.51098  ]
+        #self.gdict['fuv4']=[ -0.31011 , -0.13266 ,  3.1380e+07   , 0.41867  , 0.95197  ,  1.880500000e-08   ,  9.618000000e-16   , -0.61256 ]
+        #self.gdict['nuv1']=[ -0.55083 , -0.54792 ,  3.1788e+07   , 0.32558  , -0.08227 ,  3.116000000e-09   ,  2.823000000e-16   , -0.13231 ]
+        #self.gdict['nuv2']=[ -0.71724 , -0.69646 ,  3.1847e+07   , 0.32991  , 0.92275  ,  1.788000000e-09   ,  3.599000000e-16   , -0.15109 ]
+        #self.gdict['nuv3']=[ -0.26202 , -0.25259 ,  3.1702e+07   , 0.32890  , 0.91326  ,  9.521000000e-09   ,  3.424000000e-16   , -0.09947 ]
+        #self.gdict['nuv4']=[ -0.41113 , -0.45427 ,  3.1648e+07   , 0.31998  , 0.90299  ,  6.874000000e-09   ,  3.887000000e-16   , -0.16182 ]
 
+        #Added quadratic end parameter to output
+        #self.gdict['fuv1']=[ 0.17070  , 0.01964  ,  3.1510e+07   , 0.41591  , 0.09386  ,  2.802297015e-08   ,  5.769239109e-16   , -0.56567 ]
+        #self.gdict['fuv2']=[ 0.26720  , 0.20045  ,  3.1565e+07   , 0.37567  , 0.89111  ,  2.868000000e-08   ,  4.003000000e-16   , -0.56086 ]
+        #self.gdict['fuv3']=[ 1.48098  , 1.45770  ,  3.1516e+07   , 0.33368  , 0.87283  ,  2.856000000e-08   ,  1.151000000e-15   , -0.58208 ]
+        #self.gdict['fuv4']=[ 0.31011  , 0.13266  ,  3.1380e+07   , 0.41867  , 0.95197  ,  1.880500000e-08   ,  9.618000000e-16   , -0.61256 ]
+        #self.gdict['nuv1']=[ 0.55495  , 0.53240  ,  3.1785e+07   , 0.32971  , -0.07965 ,  3.674386994e-09   ,  2.397602519e-16   , -0.15339 ]
+        #self.gdict['nuv2']=[ 0.73252  , 0.68236  ,  3.1844e+07   , 0.33434  , 0.92946  ,  2.086566551e-09   ,  3.013959167e-16   , -0.14840 ]
+        #self.gdict['nuv3']=[ 0.26424  , 0.24437  ,  3.1699e+07   , 0.33594  , 0.91788  ,  9.985153037e-09   ,  3.111440692e-16   , -0.11878 ]
+        #self.gdict['nuv4']=[ 0.41703  , 0.44185  ,  3.1645e+07   , 0.32677  , 0.90557  ,  7.660349914e-09   ,  3.347790126e-16   , -0.19565 ] 
 
+        #input guess file
+        gfile = open('initial_parameters.txt','r')
+
+        #read input parameters from file
+        for i,line in enumerate(gfile):
+           
+            #remove whitespace and brackets
+            line = line.replace(' ','').replace('[','').replace(']','')
+            #Use the header to label all the columns
+            if i == 0: self.plis=line.split(',')
+            #else read in parameters
+            else:
+                sline = line.split('=')
+                #create parameter lis for dictionary input
+                self.gdict[sline[0]] = [float(j) for j in sline[1].split(',')]
+       
+   
+
+        #list for parameters in order
+        #self.plis = ['Amp1','Amp2','P1','Phi1','Phi2','Trend','Quad','Offset']
+
+        #close parameter file
+        gfile.close()
 
         #dictionary of time offsets (i.e. start times in IDL anytim format)
         self.t0dict =  {}
@@ -82,6 +124,11 @@ class gui_dark(Tk.Frame):
         self.dtq0['fuv'] = 5.e7
         self.dtq0['nuv'] = 7.e7
 
+        #dictionary of when to end the quadratic term for the fit
+        self.dtq1 = {}
+        self.dtq1['fuv'] = 1.295e8
+        self.dtq1['nuv'] = 7.e10
+
         #basic set of keys
         self.b_keys = sorted(self.gdict.keys())
         #add min and max parameters (Default no restriction)
@@ -95,8 +142,6 @@ class gui_dark(Tk.Frame):
         #initialize scaling limit variable
         self.sc_limit = None
 
-        #list for parameters in order
-        self.plis = ['Amp1','Amp2','P1','Phi1','Phi2','Trend','Quad','Offset']
         #add parameter code corresponding to position
         self.p_code = {}
         for j,i in enumerate(self.plis): self.p_code['{0:1d}'.format(j)] = i
@@ -468,16 +513,27 @@ class gui_dark(Tk.Frame):
         dtq = dt0-self.dtq0[self.ptype]
         #do not add quadratic term before start time
         dtq[dtq < 0.] = 0.
+
+        #stop quad term after end time
+        dtq[dtq > self.dtq1[self.ptype]-self.dtq0[self.ptype]] = self.dtq1[self.ptype]-self.dtq0[self.ptype]
+
+        #Default config
+        return (amp1*np.sin(c*(dt0/p1+phi1)))+(amp2*np.sin(c*(dt0/(p1/2.)+phi2)))+(trend*(dt0))+(quad*(dtq**2.00))+(off)
         #trying to remove 6 month period because it is not the same thing (one is eclipse the other is orbital)
-        return (amp1*np.sin(c*(dt0/p1+phi1)))+(amp2*np.sin(c*(dt0/(p1/2.)+phi2)))+(trend*(dt0))+(quad*(dtq**2.))+(off)
+        #slightly better model 2017/12/06 which is more physically motivated
+        #return (amp1*np.sin(c*(dt0/(p1)+phi1))**2.)+(amp2*np.sin(c*(dt0/(2.*p1)+phi2))**2.)+(trend*(dt0))+(quad*(dtq**2.))+(off)
+        #Trying to at asymtopic function 
+        #return (amp1*np.sin(c*(dt0/(p1)+phi1))**2.)+(amp2*np.sin(c*(dt0/(2.*p1)+phi2))**2.)+trend/(1.+np.exp(-quad*(dt0-1.4e8)))+off#(trend*(dt0))+(quad*(dtq**2.))+(off)
+        #Trying a linear model with sin function
+        #return ((amp1*np.sin(c*(dt0/(p1)+phi1))**2.)+(amp2*np.sin(c*(dt0/(2.*p1)+phi2))**2.))*((trend*(dt0))+(quad*(dtq**2.))+(off))
         #return (amp1*(np.sin(c*(dt0/(2.*p1)+phi1)))**2.)+(amp2*(np.sin(c*(dt0/(2.*p1/2.)+phi2))**2))+(trend*(dt0))+(quad*(dtq**2.))+(p2*(dt0**3.))+(off)
 
 
     #print data to terminal
     def Print(self):
-        print '      {0:10},{1:10},{2:15},{3:10},{4:10},{5:20},{6:20},{7:10}'.format('Amp1','Amp2','P1','Phi1','Phi2','Trend','Quad','Offset')
+        print('      {0:10},{1:10},{2:15},{3:10},{4:10},{5:20},{6:20},{7:10}'.format('Amp1','Amp2','P1','Phi1','Phi2','Trend','Quad','Offset'))
         for i in self.b_keys:
-            print '{0}=[{1:^10.5f},{2:^10.5f},{3:^15.4e},{4:^10.5f},{5:^10.5f},{6:^20.9e},{7:^20.9e},{8:^10.5f}]'.format(i,*self.gdict[i])
+            print('{0}=[{1:^10.5f},{2:^10.5f},{3:^15.4e},{4:^10.5f},{5:^10.5f},{6:^20.9e},{7:^20.9e},{8:^10.5f}]'.format(i,*self.gdict[i]))
 
 
     #refit list
@@ -504,7 +560,7 @@ class gui_dark(Tk.Frame):
         self.f.canvas._tkcanvas.focus_set()
 
         #freeze limit percentage
-        self.fr_limit = 0.000001
+        self.fr_limit = 0.0001
 
         #check which boxes are checked and use array locattion to update limits
         for m,i in enumerate(self.plis):
@@ -549,6 +605,7 @@ class gui_dark(Tk.Frame):
             port  = self.fdata[i][1]
             errs  = self.fdata[i][2]
             self.ptype = i[:-1]
+            #for j,k in enumerate(mins): print(k,guess[j],maxs[j])
             popt, pcov = curve_fit(self.offset,dt0,port,p0=guess,sigma=errs,bounds=(mins,maxs),xtol=1e-10) 
 
 
