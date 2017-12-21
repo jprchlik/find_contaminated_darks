@@ -23,6 +23,22 @@ Finally, compared the observed to the modeled dark pedestal trend.
 (Bonus the hot_pixel_plot_wrapper is included at the end of the script and based on my directory structure.
 I should just integrate into the main code because it solves a similar problem).
 
+The program works automaticaly because the plots output to the 'Z' window in IDL. Therefore, the job maybe cronned.
+Currently, the job runs on my CfA machine by the following cronjob (crontab -e):
+>#00 02 * * * . $HOME/.cshrc; /PathToCronFolder/process_darks.csh  
+
+My process_darks.csh looks like the following:
+
+>#/bin/tcsh
+>setenv PYTHONPATH /PathToMyPythonLibrary/personaladditions/code/python
+>alias python /PathToMyPythonExe/anaconda2/bin/python
+>setenv /PathToMyCondaPythonLibrary/lib/python2.7/site-packages:${PYTHONPATH}
+>source $HOME/.cshrc
+>source $HOME/.cshrc.user
+>cd /MyPegasusDirectory/iris/find_con_darks/
+>./run_dark_checks.csh
+
+
 run_dark_checks.csh
 -------------------
 The c-shell file is a wrapper combining the IDL and python portions of the program.
