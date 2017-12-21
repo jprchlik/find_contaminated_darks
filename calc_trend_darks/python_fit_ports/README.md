@@ -27,6 +27,16 @@ the med row for each parameter is the maximum and minimum range to search for ne
 set automatically by usieng the % Range text box in the bottom right of the gui.
 
 
+Selecting port and freezing parameters
+[![IMAGE ALT TEXT HERE](http://img.youtube.com/vi/v3VH7uBjTJw/0.jpg)](http://www.youtube.com/watch?v=v3VH7uBjTJw)
+
+Setting parameter range:
+[![IMAGE ALT TEXT HERE](http://img.youtube.com/vi/1Nu14eoA0ww/0.jpg)](http://www.youtube.com/watch?v=1Nu14eoA0ww)
+
+
+Printing new parameters:
+[![IMAGE ALT TEXT HERE](http://img.youtube.com/vi/jC0AbvZRth8/0.jpg)](http://www.youtube.com/watch?v=jC0AbvZRth8)
+
 
 initial_parameters.txt
 ----------------------
