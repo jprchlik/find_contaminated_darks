@@ -1,4 +1,6 @@
 IRIS Hot Pixel Calibration notes
+=================================
+
 BACKGROUND:
 The IRIS CCD has many pixels that are noticeably ‘hot’, or consistently brighter than the surrounding pixels. Looking at the data, it seems that there are an increasing number of bright pixels. We (Steve Saar and Nicole Schanche) set out to determine how many pixels are affected, how serious the damage of those pixels is, how the number of affected pixels changes with time, and finally whether the pixels can be corrected. Several codes have been developed for this end. Their use is documented below.
 
