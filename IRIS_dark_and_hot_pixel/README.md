@@ -66,8 +66,8 @@ The program get_uniform_struct is important. The old level1 files and the new on
 
 PLOTTING 
 ---------
-(Also included in hot_pixel_plot_wrapper)
 IDL>hot_pixel_trend_plots, cutoff_list, outdir=outdir, folder=folder, type=type, year_list=year_list   
+(Also included in hot_pixel_plot_wrapper)
 This program restores the files with the naming convention ‘NEW_port1_FUV_hot_pixel_counts_2015.sav’ (generated with IRIS_heat_map2.pro) and then plots them for each percent cutoff, meaning the percentage of time a pixel must be flagged in a given month to be called hot. The decided upon cutoffs we are tracking are 10%, 50%, and 90%.
 
 MAKING THE PLOTS ACCESSIBLE TO LMSAL
