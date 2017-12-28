@@ -28,8 +28,8 @@ Once the appropriate level1 data is downloaded, it can be put in the following f
 The level1 data must then be back converted to level0 data. Use the following code:
 
 Example JSOC query:
-Look at calibration as ran and the time line for exact time frame
-iris.lev1[2016.08.24_06:15_TAI-2016.08.24_07:59_TAI][][? IMG_TYPE ~ "DARK" ?]  
+Look at calibration as ran and the time line for exact time frame  
+iris.lev1[2016.08.24_06:15_TAI-2016.08.24_07:59_TAI][][? IMG_TYPE ~ "DARK" ?]   
 returns ~ 150 records
 Method of export should be url-tar or ftp tar for a large number of files.
 
