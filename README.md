@@ -25,7 +25,7 @@ I should just integrate into the main code because it solves a similar problem).
 
 The program works automaticaly because the plots output to the 'Z' window in IDL. Therefore, the job maybe cronned.
 Currently, the job runs on my CfA machine by the following cronjob (crontab -e):
->#00 02 * * * . $HOME/.cshrc; /PathToCronFolder/process_darks.csh  
+>00 02 * * * . $HOME/.cshrc; /PathToCronFolder/process_darks.csh  
 
 My process_darks.csh looks like the following:
 
@@ -204,6 +204,16 @@ and the rest keyword allows you to restore a previously save dark save file outp
 
 
 
+Programs in Subdirectories
+==========================
+
+IRIS_dark_and_hot_pixel/
+-----------------------
+Contains program suite for IRIS hot pixel analysis. Automatically runs in run_dar_checks.csh.
+
+calc_trend_darks/python_fit_ports/
+---------------------------------
+A python GUI for refitting the long term dark pedestal level. 
 
 
 
