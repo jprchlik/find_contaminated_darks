@@ -32,7 +32,7 @@ returns ~ 150 records
 Method of export should be url-tar or ftp tar for a large number of files.
 
 
-IDL> do_lev1to0_darks, dir, t0, t1, typ, odir  
+IDL> do_lev1to0_darks, dir, t0, t1, typ, odir   
 where ‘dir’ is the location on /data/alisdair/IRIS_LEVEL1_DARKS/, so for example, ‘2016/02/simpleB/‘
 t0 is the start time for the calibration
 t1 is the end time for the calibration
@@ -46,15 +46,15 @@ If you use a dummy directory make sure it is empty.
 HOT PIXEL COUNTS 
 -----------------
 
-IDL>hot_pixel_plot_wrapper, year_list=year_list, folder=folder, outdir=outdir, deviation=deviation, cutoff_list
+IDL>hot_pixel_plot_wrapper, year_list=year_list, folder=folder, outdir=outdir, deviation=deviation, cutoff_list   
 #Need IDL 8.1 > 0 for use of NULL variable in IRIS_HEAT_MAP2.pro
 This is the program that will automatically call all of the other programs you need. If you are running it by default, you don’t need to call any keywords. You will have to change the default folder, because currently it is set to look in my personal external hard drive. You will probably want a shared space. 
 
-IDL>IRIS_heat_map2, sav_file,year_list=year_list, outdir=outdir, month_list=month_list, deviation=deviation, type=type, port=port
+IDL>IRIS_heat_map2, sav_file,year_list=year_list, outdir=outdir, month_list=month_list, deviation=deviation, type=type, port=port  
 #called in hot pixel wrapper
 This program updates the existing save files that have information about the number of hot pixels for each exposure time, both as a raw number (hot_pix_by_month_30s) and a percent (norm_hot_pix_by_month_30s). It also contains an array with the median data values by month for each exposure (median_data_by_month_30s). It completely skips over any month it already has data for. This is a problem if there are two dark calibrations in the same month. 
 
-IDL> get_hot_pix2, index, data, deviation -  
+IDL> get_hot_pix2, index, data, deviation   
 (called in IRIS_heat_map2
  the hot pixel count is not set by YearMonthDay, therefore allows multiple hot pixel observations per month.
  It does not rely on the directory structure to do this, instead it uses the file name.
@@ -67,7 +67,7 @@ The program get_uniform_struct is important. The old level1 files and the new on
 PLOTTING 
 ---------
 (Also included in hot_pixel_plot_wrapper)
-IDL>hot_pixel_trend_plots, cutoff_list, outdir=outdir, folder=folder, type=type, year_list=year_list
+IDL>hot_pixel_trend_plots, cutoff_list, outdir=outdir, folder=folder, type=type, year_list=year_list   
 This program restores the files with the naming convention ‘NEW_port1_FUV_hot_pixel_counts_2015.sav’ (generated with IRIS_heat_map2.pro) and then plots them for each percent cutoff, meaning the percentage of time a pixel must be flagged in a given month to be called hot. The decided upon cutoffs we are tracking are 10%, 50%, and 90%.
 
 MAKING THE PLOTS ACCESSIBLE TO LMSAL
