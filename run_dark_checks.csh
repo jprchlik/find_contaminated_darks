@@ -37,8 +37,8 @@ if ($splt[1] != 'FAILED') then
     sswidl -e "do_lev1to0_darks,'"${iday}"/complexA/','','',0,'dummydir/'"
     mv dummydir/*fits /data/alisdair/opabina/scratch/joan/iris/newdat/orbit/level0/complexA/${iday}/
     ##Find and remove sources with SAA or CME contamination
-    sswidl -e "find_con_darks,"${dday}",type='NUV',logdir='log/',/plotter,outdir='txtout/',/sim"
-    sswidl -e "find_con_darks,"${dday}",type='FUV',logdir='log/',/plotter,outdir='txtout/',/sim"
+    sswidl -e "find_con_darks,"${dday}",type='NUV',logdir='log/',outdir='txtout/',/sim"
+    sswidl -e "find_con_darks,"${dday}",type='FUV',logdir='log/',outdir='txtout/',/sim"
 ##    get the temperature values and format them
     cd temps
     python get_list_of_days.py
