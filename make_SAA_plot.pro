@@ -1,4 +1,5 @@
 pro make_saa_plot,month,year,type,outdir,plotdir=plotdir
+    set_plot,'Z'
 
 
 
