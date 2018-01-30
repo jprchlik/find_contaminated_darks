@@ -85,6 +85,9 @@ class gui_dark(Tk.Frame):
         #self.gdict['nuv3']=[ 0.26424  , 0.24437  ,  3.1699e+07   , 0.33594  , 0.91788  ,  9.985153037e-09   ,  3.111440692e-16   , -0.11878 ]
         #self.gdict['nuv4']=[ 0.41703  , 0.44185  ,  3.1645e+07   , 0.32677  , 0.90557  ,  7.660349914e-09   ,  3.347790126e-16   , -0.19565 ] 
 
+        #create a variable which switch to true after creating a plot once
+        self.lat_plot = False
+
         #input guess file
         gfile = open('initial_parameters.txt','r')
 
@@ -452,11 +455,27 @@ class gui_dark(Tk.Frame):
     def iris_dark_plot(self):
         #clear the plot axes 
         for i in self.wplot.keys(): 
+
+            #If a previous plot exists get x and y limits
+            if self.lat_plot:
+                #get previous x and y limits
+                xlim = self.wplot[i].get_xlim()
+                ylim = self.wplot[i].get_ylim()
+  
+            #clear previous plot
             self.wplot[i].clear()
             self.wplot[i].set_title(i.upper())
             self.wplot[i].set_xlabel('Offset Time [s]')
             self.wplot[i].set_ylabel('Pedestal Offset [ADU]')
 
+            #If a previous plot exists set x and y limits
+            if self.lat_plot:
+                #set previous x and y limits
+                self.wplot[i].set_xlim(xlim)
+                self.wplot[i].set_ylim(ylim)
+
+        #After first run through set lat(er)_plots to true
+        self.lat_plot = True
 
         #best fit lines
         self.bline = {}
