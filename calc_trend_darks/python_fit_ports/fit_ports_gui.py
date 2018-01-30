@@ -174,7 +174,7 @@ class gui_dark(Tk.Frame):
 
         aratio = float(x)/float(y)
 #Create the figure
-        self.f,self.a = plt.subplots(ncols=2,figsize=(8*aratio,8*aratio*.5),sharey=True)
+        self.f,self.a = plt.subplots(ncols=2,figsize=(8*aratio,8*aratio*.5),sharex=True)
 #Separate the two plotting windows fuv and nuv
         self.wplot = {}
         self.wplot['fuv'] = self.a[0]
