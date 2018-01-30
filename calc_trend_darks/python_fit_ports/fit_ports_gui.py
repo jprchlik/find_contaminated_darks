@@ -127,7 +127,8 @@ class gui_dark(Tk.Frame):
         #dictionary of when to end the quadratic term for the fit
         self.dtq1 = {}
         self.dtq1['fuv'] = 1.295e8
-        self.dtq1['nuv'] = 7.e10
+        #Update nuv = fuv (2018/01/30) J. Prchlik
+        self.dtq1['nuv'] = 1.295e8
 
         #basic set of keys
         self.b_keys = sorted(self.gdict.keys())
