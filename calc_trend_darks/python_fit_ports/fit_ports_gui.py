@@ -14,6 +14,7 @@ import sys
 import matplotlib.pyplot as plt
 from datetime import datetime
 from scipy.optimize import curve_fit
+from fancy_plot import fancy_plot
 
 
 #check the python version to use one Tkinter syntax or another
@@ -178,6 +179,7 @@ class gui_dark(Tk.Frame):
         self.wplot = {}
         self.wplot['fuv'] = self.a[0]
         self.wplot['nuv'] = self.a[1]
+
 
         #set title and axis labels
         for i in self.wplot.keys(): 
@@ -489,7 +491,9 @@ class gui_dark(Tk.Frame):
 
         #add legend
         for i in self.wplot.keys():
-            self.wplot[i].legend(loc='upper left',frameon=False)
+            self.wplot[i].legend(loc='upper left',frameon=True)
+            #add fancy plotting
+            fancy_plot(self.wplot[i])
 
         self.canvas.draw()
 
