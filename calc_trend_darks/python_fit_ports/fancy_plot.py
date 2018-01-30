@@ -12,5 +12,5 @@ def fancy_plot(ax):
     #set length of the minor ticks
     ax.tick_params(which='minor',length=3,direction='in')
     ax.tick_params(direction='in')
-    ax.grid(color='gray',linestyle='-.',linewidth=2)
+    ax.grid(b=True,color='gray',linestyle='-.',linewidth=2)
     return ax
