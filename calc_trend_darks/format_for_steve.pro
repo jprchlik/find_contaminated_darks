@@ -30,6 +30,7 @@ pro format_for_steve
         get_binned_iris_dark_trend,avepix[*,ccdtyp],time[ccdtyp],gropave,gropsig,groptim
 
         if type[i] eq 'NUV' then begin 
+;            cut = 1.12
             cut = 0.12
             goodday = where((gropsig[0,*] lt cut) and (gropsig[1,*] lt cut) and (gropsig[2,*] lt cut) and (gropsig[3,*] lt cut));emperically derived  to remove November 2015
 ;create new arrays where all ports pass
