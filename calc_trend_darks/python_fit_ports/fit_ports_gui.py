@@ -133,6 +133,7 @@ class gui_dark(Tk.Frame):
         self.dtq1['fuv'] = 1.295e8
         #Update nuv = fuv (2018/01/30) J. Prchlik
         self.dtq1['nuv'] = 1.295e8
+        #self.dtq1['nuv'] = 1.131e8
 
         #basic set of keys
         self.b_keys = sorted(self.gdict.keys())
@@ -501,7 +502,7 @@ class gui_dark(Tk.Frame):
             #current dark time plus a few hours
             ptim = np.linspace(self.fdata[i][0].min(),self.fdata[i][0].max()+1e3,500)
             #plot values currently in gdict for best fit values (store in dictionary for updating line)
-            self.bline[i] = self.wplot[i[:-1]].plot(ptim,self.offset(ptim,*self.gdict[i]),color=self.fdata[i][3],label='{0}(Unc.) = {1:3.2f}'.format(i,var)) 
+            self.bline[i] = self.wplot[i[:-1]].plot(ptim,self.offset(ptim,*self.gdict[i]),color=self.fdata[i][3],label='{0}(Unc.) = {1:5.4f}'.format(i,var)) 
 
             #plot each port
             self.sdata[i] = ax.scatter(dat[0],dat[1],color=dat[3],marker=dat[4],label='{0}(last) = {1:3.2f}'.format(i,last))
@@ -544,7 +545,7 @@ class gui_dark(Tk.Frame):
         #Default config
         return (amp1*np.sin(c*(dt0/p1+phi1)))+(amp2*np.sin(c*(dt0/(p1/2.)+phi2)))+(trend*(dt0))+(quad*(dtq**2.00))+(off)
         #trying to remove 6 month period because it is not the same thing (one is eclipse the other is orbital)
-        #slightly better model 2017/12/06 which is more physically motivated
+        #slightly better model 2017/12/06 which is more physically motivated uses sin^2
         #return (amp1*np.sin(c*(dt0/(p1)+phi1))**2.)+(amp2*np.sin(c*(dt0/(2.*p1)+phi2))**2.)+(trend*(dt0))+(quad*(dtq**2.))+(off)
         #Trying to at asymtopic function 
         #return (amp1*np.sin(c*(dt0/(p1)+phi1))**2.)+(amp2*np.sin(c*(dt0/(2.*p1)+phi2))**2.)+trend/(1.+np.exp(-quad*(dt0-1.4e8)))+off#(trend*(dt0))+(quad*(dtq**2.))+(off)
