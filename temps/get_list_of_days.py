@@ -15,7 +15,7 @@ for i in files:
 
     utime = np.unique(time)
     for p in utime: 
-        for j in np.arange(-1,2):
+        for j in np.arange(-2,2):
             day = dt.datetime.strptime(p,'%Y/%m/%d')+dt.timedelta(days=j)
             t = day.strftime('%Y%m%d')
 
