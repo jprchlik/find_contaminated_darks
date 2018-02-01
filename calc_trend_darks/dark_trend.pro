@@ -52,9 +52,15 @@ pro dark_trend,sdir=sdir,pdir=pdir,simpleb=simpleb,complexa=complexa,logdir=logd
         check_ave_pixel_sub,sdir+'/'+year+'/'+month+'/'+files[j],endfile,timfile,avepix1,sigpix1,temps,levels,/writefile
         avepix[*,j] = avepix1
         sigpix[*,j] = sigpix1
+        ;Comment out 2018/01/31 J. Prchlik
+        ; Removed because after 2014 temperatures not needed
+        ;Reinserted after fixing only 1 day of temperatures issue 2018/02/01
         otemps[*,j] = temps
         basicf[j]   = endfile
         timeou[j]   = timfile
+        ;Comment out 2018/01/31 J. Prchlik
+        ; Removed because after 2014 temperatures not needed
+        ;Reinserted after fixing only 1 day of temperatures issue 2018/02/01
         olevel[0,*,j] = levels[0,*] ;Temperature polynomial 
         olevel[1,*,j] = levels[1,*] ;Dark Current 
         olevel[2,*,j] = levels[2,*] ; pedestal offset from read_iris
