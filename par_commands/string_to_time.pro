@@ -17,7 +17,9 @@ for i=0,n_elements(timest)-1 do begin
     hour  = fix(strmid(timest[i],11,2))
     min   = fix(strmid(timest[i],14,2))
     sec   = fix(strmid(timest[i],17,2))
-    timejd[i] = JULDAY(month,day,year,hour,min,sec)-normal
+    if year gt 0 then $
+        timejd[i] = JULDAY(month,day,year,hour,min,sec)-normal
+        
 endfor
 
 end
