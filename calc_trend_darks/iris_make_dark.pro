@@ -283,7 +283,6 @@ endcase
 ibad=where((tccd-tccdav[it0]) lt -20,nbad)        ; test for bad temperatures
 if nbad ne 0 then tccd[ibad] = tccdav[it0[ibad]]  ; replace bad w/season avgs
 
-
 ;crate = 0.95                          ; tweak factor for rates
 crate=1.03
 ns=21                                  ; smoothing for ramp juncture
