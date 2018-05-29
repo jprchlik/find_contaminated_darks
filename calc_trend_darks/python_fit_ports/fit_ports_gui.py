@@ -1,5 +1,7 @@
 
 import matplotlib
+matplotlib.rcParams['font.size'] = 8
+
 #Use TkAgg backend for plotting 
 matplotlib.use('TkAgg',warn=False,force=True)
 
@@ -15,6 +17,7 @@ import matplotlib.pyplot as plt
 from datetime import datetime
 from scipy.optimize import curve_fit
 from fancy_plot import fancy_plot
+import tkFont
 
 
 #check the python version to use one Tkinter syntax or another
@@ -130,6 +133,8 @@ class gui_dark(Tk.Frame):
 
         #dictionary of when to end the quadratic term for the fit
         self.dtq1 = {}
+        #Turn off quadratic turn off 2018/05/25 J. Prchlik
+        #Clearly does not work. Need to just flatten the term 2018/05/25 J. Prchlik
         self.dtq1['fuv'] = 1.295e8
         #Update nuv = fuv (2018/01/30) J. Prchlik
         self.dtq1['nuv'] = 1.295e8
@@ -178,7 +183,7 @@ class gui_dark(Tk.Frame):
 
         aratio = float(x)/float(y)
 #Create the figure
-        self.f,self.a = plt.subplots(ncols=2,figsize=(8*aratio,8*aratio*.5),sharex=True)
+        self.f,self.a = plt.subplots(ncols=2,figsize=(8*aratio,8*aratio*.25),sharex=True)
 #Separate the two plotting windows fuv and nuv
         self.wplot = {}
         self.wplot['fuv'] = self.a[0]
@@ -209,14 +214,17 @@ class gui_dark(Tk.Frame):
 
 #Create window in center of screen
     def centerWindow(self):
-        self.w = 1800
-        self.h = 1200
+        self.w = 1800/1
+        self.h = 1200/1
         sw = self.parent.winfo_screenwidth()
         sh = self.parent.winfo_screenheight()
 
+        self.h = self.w*float(sh)/float(sw)
+
         self.x = (sw-self.w)/2
         self.y = (sh-self.h)/2
-        self.parent.geometry('%dx%d+%d+%d' % (self.w,self.h,self.x,self.y))
+        #self.parent.geometry('%dx%d+%d+%d' % (self.w,self.h,self.x,self.y))
+        self.parent.geometry('%dx%d+0+0' % (sw,sh))
 
 
 #Initialize the GUI
@@ -533,17 +541,26 @@ class gui_dark(Tk.Frame):
 
 
     #Pedestal offset model
-    def offset(self,dt0,amp1,amp2,p1,phi1,phi2,trend,quad,off):
+    def offset(self,dt0,amp1,amp2,p1,phi1,phi2,trend,quad,off,qscale):
         c = 2.*np.pi
         dtq = dt0-self.dtq0[self.ptype]
         #do not add quadratic term before start time
         dtq[dtq < 0.] = 0.
 
         #stop quad term after end time
-        dtq[dtq > self.dtq1[self.ptype]-self.dtq0[self.ptype]] = self.dtq1[self.ptype]-self.dtq0[self.ptype]
+        #range to adjust quadratic term over 2018/05/25 J. Prchlik
+        adj, = np.where(dtq > self.dtq1[self.ptype]-self.dtq0[self.ptype])
+        off = np.zeros(dtq.size)+off
+        #adjust offset for given quad flattening time
+        off[adj] = off[adj]+quad*(1-qscale)*(self.dtq1[self.ptype]-self.dtq0[self.ptype])**2+trend*(1-qscale)*(self.dtq1[self.ptype])
+        dtq[adj] = (dtq[adj])*(qscale)**.5
+
+        #adjust offset for given linear flattening time
+        dtl = dt0.copy()
+        dtl[adj] = (dtl[adj])*(qscale)
 
         #Default config
-        return (amp1*np.sin(c*(dt0/p1+phi1)))+(amp2*np.sin(c*(dt0/(p1/2.)+phi2)))+(trend*(dt0))+(quad*(dtq**2.00))+(off)
+        return (amp1*np.sin(c*(dt0/p1+phi1)))+(amp2*np.sin(c*(dt0/(p1/2.)+phi2)))+(trend*(dtl))+(quad*(dtq**2.00))+(off)
         #trying to remove 6 month period because it is not the same thing (one is eclipse the other is orbital)
         #slightly better model 2017/12/06 which is more physically motivated uses sin^2
         #return (amp1*np.sin(c*(dt0/(p1)+phi1))**2.)+(amp2*np.sin(c*(dt0/(2.*p1)+phi2))**2.)+(trend*(dt0))+(quad*(dtq**2.))+(off)
@@ -556,9 +573,9 @@ class gui_dark(Tk.Frame):
 
     #print data to terminal
     def Print(self):
-        print('      {0:10},{1:10},{2:15},{3:10},{4:10},{5:20},{6:20},{7:10}'.format('Amp1','Amp2','P1','Phi1','Phi2','Trend','Quad','Offset'))
+        print('      {0:10},{1:10},{2:15},{3:10},{4:10},{5:20},{6:20},{7:10},{8:10}'.format('Amp1','Amp2','P1','Phi1','Phi2','Trend','Quad','Offset','Scale'))
         for i in self.b_keys:
-            print('{0}=[{1:^10.5f},{2:^10.5f},{3:^15.4e},{4:^10.5f},{5:^10.5f},{6:^20.9e},{7:^20.9e},{8:^10.5f}]'.format(i,*self.gdict[i]))
+            print('{0}=[{1:^10.5f},{2:^10.5f},{3:^15.4e},{4:^10.5f},{5:^10.5f},{6:^20.9e},{7:^20.9e},{8:^10.5f},{9:10.5f}]'.format(i,*self.gdict[i]))
 
 
     #refit list
@@ -696,6 +713,10 @@ def main():
     global root
     root = Tk.Tk()
     app = gui_dark(root)
+    default_font = tkFont.nametofont("TkDefaultFont")
+    default_font.configure(size=12)
+    root.option_add("*Font", default_font)
+    root.option_add("*Font", default_font)
     root.mainloop()
 
 
