@@ -28,7 +28,7 @@ if not keyword_set(outdir) then begin
 endif
 
 ;if not keyword_set(folder) then folder='/Volumes/Churchill/nschanch/iris/Hot_pixel_sav_files/5sigma_cutoff/'
-if not keyword_set(folder) then folder='/Volumes/Pegasus/jprchlik/IRIS_dark_and_hot_pixel/Hot_pixel_sav_files/5sigma_cutoff/'
+if not keyword_set(folder) then folder='/Volumes/Pegasus/jprchlik/iris/find_con_darks/IRIS_dark_and_hot_pixel/Hot_pixel_sav_files/5sigma_cutoff/'
 
 if not keyword_set(type) then type='FUV'
 ;TODO: fix this so it automatically has every year since 2014. 
@@ -128,28 +128,28 @@ for cc = 0, n_elements(cutoff_list)-1 do begin
 	if cutoff eq 1. then begin
 		plot, juldays0s[*,0], hot_arr0s[*,0], /nodata, Background=cgColor('white'),Color=cgColor('black'),  xstyle=1, $
 			xticks=4, yrange=[-10,max(hot_arr30s)+.30*max(hot_arr30s)],ystyle=1, $
-            title=type+' - Pixels hot in ' + strtrim(string(fix(cutoff*100)),1)+ '% of exposures',xtitle='Date',ytitle='Number of Hot Pixels', $
-			charthick=2,charsize=1.7,xgridstyle=1,ygridstyle=1,xticklen=1,yticklen=1,font=1, $
-            xtickname=xtick_str,xtickv=xtick_val,xrange=[min(xtick_val)-daypad,max(xtick_val)+padbad]
+            title=type+' - Pixels hot in ' + strtrim(string(fix(cutoff*100)),1)+ '% of exposures',xtitle='Date [UTC]',ytitle='Number of Hot Pixels', $
+			charthick=2,charsize=2.2,xgridstyle=1,ygridstyle=1,xticklen=1,yticklen=1,font=1, $
+            xtickname=xtick_str,xtickv=xtick_val,xrange=[min(xtick_val)-daypad,max(xtick_val)+2.*padbad]
 	endif else begin
 		;Plot the Number of Hot Pixels vs. time
 		plot, juldays0s[*,0], hot_arr0s[*,0], /nodata, Background=cgColor('white'),Color=cgColor('black'), xstyle=1, $
 			xticks=4, yrange=[-10,max(hot_arr30s)+.30*max(hot_arr30s)],ystyle=1, $
-            title=type+' - Pixels hot in > ' + strtrim(string(fix(cutoff*100)),1)+ '% of exposures',xtitle='Date',ytitle='Number of Hot Pixels', $
-			charthick=2,charsize=1.7,xgridstyle=1,ygridstyle=1,xticklen=1,yticklen=1,font=1, $
-            xtickname=xtick_str,xtickv=xtick_val,xrange=[min(xtick_val)-daypad,max(xtick_val)+daypad]
+            title=type+' - Pixels hot in > ' + strtrim(string(fix(cutoff*100)),1)+ '% of exposures',xtitle='Date [UTC]',ytitle='Number of Hot Pixels', $
+			charthick=2,charsize=2.2,xgridstyle=1,ygridstyle=1,xticklen=1,yticklen=1,font=1, $
+            xtickname=xtick_str,xtickv=xtick_val,xrange=[min(xtick_val)-daypad,max(xtick_val)+2.*daypad]
 
 	endelse	
 	;overplot the curves for the 4 different ports for both the 0s and 30s exposure files
-	oplot, juldays0s[0,*], hot_arr0s[0,*], color=cgColor('blue'), thick=5, linestyle=0
-	oplot, juldays0s[1,*], hot_arr0s[1,*], color=cgColor('blue'), thick=5, linestyle=5
-	oplot, juldays0s[2,*], hot_arr0s[2,*], color=cgColor('blue'), thick=5, linestyle=2
-	oplot, juldays0s[3,*], hot_arr0s[3,*], color=cgColor('blue'), thick=5, linestyle=4
+	oplot, juldays0s[0,*], hot_arr0s[0,*], color=cgColor('blue'), thick=7, linestyle=0
+	oplot, juldays0s[1,*], hot_arr0s[1,*], color=cgColor('blue'), thick=7, linestyle=5
+	oplot, juldays0s[2,*], hot_arr0s[2,*], color=cgColor('blue'), thick=7, linestyle=2
+	oplot, juldays0s[3,*], hot_arr0s[3,*], color=cgColor('blue'), thick=7, linestyle=4
 
-	oplot, juldays30s[0,*], hot_arr30s[0,*], color=cgColor('red'), thick=5, linestyle=0
-	oplot, juldays30s[1,*], hot_arr30s[1,*], color=cgColor('red'), thick=5, linestyle=5
-	oplot, juldays30s[2,*], hot_arr30s[2,*], color=cgColor('red'), thick=5, linestyle=2
-	oplot, juldays30s[3,*], hot_arr30s[3,*], color=cgColor('red'), thick=5, linestyle=4
+	oplot, juldays30s[0,*], hot_arr30s[0,*], color=cgColor('red'), thick=7, linestyle=0
+	oplot, juldays30s[1,*], hot_arr30s[1,*], color=cgColor('red'), thick=7, linestyle=5
+	oplot, juldays30s[2,*], hot_arr30s[2,*], color=cgColor('red'), thick=7, linestyle=2
+	oplot, juldays30s[3,*], hot_arr30s[3,*], color=cgColor('red'), thick=7, linestyle=4
 
 ;	oplot, juldays30s, hot_arr30s[0,*], color=cgColor('purple'), psym=6
 ;	oplot, juldays30s, hot_arr30s[1,*], color=cgColor('purple'), psym=6
@@ -160,9 +160,9 @@ for cc = 0, n_elements(cutoff_list)-1 do begin
 	bakeout_time=julday(10,16,2014)
 	bakeout_time2=julday(10,26,2015)
 	bakeout_time3=julday(4,26,2016)
-	oplot, [bakeout_time,bakeout_time],[!y.crange[0],!y.crange[1]], linestyle=2,thick=3, color=cgColor('charcoal')
-	oplot, [bakeout_time2,bakeout_time2],[!y.crange[0],!y.crange[1]], linestyle=2,thick=3, color=cgColor('charcoal')
-	oplot, [bakeout_time3,bakeout_time3],[!y.crange[0],!y.crange[1]], linestyle=2,thick=3, color=cgColor('charcoal')
+	oplot, [bakeout_time,bakeout_time],[!y.crange[0],!y.crange[1]], linestyle=2,thick=7, color=cgColor('charcoal')
+	oplot, [bakeout_time2,bakeout_time2],[!y.crange[0],!y.crange[1]], linestyle=2,thick=7, color=cgColor('charcoal')
+	oplot, [bakeout_time3,bakeout_time3],[!y.crange[0],!y.crange[1]], linestyle=2,thick=7, color=cgColor('charcoal')
 
     ;Include bake out label in plot legend (J. Prchlik 2016/09/26)
 	labels = ['port1','port2','port3','port4','bake out']
@@ -172,8 +172,8 @@ for cc = 0, n_elements(cutoff_list)-1 do begin
         al_legend, labels, Color=['purple','purple','purple','purple',cgColor('charcoal')],thick=[3,3,3,3,2], LineStyle=[0,5,2,4,2], /left, charsize=1.5 
 
 	;Label which are from the 30s data and which are from the 0s
-	xyouts, max(juldays0s)+5, average(hot_arr30s)*1.5, '30 sec', charsize=1.5, charthick=2, color=cgColor('red')
-	xyouts, max(juldays0s)+5, average(hot_arr0s)*1.5, '0 sec', charsize=1.5, charthick=2, color=cgColor('blue')
+	xyouts, max(juldays0s)+5, average(hot_arr30s)*1.5, '30 sec', charsize=1.5, charthick=3, color=cgColor('red')
+	xyouts, max(juldays0s)+5, average(hot_arr0s)*1.5, '0 sec', charsize=1.5, charthick=3, color=cgColor('blue')
 	;print, average(hot_arr30s), average(hot_arr0s)
 	
     device,/close
