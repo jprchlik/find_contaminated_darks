@@ -1,4 +1,4 @@
-pro hot_pixel_trend_plots, cutoff_list=cutoff_list, folder=folder, outdir=outdir, type=type, year_list=year_list
+pro hot_pixel_trend_plots, cutoff_list=cutoff_list, folder=folder, outdir=outdir, type=type, year_list=year_list,bakeout_array=bakeout_array
 ;This is the program that plots the number of hot pixels by month. 
 ;
 ;INPUTS -   CUTOFF_LIST - A list containing the range of cutoff ratios (times a pixel is considered hot during a dark calibration sequence for a given a month) 
@@ -12,6 +12,7 @@ pro hot_pixel_trend_plots, cutoff_list=cutoff_list, folder=folder, outdir=outdir
 ;					TYPE: either FUV or NUV. If none is set, then it plots the FUV. 
 ;					YEAR_LIST: List of years (as strings) you would like to include in the plot. Default is ['2014','2015']
 ;					CUTOFF_LIST: List of the fraction of times a pixel must be hot in a given month to be considered hot. Default is [0.1,0.5,0.9]
+;					BAKEOUT_ARRAY: ARRAY of the bakeout times in Double precision JULIAN DAYS. Default is dblarr([julday(10,16,2014),julday(10,26,2015),julday(4,26,2016),julday(6,13,2018)])
 ;
 ;
 ;Program created by N. Schanche, SAO, Nov 2015
@@ -33,6 +34,13 @@ if not keyword_set(type) then type='FUV'
 if not keyword_set(year_list) then year_list=['2014','2015', '2016','2017','2018']
 
 if not keyword_set(cutoff_list) then cutoff_list=[0.1, 0.5, 0.9]
+
+
+if not keyword_set(bakeout_array) then bakeout_array = double([julday(10,16,2014),julday(10,26,2015),julday(4,26,2016),julday(6,13,2018)])
+	;bakeout_time=julday(10,16,2014)
+	;bakeout_time2=julday(10,26,2015)
+	;bakeout_time3=julday(4,26,2016)
+	;bakeout_time4=julday(6,13,2018)
 
 for cc = 0, n_elements(cutoff_list)-1 do begin
 	cutoff=cutoff_list[cc]
@@ -141,12 +149,17 @@ for cc = 0, n_elements(cutoff_list)-1 do begin
 ;	oplot, juldays30s, hot_arr30s[3,*], color=cgColor('purple'), psym=6
 
 	;Include vertical lines that represent when the bakeouts occured. These need to be manually updated for each bakeout. 
-	bakeout_time=julday(10,16,2014)
-	bakeout_time2=julday(10,26,2015)
-	bakeout_time3=julday(4,26,2016)
-	oplot, [bakeout_time,bakeout_time],[!y.crange[0],!y.crange[1]], linestyle=2,thick=3, color=cgColor('charcoal')
-	oplot, [bakeout_time2,bakeout_time2],[!y.crange[0],!y.crange[1]], linestyle=2,thick=3, color=cgColor('charcoal')
-	oplot, [bakeout_time3,bakeout_time3],[!y.crange[0],!y.crange[1]], linestyle=2,thick=3, color=cgColor('charcoal')
+    ;Switched to bakout_array 2018/07/18 J. Prchlik
+	;bakeout_time=julday(10,16,2014)
+	;bakeout_time2=julday(10,26,2015)
+	;bakeout_time3=julday(4,26,2016)
+	;bakeout_time4=julday(6,13,2018)
+    for m=0,n_elements(bakeout_array)-1 do oplot, [bakeout_array[m],bakeout_array[m]],[!y.crange[0],!y.crange[1]], linestyle=2,thick=3, color=cgColor('charcoal')
+	
+    ;Switched to bakout_array 2018/07/18 J. Prchlik
+	;oplot, [bakeout_time2,bakeout_time2],[!y.crange[0],!y.crange[1]], linestyle=2,thick=3, color=cgColor('charcoal')
+	;oplot, [bakeout_time3,bakeout_time3],[!y.crange[0],!y.crange[1]], linestyle=2,thick=3, color=cgColor('charcoal')
+	;oplot, [bakeout_time4,bakeout_time4],[!y.crange[0],!y.crange[1]], linestyle=2,thick=3, color=cgColor('charcoal')
 
     ;Include bake out label in plot legend (J. Prchlik 2016/09/26)
 	labels = ['port1','port2','port3','port4','bake out']
