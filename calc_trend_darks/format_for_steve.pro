@@ -89,14 +89,16 @@ pro format_for_steve
 
 
        print,'HERE 2'
+       yrange= [-5,15]
+       if type[i] eq 'NUV' then yrange=[-3,6]
 
 
         dummy = LABEL_DATE(DATE_FORMAT=["%D-%M-%Y"])
    ;set up the plot 
         utplot,[0,0],[0,0],'1-jan-79',ytitle="Average Offset Dark-Model [ADU]",title=type[i]+' Dark Pixel Evolution',$
             XSTYLE=1,$;timerange=['24-aug-16,05:59:00','24-aug-16,8:00:00'],$
-            xrange=[min(time)-3*240.*3600.,max(time)+3*240.*3600.],$
-            /nodata,yrange=[-5,15],background=cgColor('white'),color=0,$
+            xrange=[min(time)-3*240.*3600.,max(time)+3*240.*3600.],YSTYLE=1,$
+            /nodata,yrange=yrange,background=cgColor('white'),color=0,$
             charthick=3,charsize=2.5,xminor=12,xtitle='Year [20XX]' ;yrange=[80,120]
 
 
