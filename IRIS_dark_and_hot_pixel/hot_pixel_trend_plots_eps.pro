@@ -1,4 +1,4 @@
-pro hot_pixel_trend_plots_eps, cutoff_list=cutoff_list, folder=folder, outdir=outdir, type=type, year_list=year_list
+pro hot_pixel_trend_plots_eps, cutoff_list=cutoff_list, folder=folder, outdir=outdir, type=type, year_list=year_list,bakeout_array=bakeout_array
 ;This is the program that plots the Number of Hot Pixels by month. 
 ;
 ;INPUTS -   CUTOFF_LIST - A list containing the range of cutoff ratios (times a pixel is considered hot during a dark calibration sequence for a given a month) 
@@ -12,6 +12,7 @@ pro hot_pixel_trend_plots_eps, cutoff_list=cutoff_list, folder=folder, outdir=ou
 ;					TYPE: either FUV or NUV. If none is set, then it plots the FUV. 
 ;					YEAR_LIST: List of years (as strings) you would like to include in the plot. Default is ['2014','2015']
 ;					CUTOFF_LIST: List of the fraction of times a pixel must be hot in a given month to be considered hot. Default is [0.1,0.5,0.9]
+;					BAKEOUT_ARRAY: ARRAY of the bakeout times in Double precision JULIAN DAYS. Default is dblarr([julday(10,16,2014),julday(10,26,2015),julday(4,26,2016),julday(6,13,2018)])
 ;
 ;
 ;Program created by N. Schanche, SAO, Nov 2015
@@ -35,6 +36,8 @@ if not keyword_set(type) then type='FUV'
 if not keyword_set(year_list) then year_list=['2014','2015', '2016','2017','2018']
 
 if not keyword_set(cutoff_list) then cutoff_list=[0.1, 0.5, 0.9]
+
+if not keyword_set(bakeout_array) then bakeout_array = double([julday(10,16,2014),julday(10,26,2015),julday(4,26,2016),julday(6,13,2018)])
 
 for cc = 0, n_elements(cutoff_list)-1 do begin
 	cutoff=cutoff_list[cc]
@@ -119,6 +122,7 @@ for cc = 0, n_elements(cutoff_list)-1 do begin
     xtick_str = ['2014-01','2015-01','2016-01','2017-01','2018-01']
 
 	;Save the image as a png file. 
+    for m=0,n_elements(bakeout_array)-1 do oplot, [bakeout_array[m],bakeout_array[m]],[!y.crange[0],!y.crange[1]], linestyle=2,thick=3, color=cgColor('charcoal')
 	fname = outdir+'NEW_'+type+'_hot_pixel_trend_' + strtrim(string(fix(cutoff*100)),1) +'.eps'
     device,filename=fname,encap=1,/helvetica,xsize=9.0,ysize=6.0,/inch
 
@@ -130,14 +134,14 @@ for cc = 0, n_elements(cutoff_list)-1 do begin
 			xticks=4, yrange=[-10,max(hot_arr30s)+.30*max(hot_arr30s)],ystyle=1, $
             title=type+' - Pixels hot in ' + strtrim(string(fix(cutoff*100)),1)+ '% of exposures',xtitle='Date [UTC]',ytitle='Number of Hot Pixels', $
 			charthick=2,charsize=2.2,xgridstyle=1,ygridstyle=1,xticklen=1,yticklen=1,font=1, $
-            xtickname=xtick_str,xtickv=xtick_val,xrange=[min(xtick_val)-daypad,max(xtick_val)+2.*padbad]
+            xtickname=xtick_str,xtickv=xtick_val,xrange=[min(xtick_val)-daypad,max(xtick_val)+3.*daypad]
 	endif else begin
 		;Plot the Number of Hot Pixels vs. time
 		plot, juldays0s[*,0], hot_arr0s[*,0], /nodata, Background=cgColor('white'),Color=cgColor('black'), xstyle=1, $
 			xticks=4, yrange=[-10,max(hot_arr30s)+.30*max(hot_arr30s)],ystyle=1, $
             title=type+' - Pixels hot in > ' + strtrim(string(fix(cutoff*100)),1)+ '% of exposures',xtitle='Date [UTC]',ytitle='Number of Hot Pixels', $
 			charthick=2,charsize=2.2,xgridstyle=1,ygridstyle=1,xticklen=1,yticklen=1,font=1, $
-            xtickname=xtick_str,xtickv=xtick_val,xrange=[min(xtick_val)-daypad,max(xtick_val)+2.*daypad]
+            xtickname=xtick_str,xtickv=xtick_val,xrange=[min(xtick_val)-daypad,max(xtick_val)+3.*daypad]
 
 	endelse	
 	;overplot the curves for the 4 different ports for both the 0s and 30s exposure files
@@ -157,19 +161,21 @@ for cc = 0, n_elements(cutoff_list)-1 do begin
 ;	oplot, juldays30s, hot_arr30s[3,*], color=cgColor('purple'), psym=6
 
 	;Include vertical lines that represent when the bakeouts occured. These need to be manually updated for each bakeout. 
-	bakeout_time=julday(10,16,2014)
-	bakeout_time2=julday(10,26,2015)
-	bakeout_time3=julday(4,26,2016)
-	oplot, [bakeout_time,bakeout_time],[!y.crange[0],!y.crange[1]], linestyle=2,thick=7, color=cgColor('charcoal')
-	oplot, [bakeout_time2,bakeout_time2],[!y.crange[0],!y.crange[1]], linestyle=2,thick=7, color=cgColor('charcoal')
-	oplot, [bakeout_time3,bakeout_time3],[!y.crange[0],!y.crange[1]], linestyle=2,thick=7, color=cgColor('charcoal')
+	;bakeout_time=julday(10,16,2014)
+	;bakeout_time2=julday(10,26,2015)
+	;bakeout_time3=julday(4,26,2016)
+	;oplot, [bakeout_time,bakeout_time],[!y.crange[0],!y.crange[1]], linestyle=2,thick=7, color=cgColor('charcoal')
+	;oplot, [bakeout_time2,bakeout_time2],[!y.crange[0],!y.crange[1]], linestyle=2,thick=7, color=cgColor('charcoal')
+	;oplot, [bakeout_time3,bakeout_time3],[!y.crange[0],!y.crange[1]], linestyle=2,thick=7, color=cgColor('charcoal')
+    ;UPdated to loop over array values and plot bakeout 2018/07/23 J. Prchlik
+    for m=0,n_elements(bakeout_array)-1 do oplot, [bakeout_array[m],bakeout_array[m]],[!y.crange[0],!y.crange[1]], linestyle=2,thick=7, color=cgColor('charcoal')
 
     ;Include bake out label in plot legend (J. Prchlik 2016/09/26)
 	labels = ['port1','port2','port3','port4','bake out']
 	if cutoff lt .3 then $
-        al_legend, labels, Color=['purple','purple','purple','purple',cgColor('charcoal')],thick=[3,3,3,3,2], LineStyle=[0,5,2,4,2], /right, charsize=1.5 $
+        al_legend, labels, Color=['purple','purple','purple','purple',cgColor('charcoal')],thick=[3,3,3,3,3], LineStyle=[0,5,2,4,2], /right, charsize=1.5 $
     else $
-        al_legend, labels, Color=['purple','purple','purple','purple',cgColor('charcoal')],thick=[3,3,3,3,2], LineStyle=[0,5,2,4,2], /left, charsize=1.5 
+        al_legend, labels, Color=['purple','purple','purple','purple',cgColor('charcoal')],thick=[3,3,3,3,3], LineStyle=[0,5,2,4,2], /left, charsize=1.5 
 
 	;Label which are from the 30s data and which are from the 0s
 	xyouts, max(juldays0s)+5, average(hot_arr30s)*1.5, '30 sec', charsize=1.5, charthick=3, color=cgColor('red')
