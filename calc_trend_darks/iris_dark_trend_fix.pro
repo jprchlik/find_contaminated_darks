@@ -1,7 +1,6 @@
 
 ;pro iris_dark_trend_fix, index, offsets,  progver = progver
-pro iris_dark_trend_fix, obstime, offsets,type,  progver = progver
-
+pro iris_dark_trend_fix, obstime, offsets, type, progver = progver
 ; ============================================================================
 ;+
 ;
@@ -87,10 +86,15 @@ progver = 'v2017.Jun.06' ;--- (SSaar,JPrchlik) V11 update of double sine model
 ;                                       +quad trend, P2=P1/2, data thru 05/17
 progver = 'v2017.Oct.16' ;--- (SSaar,JPrchlik) V12 update of double sine model
 ;                                       +quad trend, P2=P1/2, data thru 10/17
-progver = 'v2018.May.29' ;--- (SSaar,JPrchlik) V13 update of double sine model
+progver = 'v2017.Dec.14' ;--- (SSaar,JPrchlik) V13 update of double sine model
+;                                       +quad trend (now with stop time for
+;                                        FUV), P2=P1/2, data thru 11/17
+progver = 'v2018.Feb.02' ;--- (SSaar,JPrchlik) V14 update of double sine model
+;                                       +quad trend (now with stop time),
+;                                        P2=P1/2, data thru 01/18
+progver = 'v2018.May.29' ;--- (SSaar,JPrchlik) V15 update of double sine model
 ;                                       +quad trend, P2=P1/2, data thru 05/18
-;                                       Add parameter to flatten quad and linear
-;                                       trends after August 2017
+;                                      linear+quad trend now reduced after 8/17
 ;
 ;
 ;-
@@ -104,22 +108,22 @@ ins = type ne 'FUV'
 k=indgen(4)  + ins*4                          
 
 
-fuv1=[ 0.19862  , 0.07801  ,  3.2101e+07   , 0.47127  , 0.14926  ,  2.851681516e-08   ,$
-       5.610333043e-16   , -0.59788 ,   0.38371]
-fuv2=[ 0.28535  , 0.20777  ,  3.1671e+07   , 0.38135  , 0.90796  ,  2.883263417e-08   ,$
-       3.976993552e-16   , -0.57493 ,   0.48750]
-fuv3=[ 1.60381  , 1.64299  ,  3.1620e+07   , 0.33483  , 0.88216  ,  2.834048526e-08   ,$
-       1.190318064e-15   , -0.72855 ,   0.25935]
-fuv4=[ 0.33159  , 0.19315  ,  3.1641e+07   , 0.42014  , 0.94635  ,  1.966054402e-08   ,$
-       9.522024659e-16   , -0.66065 ,   0.26030]
-nuv1=[ 0.58898  , 0.56991  ,  3.1594e+07   , 0.31556  , -0.10659 ,  4.657181305e-09   ,$
-       2.025746662e-16   , -0.20046 ,   0.26542]
-nuv2=[ 0.72959  , 0.70146  ,  3.1688e+07   , 0.32213  , 0.90370  ,  3.479937632e-09   ,$
-       2.754279272e-16   , -0.21316 ,   0.22897]
-nuv3=[ 0.26941  , 0.25662  ,  3.1653e+07   , 0.33193  , 0.90995  ,  9.954674645e-09   ,$
-       3.174683491e-16   , -0.12158 ,   0.55768]
-nuv4=[ 0.45264  , 0.46882  ,  3.1656e+07   , 0.33149  , 0.90929  ,  8.590269637e-09   ,$
-       3.136282184e-16   , -0.25561 ,   0.41518]
+fuv1=[ 0.19922  , 0.07698  ,  3.2020e+07   , 0.46748  , 0.13289  ,  2.828782947e-08   ,$
+       5.683836798e-16   , -0.59034 ,   0.357]
+fuv2=[ 0.28201  , 0.21098  ,  3.1610e+07   , 0.38922  , 0.89576  ,  2.786122108e-08   ,$
+       4.265646236e-16   , -0.54181 ,   0.357]
+fuv3=[ 1.63208  , 1.63397  ,  3.1609e+07   , 0.32927  , 0.88294  ,  3.092388058e-08   ,$
+       1.124857033e-15   , -0.81379 ,   0.357]
+fuv4=[ 0.32909  , 0.18118  ,  3.1669e+07   , 0.41185  , 0.95284  ,  2.139613246e-08   ,$
+       9.060289897e-16   , -0.73099 ,   0.357]
+nuv1=[ 0.59161  , 0.57037  ,  3.1602e+07   , 0.31526  , -0.10472 ,  4.800729711e-09   ,$
+       1.926945561e-16   , -0.20605 ,   0.357]
+nuv2=[ 0.73379  , 0.70328  ,  3.1698e+07   , 0.32155  , 0.90637  ,  3.784201739e-09   ,$
+       2.559618399e-16   , -0.22506 ,   0.357]
+nuv3=[ 0.26589  , 0.25504  ,  3.1612e+07   , 0.33407  , 0.89746  ,  9.345864913e-09   ,$
+       3.545814274e-16   , -0.09758 ,   0.357]
+nuv4=[ 0.45101  , 0.46819  ,  3.1648e+07   , 0.33230  , 0.90779  ,  8.445645868e-09   ,$
+       3.239736069e-16   , -0.25022 ,   0.357]
 
 
 if ins eq 0 then begin                     ; if FUV, load up variables
@@ -131,7 +135,7 @@ if ins eq 0 then begin                     ; if FUV, load up variables
    trend=[fuv1(5),fuv2(5),fuv3(5),fuv4(5)] ; linear long-term trend
    quad=[fuv1(6),fuv2(6),fuv3(6),fuv4(6)]  ;  quadratic term
    off=[fuv1(7),fuv2(7),fuv3(7),fuv4(7)]   ; offset constant
-   scl=[fuv1(8),fuv2(8),fuv3(8),fuv4(8)]   ; Rescaling trend after given time frame 2018/05/29 J. Prchlik
+   scl=[fuv1(8),fuv2(8),fuv3(8),fuv4(8)]   ; Rescaling trend after given time 
    dtq0 = 5e7                               ; start time, quad term
    tq_end = 1.295e8                               ; end time, quad term
 endif else begin                          ; if NUV/SJI
@@ -143,7 +147,7 @@ endif else begin                          ; if NUV/SJI
    trend=[nuv1(5),nuv2(5),nuv3(5),nuv4(5)]
    quad=[nuv1(6),nuv2(6),nuv3(6),nuv4(6)]
    off=[nuv1(7),nuv2(7),nuv3(7),nuv4(7)]
-   scl=[nuv1(8),nuv2(8),nuv3(8),nuv4(8)]   ; Rescaling trend after given time frame 2018/05/29 J. Prchlik
+   scl=[nuv1(8),nuv2(8),nuv3(8),nuv4(8)]   ; Rescaling trend after given time 
    dtq0 = 7e7                               ; start time, quad term
    tq_end = 1.295e8                               ; end time, quad term
 endelse
@@ -163,22 +167,19 @@ c=2*!pi
 
 dt0 = t - t0[k]
 
-;Adjust quadratic and linear time after date when quadratic term turns over 2018/05/29 J. Prchlik
-dtq = dt0 > dtq0 ;Removed quadtratic end time 2018/05/29 J. Prchlik
+dtq = dt0 > dtq0                   ; Removed quadratic end time 
 dtq = dtq - dtq0                   ; timeline for quad term, for dt0>dtq0
 
-;Get where times are above the qaudratic and linear terms turn over 2018/05/29 J. Prchlik
-adj = -(dt0 gt tq_end)*(1.0-scl)+1
-;Change offset to it is continous across boundary of term flatterning 2018/05/29 J. Prchlik
-;Solve of boundary condition
-toff = (1.0-scl)*(quad*(tq_end-dtq0)^2+trend*tq_end)+off
-;Get difference between curved and flat boundary
-doff = toff-off
-;apply boundary when time exceeds tq_end
-off = off+(dt0 gt tq_end)*doff
+tred = (dt0 gt tq_end)             ; times > when lin+quad trend are reduced 
+                                   ;  (tq_end is now where trends are reduced)
+adj = 1.0 - tred*(1.0-scl)         ; rescale at trend change boundary: 
+                                   ;      1->scl
+; Change offset across boundary so trend is continuous 
+toff = (1.0-scl)*(quad*(tq_end-dtq0)^2+trend*tq_end)+off ; new boundary value 
+off = off*(tred ne 1) + toff*tred  ; apply new boundary when t>tq_end
 
 ; add it together: 
-;  A1 *sin(t/p +phi1) + A2 *sin (2*t/p +phi2) + B*t + C*(t>tq0<tq_end)^2   
+;  A1 *sin(t/p +phi1) + A2 *sin (2*t/p +phi2) + B*t + C*(t>tq0)^2   
 
 
 offsets = amp1 *sin(c*(dt0/p1 + phi1)) +  $
@@ -186,7 +187,6 @@ offsets = amp1 *sin(c*(dt0/p1 + phi1)) +  $
            trend*adj*dt0  + adj*quad*dtq^2 + off 
 
 
-;if max(dt0) gt tq_end then stop ;else print,off
 return
 end
 ;
