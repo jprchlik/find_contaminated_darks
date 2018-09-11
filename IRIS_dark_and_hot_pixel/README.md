@@ -34,6 +34,9 @@ returns ~ 150 records
 Method of export should be url-tar or ftp tar for a large number of files.
 
 
+N.B. This step should never be performed manually because ../run_dark_checks.csh in get_iris_darks.py
+
+
 IDL> do_lev1to0_darks, dir, t0, t1, typ, odir   
 where ‘dir’ is the location on /data/alisdair/IRIS_LEVEL1_DARKS/, so for example, ‘2016/02/simpleB/‘
 t0 is the start time for the calibration
