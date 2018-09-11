@@ -36,7 +36,7 @@ if ($splt[1] != 'FAILED') then
     #convert level1 darks to level0 darks for complexa
     sswidl -e "do_lev1to0_darks,'"${iday}"/complexA/','','',0,'dummydir/'"
     mv dummydir/*fits /data/alisdair/opabina/scratch/joan/iris/newdat/orbit/level0/complexA/${iday}/
-    ##Find and remove sources with SAA or CME contamination
+    ##Find and remove darks with SAA or CME contamination
     sswidl -e "find_con_darks,"${dday}",type='NUV',logdir='log/',outdir='txtout/',/sim"
     sswidl -e "find_con_darks,"${dday}",type='FUV',logdir='log/',outdir='txtout/',/sim"
 ##    get the temperature values and format them
@@ -45,7 +45,7 @@ if ($splt[1] != 'FAILED') then
 ##    Now run so we get the current dark trend
     cd ../calc_trend_darks
     sswidl -e "dark_trend,/sim"
-## format the output for steve's progam
+## format the output for steve's progam and the python refitting GUI
     sswidl -e "format_for_steve"
 
 
