@@ -33,8 +33,9 @@ class dark_times:
 
         Parameters
         ----------
-        time: datetime object
-            A date time object containing the date the dark observations started based on the IRIS calibration-as-run calendar
+        time: str
+            A string containing the date the dark observations started based on the IRIS calibration-as-run calendar in YYYY/MM/DD format (e.g. 
+            test = gdf.dark_times(time,simpleb=True))
         irisweb: string, optional
             A formatted text string which corresponds to the location of the IRIS timeline files 
             (Default = 'http://iris.lmsal.com/health-safety/timeline/iris_tim_archive/{2}/IRIS_science_timeline_{0}.V{1:2d}.txt').
@@ -88,8 +89,8 @@ class dark_times:
 
         #make the download directory
         if self.simpleb:
-            self.bdir = '/{0}/simpleB/'.format(self.otime.strftime('%Y/%m'))
-            self.ldir = '/simpleB/{0}/'.format(self.otime.strftime('%Y/%m'))
+            self.bdir = bdir+'/{0}/simpleB/'.format(self.otime.strftime('%Y/%m'))
+            self.ldir = ldir+'/simpleB/{0}/'.format(self.otime.strftime('%Y/%m'))
         else:
             self.bdir = bdir+'/{0}/complexA/'.format(self.otime.strftime('%Y/%m'))
             self.ldir = ldir+'/complexA/{0}/'.format(self.otime.strftime('%Y/%m'))
