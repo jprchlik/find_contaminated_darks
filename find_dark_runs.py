@@ -24,6 +24,8 @@ except ImportError:
 SCOPES = 'https://www.googleapis.com/auth/calendar.readonly'
 CLIENT_SECRET_FILE = 'client_secret.json'
 APPLICATION_NAME = 'Google Calendar API Python Quickstart'
+
+
 def get_credentials():
     """Gets valid user credentials from storage.
 
@@ -57,6 +59,16 @@ def main():
 
     Creates a Google Calendar API service object and outputs a list of the 
     Dark runs on IRIS calibration-as-run calendar.
+ 
+    Parameters:
+    -----------
+    None
+
+    Returns:
+    --------
+    outc: string
+        A string in YYYY/MM format. This string is used by other programs in the run_dark_checks.csh script. 
+ 
     """
     credentials = get_credentials()
     http = credentials.authorize(httplib2.Http())
@@ -74,16 +86,20 @@ def main():
 #      if not page_token:
 #        break
 
+    #search for 15 previous days
     span = 15
     now = datetime.datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
     onmonth = (datetime.datetime.utcnow()-datetime.timedelta(days=span)).isoformat()+'Z'
 #    print('Getting days with darks')
+    #The calendarid is the calendar ID for the IRIS calibration-as-run calendar
     eventsResult = service.events().list(
         calendarId='27f4lqaadrbrp1nueps13qq2n0@group.calendar.google.com', timeMin=onmonth,timeMax=now, singleEvents=True, #IRIS calibration-as-run
         orderBy='startTime').execute()
     events = eventsResult.get('items', [])
 
 
+    #name corresponding to the dark observations in the IRIS calibration-as-run calendar
+    #this removes all spacing and case to make the match simpler (the final string is calib3dark)
     darks = 'Calib 3: Dark'.upper().replace(' ','').replace(':','')
 
 
@@ -92,18 +108,18 @@ def main():
 
 #    if not events:
 #        print('No darks found in last {0:3d}.'.format(span))
-#Check that you don't reprocesss/redownload recently processed darks
+    #Check that you don't reprocesss/redownload recently processed darks
     darkf = "processed_dark_months"
     prev = open(darkf,"r")
     check = prev.readlines()
-#set up so you only get the last event
+    #set up so you only get the last event
     found = False
     for event in events:
         start = event['start'].get('dateTime', event['start'].get('date'))
         eventstring = event['summary'].upper().replace(' ','').replace(':','')
         if ((eventstring == darks) | (eventstring == darks+'S')):
             out = start.split('-')
-# do the check to make sure the files are not already processed
+            # do the check to make sure the files are not already processed
             checkd = out[0]+'/'+out[1]+'/'+out[2]+"\n"
             if checkd  in check: 
                 sys.stdout.write('FAILED, ALREADY PROCESSED THIS MONTHS DARKS')
@@ -111,7 +127,7 @@ def main():
                 return outc
 #                sys.exit(1)
 
-#get and download simpleb darks
+            #get and download simpleb darks
             darkd = gdf.dark_times(out[0]+'/'+out[1]+'/'+out[2],simpleb=True)
             darkd.run_all()
 #ERROR NICELY if download fails
@@ -121,7 +137,7 @@ def main():
 #                outc = 1
 #                return outc
 #
-#get and download complexa darks
+            #get and download complexa darks
             darkd = gdf.dark_times(out[0]+'/'+out[1]+'/'+out[2],complexa=True)
             darkd.run_all()
 #ERROR NICELY if download fails
@@ -158,4 +174,4 @@ if __name__ == '__main__':
     except:
         outc = 2
     if outc > 1:
-        sys.stdout.write("FAILED, UNKNOWN REASON (PROBABLY CODING)")
+        sys.stdout.write("FAILED, likely reason is no new darks")
