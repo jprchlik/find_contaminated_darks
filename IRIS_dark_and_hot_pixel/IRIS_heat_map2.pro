@@ -1,4 +1,4 @@
-pro IRIS_heat_map2, sav_file, year_list=year_list, outdir=outdir, month_list=month_list, deviation=deviation, type=type, port=port
+pro IRIS_heat_map2, sav_file, year_list=year_list, outdir=outdir, month_list=month_list, deviation=deviation, type=type, port=port,file_loc=file_loc
 ;This program goes through all of the dark calibration images of 0s and 30s exposure times, analyzes them for dark pixel count rates, 
 ;		 and appends the results to the given file.  
 ;INPUTS: SAV_FILE - the file you want to update (for example, '/Volumes/Churchill/nschanch/iris/hot_pixel_trends/5sigma_cutoff/NEW_port1_FUV_hot_pixel_counts.sav')

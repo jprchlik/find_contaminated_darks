@@ -1,4 +1,4 @@
-pro hot_pixel_plot_wrapper, year_list=year_list, folder=folder, outdir=outdir, deviation=deviation, cutoff_list=cutoff_list, types=types, ports=ports
+pro hot_pixel_plot_wrapper, year_list=year_list, folder=folder, outdir=outdir, deviation=deviation, cutoff_list=cutoff_list, types=types, ports=ports,file_loc=file_loc
 ;This is the wrapper program for hot_pixel_exploration. This makes plots showing the number of hot pixels 
 ;	in dark calibration observations over time.
 ;If you only want to re-make a single plot, you can call hot_pixel_exploration directly
@@ -10,6 +10,7 @@ pro hot_pixel_plot_wrapper, year_list=year_list, folder=folder, outdir=outdir, d
 ;				- CUTOFF_LIST - the fraction of time above which you will define a pixel hot in a given month. Default is [0.1, 0.5, 0.9]
 ;				- TYPES - which CCD you want to look at. Options are FUV and NUV. Default is both
 ;				- PORTS - which port you want to look at. Default is all 4 (['port1','port2', 'port3','port4'])
+;		        - FILE_LOC - where the level0 files are kept. Default is /data/alisdair/opabina/scratch/joan/iris/newdat/orbit/level0/simpleB/
 
 
 ;Written 2016/02/04 by N. Schanche, SAO
@@ -25,6 +26,8 @@ if not keyword_set(folder) then folder='Hot_pixel_sav_files/5sigma_cutoff/'
 
 ;Want to run this for every year from the start of regular darks (2014) to present
 
+;Add file loc keyword which is contained in the IRIS_heat_map2  2018/09/17 J. Prchlik
+if not keyword_set(file_loc) then file_loc = '/data/alisdair/opabina/scratch/joan/iris/newdat/orbit/level0/simpleB/'
 
 if not keyword_set(year_list) then begin
 	time = systime()
@@ -46,7 +49,7 @@ for ii=0, n_elements(types)-1 do begin
 	for jj=0, n_elements(ports)-1 do begin
 		file_update = folder+'NEW_'+ports[jj]+'_'+types[ii]+'_hot_pixel_counts.sav'
 		print, 'Updating '+file_update
-		iris_heat_map2, file_update, outdir=outdir, deviation=deviation, type=types[ii], port=ports[jj],year_list=year_list
+		iris_heat_map2, file_update, outdir=outdir, deviation=deviation, type=types[ii], port=ports[jj],year_list=year_list,file_loc=file_loc
 	endfor
 endfor
 
