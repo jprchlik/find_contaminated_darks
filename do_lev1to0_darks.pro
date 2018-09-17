@@ -20,10 +20,10 @@ set_plot,'Z'
 ;dir0='/data/alisdair/IRIS_LEVEL1_DARKS/'
 ;read in parameter file
 readcol,'parameter_file',pars,format='A' 
-dir0 = pars[1] ; Get the level1 directory
+dir0 = string(pars[1]) ; Get the level1 directory
 
 
-fil=findfile(dir0+dir+'*.fits')
+fil=findfile(dir0+'/'+dir+'*.fits')
 ;fil=findfile('/Volumes/Pegasus/nschanch/iris/test/lev1/'+'*.fits')
 read_sdo,fil,ind,d,/nod
 
