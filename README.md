@@ -9,7 +9,7 @@ Then it grabs the text of the timeline file for that day and searches for the si
 This would run into an issue if ~~the dark are ran on a weekend timeline (always ran on Wednesday during the time of this documentation)~~ (verified to work when run on the weekend)
 or someone messed up the calibration-as-run calendar either by not following naming convention (Calib 3: Dark) or by failing to update the calibration-as-run calendar.
 If it is the latter you should fix it in the calibration-as-run calendar, but if you notice a pattern of errors you should report that to Ryan Timmons because
-verifying the calibration-as-run calendar ~~; however, the former requires more coding or manually entering the date in to the get_dark_files.py~~ (no longer needed because code checks if the timeline file exists and if not it it iterively searched backwards)).
+verifying the calibration-as-run calendar ~~; however, the former requires more coding or manually entering the date in to the get_dark_files.py)~~ (no longer true because code checks if the timeline file exists and if not it it iterively searched backwards).
 Using the last set of observed dark times,
 the dark files are download from JSOC using the drms module (get_dark_files.py)
 The code initially places the level1 dark files in /data/alisdair/IRIS_LEVEL1_DARKS/YYYY/MM/(simpleB or complexA; depending on OBSID)
@@ -60,7 +60,7 @@ find_dark_runs.py
 This program requires the google calendar API referenced above,
 but other than that is quite simple.
 The program searches the calendar for the string calib3:dark and sends the day to get_dark_files.py and the year,month to c-shell script,
-which the c-shell script uses to pass to idl functions.
+which the c-shell script uses to pass to IDL functions.
 
 get_dark_files.py
 -----------------
@@ -90,12 +90,12 @@ You may call it by the following commands in IDL.
 
 >do_lev1to0_darks,MM,YYYY,/complexA,'0','dummydir/'
 
-The program assumes the darks are located in /data/alisdair/IRIS_LEVEL1_DARKS/YYYY/MM,
+The program assumes the darks are located in ~~/data/alisdair/IRIS_LEVEL1_DARKS/YYYY/MM~~ line 2 of parameter file in addition to the YYYY/MM subdirectory passed to the program,
 which is why the python program downloads the files there.
 The level 1 to level 0 conversion is small and mostly rotates the image using the sswidl function iris_lev120_darks.
 Currently, the program is set to output to a dummy directory because saving to a network directory from IDL can 
 cause hangs in my experience.
-Therefore, I create the files locally then immediately move them in the script.
+Therefore, I create the files locally then immediately move them in the script to the output directory specified in line 3 of the parameter file.
 
 
 find_contaminated_darks
