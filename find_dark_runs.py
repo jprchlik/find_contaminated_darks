@@ -171,7 +171,9 @@ def main():
 if __name__ == '__main__':
     try:
         outc = main()
-    except:
+    except Exception as e:
         outc = 2
+        print(e)
+        #sys.stdout.write(e)
     if outc > 1:
         sys.stdout.write("FAILED, likely reason is no new darks")
