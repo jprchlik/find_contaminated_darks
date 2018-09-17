@@ -1,9 +1,10 @@
-pro plot_dark_trend,time,yval,sdir=sdir,pdir=pdir,rest=rest,pplot=pplot
+pro plot_dark_trend,time,yval,pdir=pdir,rest=rest,pplot=pplot
 
 set_plot,'Z'
 device,decomposed=0,set_pixel_depth=24,set_resolution=[1000,750]
 loadct,12
-if keyword_set(sdir) then sdir=sdir else sdir='/data/alisdair/opabina/scratch/joan/iris/newdat/orbit/level0/simpleB/'
+;sdir no longer used 2018/09/17 J. Prchlik
+;if keyword_set(sdir) then sdir=sdir else sdir='/data/alisdair/opabina/scratch/joan/iris/newdat/orbit/level0/simpleB/'
 if keyword_set(pdir) then pdir=pdir else pdir='plots/'
 if keyword_set(rest) then begin
     restore,'alldark_ave_sig.sav'
