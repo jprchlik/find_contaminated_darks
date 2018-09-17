@@ -10,13 +10,17 @@
 ; SHS 09/01/15
 ;     09/02/15  v2 works if t0 t1 are not defined, fixed odir
 ; NS,SHS 09/03/15  v3 fix write out of files, and read in of later ones
+; JP  09/17/18  Now works by reading the parameter file
 ;
 ;-
 
 pro do_lev1to0_darks,dir,t0,t1,typ,odir
 set_plot,'Z'
 
-dir0='/data/alisdair/IRIS_LEVEL1_DARKS/'
+;dir0='/data/alisdair/IRIS_LEVEL1_DARKS/'
+;read in parameter file
+readcol,'parameter_file',pars,format='A' 
+dir0 = pars[1] ; Get the level1 directory
 
 
 fil=findfile(dir0+dir+'*.fits')
