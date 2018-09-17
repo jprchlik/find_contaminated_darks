@@ -50,7 +50,8 @@ class dark_times:
         
         Returns
         -------
-        NOTHING, just downloads files and creates required directories.
+        None
+            Just downloads files and creates required directories.
 
         """
 
