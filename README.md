@@ -3,25 +3,31 @@ Long term dark analysis
 For historical (i.e. human reasons) the directory structure hides the true function of this program.
 Primarily the directory now exists to test the long term trending of the IRIS pedestal dark level,
 which was first noticed to be discrepant from the launch model in ~June 2014.
-The main directory contains a c-shell script (run_dark_checks.csh), which runs a code series.
-The code series performs the following tasks.
+The main directory contains a c-shell script (run_dark_checks.csh), which runs a series of codes.
 First, it finds the day of the observed darks by querying the google calibration-as-run calendar for IRIS dark runs in the last 25 days.
 Then it grabs the text of the timeline file for that day and searches for the simpleb and complexa OBSIDs (find_dark_runs.py). 
-This would run into an issue if the dark are ran on a weekend timeline (always ran on Wednesday during the time of this documentation)
-or someone messed up the calibration-as-run calendar.
-If it is the latter you should fix it; however, the former requires more coding or manually entering the date in to the get_dark_files.py.
-Using the last set of observed dark times (set up for eclipse season, but will work in normal orbits),
+This would run into an issue if ~~the dark are ran on a weekend timeline (always ran on Wednesday during the time of this documentation)~~ (verified to work when run on the weekend)
+or someone messed up the calibration-as-run calendar either by not following naming convention (Calib 3: Dark) or by failing to update the calibration-as-run calendar.
+If it is the latter you should fix it in the calibration-as-run calendar, but if you notice a pattern of errors you should report that to Ryan Timmons because
+verifying the calibration-as-run calendar ~~; however, the former requires more coding or manually entering the date in to the get_dark_files.py~~ (no longer needed because code checks if the timeline file exists and if not it it iterively searched backwards)).
+Using the last set of observed dark times,
 the dark files are download from JSOC using the drms module (get_dark_files.py)
 The code initially places the level1 dark files in /data/alisdair/IRIS_LEVEL1_DARKS/YYYY/MM/(simpleB or complexA; depending on OBSID)
 and renames the files to adhere to previous standards.
 
 Next, run_dark_checks converts the level1 files to level0 darks (do_lev1to0_darks.pro) for a given month and moves them to
 the level0 directory.
-Then the script checks for darks significantly affected by SAAs or CMEs (find_contaminated_darks.pro; i.e. too many 5 sigma hot pixels for a Gaussian distribution.).
+Then the script checks for darks significantly affected by SAAs or transient particle hits (find_contaminated_darks.pro; i.e. too many 5 sigma hot pixels for a Gaussian distribution.).
 Next, download the temperature files for the day darks are observed plus +/- 1 day and format the output temperature file for IDL.
-Finally, compared the observed to the modeled dark pedestal trend.
-(Bonus the hot_pixel_plot_wrapper is included at the end of the script and based on my directory structure.
-I should just integrate into the main code because it solves a similar problem).
+The last step in the dark pedestal pipeline creates plots to compare the observed to the modeled dark pedestal trend.
+~~(Bonus the hot_pixel_plot_wrapper is included at the end of the script and based on my directory structure.
+I should just integrate into the main code because it solves a similar problem).~~
+
+
+After the pedestal analysis finishes, 
+the code runs the hot pixel analysis.
+The hot pixel analysis counts the number of Hot (5&sigma; pixels) in the level 1 IRIS observations.
+For more information navigate to the IRIS_dark_and_hot_pixel sub-folder and read the README.md inside.
 
 The program works automaticaly because the plots output to the 'Z' window in IDL. Therefore, the job maybe cronned.
 Currently, the job runs on my CfA machine by the following cronjob (crontab -e):
@@ -46,23 +52,33 @@ In order to run the script from your machine you will need to do a few things.
 First, is make this script executable by typing chmod a+x run_dark_checks.csh.
 Then you need to update the HOME variable at the top of the directory to be your HOME directory.
 Finally, you need to follow instructions at https://developers.google.com/google-apps/calendar/quickstart/python
-to get google calendar API for your email address.
+to get the google calendar API for your email address and the associated python packages.
 
 
 find_dark_runs.py
 -----------------
 This program requires the google calendar API referenced above,
 but other than that is quite simple.
-The program searches the calendar for the string calib3:darks and sends the day to get_dark_files.py and the year,month to c-shell script.
+The program searches the calendar for the string calib3:dark and sends the day to get_dark_files.py and the year,month to c-shell script,
+which the c-shell script uses to pass to idl functions.
 
 get_dark_files.py
 -----------------
 This program is the work horse for obtaining the darks from JSOC.
 It takes the time from find_dark_runs.py and whether you are seeking complexA or simpleB darks (find_dark_runs asks for both).
 The program then gets the timeline text from Lockheed, which it parses to find start and stop times for OBSIDs corresponding to the selected dark.
-Next, it uses the time frame found in the timeline to query JSOC iris level1 using the drms module in python.
+Next, it uses the time frame found in the timeline to query JSOC iris level1 using the drms module in python ([will need to install drms](https://github.com/kbg/drms)).
 Once the JSOC query finishes, 
 the program downloads the files and renames them according to a previous file naming convention for convince.
+Versions of the program after September 17, 2018 require a parameter file in the current directory called "parameter_file".
+This file contains three lines in the order below (use help(get_dark_files) for more information:
+Line1: email address registered with JSOC (e.g. email@email.org)    
+Line2: A base directory containing the level 1 IRIS dark files. The program will concatenate YYYY/MM/simpleb/ or YYYY/MM/complexa/ onto the base directory    
+Line3: A base directory containing the level 0 IRIS dark files. The program will concatenate simpleb/YYYY/MM/ or complexa/YYYY/MM/ onto the base directory    
+
+
+An example parameter file exists in the current directory.
+
 
 do_lev1to0_darks
 ----------------
