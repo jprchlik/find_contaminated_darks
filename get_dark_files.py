@@ -12,23 +12,86 @@ import glob
 class dark_times:
 
 
-    def __init__(self,time,irisweb='http://iris.lmsal.com/health-safety/timeline/iris_tim_archive/{2}/IRIS_science_timeline_{0}.V{1:2d}.txt',simpleb=False,complexa=False,tol=50):
+    def __init__(self,time,
+                irisweb='http://iris.lmsal.com/health-safety/timeline/iris_tim_archive/{2}/IRIS_science_timeline_{0}.V{1:2d}.txt',
+                simpleb=False,complexa=False,tol=50):
+
+        """
+        A python class used for finding and downloading IRIS dark observations. This module requires that parameters be specified in
+        a parameter file in this directory. The parameter file's name must be "parameter_file" and contain the three following lines:
+        Line1: email address registered with JSOC (e.g. email@email.org)
+        Line2: A base directory containing the level 1 IRIS dark files. The program will concatenate YYYY/MM/simpleb/ or YYYY/MM/complexa/ onto the base directory
+        Line3: A base directory containing the level 0 IRIS dark files. The program will concatenate simpleb/YYYY/MM/ or complexa/YYYY/MM/ onto the base directory
+
+        Example three lines below:
+        email@email.org
+        /data/alisdair/IRIS_LEVEL1_DARKS/
+        /data/alisdair/opabina/scratch/joan/iris/newdat/orbit/level0/
+
+ 
+        The program will create the level0 and level1 directories as needed.
+
+        Parameters
+        ----------
+        time: datetime object
+            A date time object containing the date the dark observations started based on the IRIS calibration-as-run calendar
+        irisweb: string, optional
+            A formatted text string which corresponds to the location of the IRIS timeline files 
+            (Default = 'http://iris.lmsal.com/health-safety/timeline/iris_tim_archive/{2}/IRIS_science_timeline_{0}.V{1:2d}.txt').
+            The {0} character string corresponds the date of the timeline uploaded in YYYYMMDD format, while {1:2d} 
+            corresponds to the highest number version of the timeline, which I assume is the timeline uploaded to the spacecraft.         
+        simpleb: boolean, optional
+            Whether to download simpleb darks can only perform simpleb or complexa darks per call (Default = False).
+        complexa: boolean, optional
+            Whether to download complexa darks can only perform simpleb or complexa darks per call (Default = False).
+        tol: int, optional
+            The number of darks in a directory before the program decides to download. If greater than tolerance
+            than it will not download any new darks if less than tolerance then it will download the new darks (Default = 50). 
+        
+        Returns
+        -------
+        NOTHING, just downloads files and creates required directories.
+
+        """
 
 
-#web page location of IRIS timeline
 
+        #web page location of IRIS timeline
         self.irisweb = irisweb #.replace('IRIS',time+'/IRIS')
         self.otime = dt.datetime.strptime(time,'%Y/%m/%d')
         self.stime = self.otime.strftime('%Y%m%d')
+
+        #Type of dark to download simple B or complex A
         self.complexa = complexa
         self.simpleb = simpleb
-#Minimum number of dark files reqiured to run
+        #Minimum number of dark files reqiured to run
         self.tol = tol
 
+        #read lines in parameter file
+        parU = open('parameter_file','r')
+        pars = parU.readlines()
+        parU.close()
+
+        #update parameters based on new parameter file
+        #get email address
+        self.email = pars[0].strip() 
+        #get level 1/download base directory (without simpleb or complexa subdirectory
+        bdir = pars[1].strip()
+        #get level 0 directory
+        ldir = pars[2].strip()
+        
         if complexa:
             self.obsid = 'OBSID=4203400000'
         if simpleb:
             self.obsid = 'OBSID=4202000003'
+
+        #make the download directory
+        if self.simpleb:
+            self.bdir = '/{0}/simpleB/'.format(self.otime.strftime('%Y/%m'))
+            self.ldir = '/simpleB/{0}/'.format(self.otime.strftime('%Y/%m'))
+        else:
+            self.bdir = bdir+'/{0}/complexA/'.format(self.otime.strftime('%Y/%m'))
+            self.ldir = ldir+'/complexA/{0}/'.format(self.otime.strftime('%Y/%m'))
         
     def request_files(self):
 
@@ -94,7 +157,7 @@ class dark_times:
 #set up JSOC query for darks
     def dark_query(self):
 #use drms module to download from JSOC (https://pypi.python.org/pypi/drms)
-        client = drms.Client(email='jakub.prchlik@cfa.harvard.edu',verbose=False)
+        client = drms.Client(email=self.email,verbose=False)
         fmt = '%Y.%m.%d_%H:%M'
         self.qstr = 'iris.lev1[{0}_TAI-{1}_TAI][][? IMG_TYPE ~ "DARK" ?]'.format(self.sta_dark_dt.strftime(fmt),self.end_dark_dt.strftime(fmt)) 
         self.expt = client.export(self.qstr)
@@ -122,13 +185,6 @@ class dark_times:
 ####                wait = False
 ####            elif stat > 1:
 ####                break #jump out of loop if you get an error
-        #make the download directory
-        if self.simpleb:
-            self.bdir = '/data/alisdair/IRIS_LEVEL1_DARKS/{0}/simpleB/'.format(self.otime.strftime('%Y/%m'))
-            self.ldir = '/data/alisdair/opabina/scratch/joan/iris/newdat/orbit/level0/simpleB/{0}/'.format(self.otime.strftime('%Y/%m'))
-        else:
-            self.bdir = '/data/alisdair/IRIS_LEVEL1_DARKS/{0}/complexA/'.format(self.otime.strftime('%Y/%m'))
-            self.ldir = '/data/alisdair/opabina/scratch/joan/iris/newdat/orbit/level0/complexA/{0}/'.format(self.otime.strftime('%Y/%m'))
 
         # check to make sure directory does not exist 
         if not os.path.exists(self.bdir):
