@@ -1,19 +1,21 @@
 #!/bin/tcsh
 #source in normal env variable from home
 source $HOME/.cshrc
-source $HOME/.cshrc.user
 
-#Set up display 
-#create sswidl alias
-alias sswidl /proj/DataCenter/ssw/gen/setup/ssw_idl
-#Setup the SSWIDL environment
-# If you need to set SSW_INSTER, use the variable above. Otherwise, your 
-# SSWIDL environment will not build correctly after this line.
-setenv SSW /proj/DataCenter/ssw
-#SSWIDL settings
-#Set instrument and packages to be used after  $SSW_INSTR:
-setenv SSW_INSTR    "AIA IRIS"
-source $SSW/gen/setup/setup.ssw /quiet
+#These variables are not needed for the pipeline anymore 2018/10/11 J. Prchlik
+##source $HOME/.cshrc.user
+##
+###Set up display 
+###create sswidl alias
+##alias sswidl /proj/DataCenter/ssw/gen/setup/ssw_idl
+###Setup the SSWIDL environment
+### If you need to set SSW_INSTER, use the variable above. Otherwise, your 
+### SSWIDL environment will not build correctly after this line.
+##setenv SSW /proj/DataCenter/ssw
+###SSWIDL settings
+###Set instrument and packages to be used after  $SSW_INSTR:
+##setenv SSW_INSTR    "AIA IRIS"
+##source $SSW/gen/setup/setup.ssw /quiet
 
 
 #get printed date from dark in last 31 days
