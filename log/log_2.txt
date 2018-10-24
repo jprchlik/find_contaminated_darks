@@ -1,0 +1,35 @@
+2018-10-07 07:12:38.075 idl_opserver[48709:4800085] This process is attempting to exclude an item from Time Machine by path without administrator privileges. This is not supported.
+2018-10-07 07:12:38.077 idl_opserver[48709:4800085] This process is attempting to exclude an item from Time Machine by path without administrator privileges. This is not supported.
+2018-10-07 07:12:38.078 idl_opserver[48709:4800085] This process is attempting to exclude an item from Time Machine by path without administrator privileges. This is not supported.
+2018-10-07 07:12:38.079 idl_opserver[48709:4800085] This process is attempting to exclude an item from Time Machine by path without administrator privileges. This is not supported.
+2018-10-07 07:12:38.080 idl_opserver[48709:4800085] This process is attempting to exclude an item from Time Machine by path without administrator privileges. This is not supported.
+2018-10-07 07:12:38.081 idl_opserver[48709:4800085] This process is attempting to exclude an item from Time Machine by path without administrator privileges. This is not supported.
+2018-10-07 07:12:38.081 idl_opserver[48709:4800085] This process is attempting to exclude an item from Time Machine by path without administrator privileges. This is not supported.
+2018-10-07 07:12:38.082 idl_opserver[48709:4800085] This process is attempting to exclude an item from Time Machine by path without administrator privileges. This is not supported.
+2018-10-07 07:12:38.083 idl_opserver[48709:4800085] This process is attempting to exclude an item from Time Machine by path without administrator privileges. This is not supported.
+2018-10-07 07:12:38.084 idl_opserver[48709:4800085] This process is attempting to exclude an item from Time Machine by path without administrator privileges. This is not supported.
+2018-10-07 07:12:38.086 idl_opserver[48709:4800085] This process is attempting to exclude an item from Time Machine by path without administrator privileges. This is not supported.
+2018-10-07 07:12:38.087 idl_opserver[48709:4800085] This process is attempting to exclude an item from Time Machine by path without administrator privileges. This is not supported.
+2018-10-07 07:12:38.088 idl_opserver[48709:4800085] This process is attempting to exclude an item from Time Machine by path without administrator privileges. This is not supported.
+2018-10-07 07:12:38.099 idl_opserver[48709:4800085] This process is attempting to exclude an item from Time Machine by path without administrator privileges. This is not supported.
+2018-10-07 07:12:38.102 idl_opserver[48709:4800085] This process is attempting to exclude an item from Time Machine by path without administrator privileges. This is not supported.
+2018-10-07 07:12:38.107 idl_opserver[48709:4800085] This process is attempting to exclude an item from Time Machine by path without administrator privileges. This is not supported.
+2018-10-07 07:12:38.107 idl_opserver[48709:4800085] This process is attempting to exclude an item from Time Machine by path without administrator privileges. This is not supported.
+2018-10-07 07:12:38.108 idl_opserver[48709:4800085] This process is attempting to exclude an item from Time Machine by path without administrator privileges. This is not supported.
+% Compiled module: CHECK_SIG_LEVEL.
+% Compiled module: FITS_READ.
+% Compiled module: FITS_OPEN.
+% Compiled module: SXPAR.
+% Compiled module: GETTOK.
+% Compiled module: VALID_NUM.
+% Compiled module: SXDELPAR.
+% Compiled module: TAG_EXIST.
+% Compiled module: FITS_CLOSE.
+% Compiled module: FIVESIGMA.
+FUV20181003_123828.fits 2018/10/03T12:38:28   1
+FUV20181003_125259.fits 2018/10/03T12:52:59   1
+FUV20181003_130759.fits 2018/10/03T13:07:59   1
+FUV20181003_132328.fits 2018/10/03T13:23:28   1
+FUV20181003_133936.fits 2018/10/03T13:39:36   1
+FUV20181003_135741.fits 2018/10/03T13:57:41   1
+
