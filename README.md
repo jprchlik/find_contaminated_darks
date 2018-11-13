@@ -18,6 +18,7 @@ and renames the files to adhere to previous standards.
 Next, run_dark_checks converts the level1 files to level0 darks (do_lev1to0_darks.pro) for a given month and moves them to
 the level0 directory.
 Then the script checks for darks significantly affected by SAAs or transient particle hits (find_contaminated_darks.pro; i.e. too many 5 sigma hot pixels for a Gaussian distribution.).
+This step runs in parallel, which requires that you add par_commands to your IDL start up via the enviromental variable IDL_PATH in .cshrc or your .idl_startup file.
 Next, download the temperature files for the day darks are observed plus +/- 1 day and format the output temperature file for IDL.
 The last step in the dark pedestal pipeline creates plots to compare the observed to the modeled dark pedestal trend.
 ~~(Bonus the hot_pixel_plot_wrapper is included at the end of the script and based on my directory structure.
