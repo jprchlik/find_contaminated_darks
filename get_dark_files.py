@@ -1,7 +1,13 @@
 import os,sys
 import datetime as dt
 import numpy as np
-import urllib2
+try:
+    #for python 3.0 or later
+    from urllib.request import urlopen
+except ImportError:
+    #Fall back to python 2 urllib2
+    from urllib2 import urlopen
+
 import requests
 from multiprocessing import Pool
 import drms
