@@ -133,7 +133,7 @@ class dark_times:
                 inurl = self.irisweb.format(self.stime, v,irispath).replace(' ','0')
             else: v+=1
 #get the timeline file information for request timeline
-        res = urllib2.urlopen(inurl)
+        res = urlopen(inurl)
 
         self.res = res
         self.timeline = res.read()
