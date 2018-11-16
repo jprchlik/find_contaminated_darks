@@ -32,61 +32,37 @@ class gui_dark(Tk.Frame):
 
     def __init__(self,parent):
         """
-        Program to fit the long term evolution of the IRIS pedestal. 
+        Program to fit the long term evolution of the IRIS pedestal. Hopefully this program is static and you can run the GUI with the following command:
+        tcsh>python fit_ports_gui.py
 
+        However, there will be times when this code should be modified. For example, following a prolonged bake out like the one from June 13-15, 2018.
+        In that case the code modification will still be small and the exact functions you will need to edit will be specified below.
+
+
+        The one thing you will need to change every time you preform a model dark pedestal recalibration is the initial_parameters.txt file in this
+        directory. This file contains 9 lines. The first line is the Comma sepearated parameter header. The header information matters because it 
+        is read by this GUI and used to create parameter list you see below the plots in the GUI and the "Freeze Par." check boxes. The next lines are
+        the values for each parameter, comma separated, for each port, specified on the left. The GUI will read those parameters from the file and 
+        create the long term trend on the plot and set the value in median text box for each parameter. The reason the file is formatted this way
+        is that the iris_dark_trend_fix.pro expects the parameters in this format, so you can copy and paste the values from initial_parameters.txt
+        into the newest version of iris_dark_trend_fix.pro. See the README at 
+        https://github.com/jprchlik/find_contaminated_darks/tree/master/calc_trend_darks/python_fit_ports for detailed information on refitting a 
+        model. This page includes video examples on refitting model parameters.
+
+
+        Now if you are ever unfortunate enough to have to redefine the IRIS dark pedestal model, then you will need to make a few modifications to 
+        this code. Fortunately, you will not have to add the new parameter names in manually because that is done automatically by the list of 
+        parameters in the header of initial_parameters.txt. You will need to change the offset function in this module. The reason for this
+        is the code needs to know how to handle to new parameters you are giving it. You will need to also add the new variable names and 
+        values to the Print function in this module. The reason you have to add the Print explicitly is I do not know a priori the best format
+        for printing whatever variable you add. After you bend those two short funcitons to your will, no further modifications of the
+        code are needed.
 
         """
         Tk.Frame.__init__(self,parent,background='white') #create initial frame with white background
 
         #dictionary of initial Guess parameters (Manually update with the previous version of trend fix 
         self.gdict = {}
-        #conversion from idl iris_make_dark to python is {0,1,2,3,4,5,6,7}
-        #Add time dependent evolution of one of the sin peaks
-        #Added P2 for testing
-        ##self.gdict['fuv1'] = [ 0.13676  , 0.11199     ,  3.4355e+07 , 1.0 , 0.57852  , 0.53048  ,  2.337e-08   ,  6.981e-16   , -0.35432 ]
-        ##self.gdict['fuv2'] = [ 0.26720  , 0.20045     ,  3.1565e+07 , 1.0 , 0.37567  , 0.89111  ,  2.868e-08   ,  4.003e-16   , -0.56086 ]
-        ##self.gdict['fuv3'] = [ 1.50775  , 1.71743     ,  3.1505e+07 , 1.0 , 0.31094  , -0.12981 ,  2.169e-08   ,  1.319e-15   , -0.37175 ]
-        ##self.gdict['fuv4'] = [ 0.23718  , 0.18892     ,  3.1155e+07 , 1.0 , 0.35511  , 0.86652  ,  1.398e-08   ,  1.091e-15   , -0.40907 ]
-        ##self.gdict['nuv1'] = [ 0.55083  , 0.54792     ,  3.1788e+07 , 1.0 , 0.32558  , -0.08227 ,  3.116e-09   ,  2.823e-16   , -0.13231 ]
-        ##self.gdict['nuv2'] = [ 0.71724  , 0.69646     ,  3.1847e+07 , 1.0 , 0.32991  , 0.92275  ,  1.788e-09   ,  3.599e-16   , -0.15109 ]
-        ##self.gdict['nuv3'] = [ 0.26202  , 0.25259     ,  3.1702e+07 , 1.0 , 0.32890  , 0.91326  ,  9.521e-09   ,  3.424e-16   , -0.09947 ]
-        ##self.gdict['nuv4'] = [ 0.41113  , 0.45427     ,  3.1648e+07 , 1.0 , 0.31998  , 0.90299  ,  6.874e-09   ,  3.887e-16   , -0.16182 ]
-        #self.gdict['fuv1'] = [ 0.13676  , 0.11199     ,  3.4355e+07  , 0.57852  , 0.53048  ,  2.337e-08   ,  6.981e-16   , -0.35432 ]
-        #self.gdict['fuv2'] = [ 0.26720  , 0.20045     ,  3.1565e+07  , 0.37567  , 0.89111  ,  2.868e-08   ,  4.003e-16   , -0.56086 ]
-        #self.gdict['fuv3'] = [ 1.50775  , 1.71743     ,  3.1505e+07  , 0.31094  , -0.12981 ,  2.169e-08   ,  1.319e-15   , -0.37175 ]
-        #self.gdict['fuv4'] = [ 0.23718  , 0.18892     ,  3.1155e+07  , 0.35511  , 0.86652  ,  1.398e-08   ,  1.091e-15   , -0.40907 ]
-        #self.gdict['nuv1'] = [ 0.55083  , 0.54792     ,  3.1788e+07  , 0.32558  , -0.08227 ,  3.116e-09   ,  2.823e-16   , -0.13231 ]
-        #self.gdict['nuv2'] = [ 0.71724  , 0.69646     ,  3.1847e+07  , 0.32991  , 0.92275  ,  1.788e-09   ,  3.599e-16   , -0.15109 ]
-        #self.gdict['nuv3'] = [ 0.26202  , 0.25259     ,  3.1702e+07  , 0.32890  , 0.91326  ,  9.521e-09   ,  3.424e-16   , -0.09947 ]
-        #self.gdict['nuv4'] = [ 0.41113  , 0.45427     ,  3.1648e+07  , 0.31998  , 0.90299  ,  6.874e-09   ,  3.887e-16   , -0.16182 ]
-        #commented out to test new parameters 2017/12/06
-        #self.gdict['fuv1'] = [ 0.189662 , 0.0178533, 3.15070e+07  , 0.445460    , 0.104290 ,  2.925e-08   ,  5.473e-16  , -0.598880]
-        #self.gdict['fuv2'] = [ 0.26720  , 0.20045  , 3.1565e+07   , 0.37567     , 0.89111  , 2.868e-08    ,  4.003e-16  , -0.56086 ]
-        #self.gdict['fuv3'] = [ 1.48098  , 1.45770  , 3.15160e+07  , 0.333684    , 0.872832 , 2.856e-08    ,  1.151e-15  , -0.582085]
-        #self.gdict['fuv4'] = [ 0.310112 , 0.132660 , 3.13800e+07  , 0.418674    , 0.951970 , 1.8805e-08   ,  9.618e-16  , -0.612558]
-        #self.gdict['nuv1'] = [ 0.55083  , 0.54792  , 3.1788e+07   , 0.32558     , -0.08227 ,  3.116e-09   ,  2.823e-16  , -0.13231 ]
-        #self.gdict['nuv2'] = [ 0.71724  , 0.69646  , 3.1847e+07   , 0.32991     , 0.92275  ,  1.788e-09   ,  3.599e-16  , -0.15109 ]
-        #self.gdict['nuv3'] = [ 0.26202  , 0.25259  , 3.1702e+07   , 0.32890     , 0.91326  ,  9.521e-09   ,  3.424e-16  , -0.09947 ]
-        #self.gdict['nuv4'] = [ 0.41113  , 0.45427  , 3.1648e+07   , 0.31998     , 0.90299  ,  6.874e-09   ,  3.887e-16  , -0.16182 ]
-        #New parameters 2017/12/06
-        #self.gdict['fuv1']=[ -0.18966 , -0.01785 ,  3.1507e+07   , 0.44546  , 0.10429  ,  2.925000000e-08   ,  5.473000000e-16   , -0.59888 ]
-        #self.gdict['fuv2']=[ -0.26720 , -0.20045 ,  3.1565e+07   , 0.37567  , 0.89111  ,  2.868000000e-08   ,  4.003000000e-16   , -0.56086 ]
-        #self.gdict['fuv3']=[ -3.31362 , -3.13384 ,  3.1447e+07   , 0.80595  , 0.03397  ,  2.915039795e-08   ,  1.132137520e-15   , 2.51098  ]
-        #self.gdict['fuv4']=[ -0.31011 , -0.13266 ,  3.1380e+07   , 0.41867  , 0.95197  ,  1.880500000e-08   ,  9.618000000e-16   , -0.61256 ]
-        #self.gdict['nuv1']=[ -0.55083 , -0.54792 ,  3.1788e+07   , 0.32558  , -0.08227 ,  3.116000000e-09   ,  2.823000000e-16   , -0.13231 ]
-        #self.gdict['nuv2']=[ -0.71724 , -0.69646 ,  3.1847e+07   , 0.32991  , 0.92275  ,  1.788000000e-09   ,  3.599000000e-16   , -0.15109 ]
-        #self.gdict['nuv3']=[ -0.26202 , -0.25259 ,  3.1702e+07   , 0.32890  , 0.91326  ,  9.521000000e-09   ,  3.424000000e-16   , -0.09947 ]
-        #self.gdict['nuv4']=[ -0.41113 , -0.45427 ,  3.1648e+07   , 0.31998  , 0.90299  ,  6.874000000e-09   ,  3.887000000e-16   , -0.16182 ]
-
-        #Added quadratic end parameter to output
-        #self.gdict['fuv1']=[ 0.17070  , 0.01964  ,  3.1510e+07   , 0.41591  , 0.09386  ,  2.802297015e-08   ,  5.769239109e-16   , -0.56567 ]
-        #self.gdict['fuv2']=[ 0.26720  , 0.20045  ,  3.1565e+07   , 0.37567  , 0.89111  ,  2.868000000e-08   ,  4.003000000e-16   , -0.56086 ]
-        #self.gdict['fuv3']=[ 1.48098  , 1.45770  ,  3.1516e+07   , 0.33368  , 0.87283  ,  2.856000000e-08   ,  1.151000000e-15   , -0.58208 ]
-        #self.gdict['fuv4']=[ 0.31011  , 0.13266  ,  3.1380e+07   , 0.41867  , 0.95197  ,  1.880500000e-08   ,  9.618000000e-16   , -0.61256 ]
-        #self.gdict['nuv1']=[ 0.55495  , 0.53240  ,  3.1785e+07   , 0.32971  , -0.07965 ,  3.674386994e-09   ,  2.397602519e-16   , -0.15339 ]
-        #self.gdict['nuv2']=[ 0.73252  , 0.68236  ,  3.1844e+07   , 0.33434  , 0.92946  ,  2.086566551e-09   ,  3.013959167e-16   , -0.14840 ]
-        #self.gdict['nuv3']=[ 0.26424  , 0.24437  ,  3.1699e+07   , 0.33594  , 0.91788  ,  9.985153037e-09   ,  3.111440692e-16   , -0.11878 ]
-        #self.gdict['nuv4']=[ 0.41703  , 0.44185  ,  3.1645e+07   , 0.32677  , 0.90557  ,  7.660349914e-09   ,  3.347790126e-16   , -0.19565 ] 
 
         #create a variable which switch to true after creating a plot once
         self.lat_plot = False
@@ -140,6 +116,10 @@ class gui_dark(Tk.Frame):
         self.dtq1['nuv'] = 1.295e8
         #self.dtq1['nuv'] = 1.131e8
 
+        #Add the June 13-15th bake out to the dropped pedestal level
+        #unit s from 1-jan-1958 based on anytim from IDL 
+        self.bojune152018 = 1.2450240e+09
+
         #basic set of keys
         self.b_keys = sorted(self.gdict.keys())
         #add min and max parameters (Default no restriction)
@@ -174,6 +154,19 @@ class gui_dark(Tk.Frame):
 
 #Create area and window for figure
     def FigureWindow(self):
+        """
+        This function creates a GUI window with a given size and format
+
+        Args
+        ------
+        self: class
+            The GUI class in this module
+   
+        Returns
+        --------
+            None
+        """
+
 #set the information based on screen size
         x =  self.parent.winfo_screenwidth()
         y =  self.parent.winfo_screenheight()
@@ -214,6 +207,18 @@ class gui_dark(Tk.Frame):
 
 #Create window in center of screen
     def centerWindow(self):
+        """
+        This function sets the size of the GUI window based on the screen size. Can cause problems for small screens.
+
+        Args
+        ------
+        self: class
+            The GUI class in this module
+   
+        Returns
+        --------
+            None
+        """
         self.w = 1800/1
         self.h = 1200/1
         sw = self.parent.winfo_screenwidth()
@@ -229,6 +234,19 @@ class gui_dark(Tk.Frame):
 
 #Initialize the GUI
     def initUI(self):
+        """
+        This function initializes the GUI. This includes creating an appropriately sized GUI, adding buttons to the GUI, adding parameter text
+        boxes and values, adding freeze check boxes, and adding refit check boxes.
+
+        Args
+        ------
+        self: class
+            The GUI class in this module
+   
+        Returns
+        --------
+            None
+        """
 #set up the title 
         self.parent.title("FIT IRIS DARK PEDESTAL")
 
@@ -347,7 +365,20 @@ class gui_dark(Tk.Frame):
 
 
     #update the port values in the GUI
-    def update_port_vals(self):
+    def update_port_vals(self):  
+       """
+       This function updates the parameter text in the GUI based on the parameter in the gdict class. 
+       This function will call after you refit a parameter and accept the new parameter values.
+
+       Args
+       ------
+       self: class
+           The GUI class in this module
+   
+       Returns
+       --------
+           None
+       """
        #loop over all columns (parameters) for each port
        for c,j in enumerate(self.gdict[i]):
            inp_val = '{0:10}'.format(j)
@@ -362,6 +393,20 @@ class gui_dark(Tk.Frame):
 
     #Update parameters in gdict with percentage limit
     def set_limt_param(self,onenter):
+        """
+        This function will set the parameter limits after updating the range value in the lower right text box.
+
+        Args
+        ------
+        self: class
+            The GUI class in this module
+        onenter: class
+            Initiate on enter
+   
+        Returns
+        --------
+            None
+        """
         #release cursor from entry box and back to the figure
         #needs to be done otherwise key strokes will not work
         self.f.canvas._tkcanvas.focus_set()
@@ -387,6 +432,20 @@ class gui_dark(Tk.Frame):
 
     #Update parameters in gdict base on best fit values
     def get_iris_param(self,onenter):
+        """
+        This function will get the parameter limits from the parameter text boxes and update them in the fitting dictionary.
+
+        Args
+        ------
+        self: class
+            The GUI class in this module
+        onenter: class
+            Initiate on enter
+   
+        Returns
+        --------
+            None
+        """
         #release cursor from entry box and back to the figure
         #needs to be done otherwise key strokes will not work
         self.f.canvas._tkcanvas.focus_set()
@@ -402,6 +461,18 @@ class gui_dark(Tk.Frame):
 
     #Update shown parameters base on new best fit
     def iris_show(self):
+        """
+        This function will updated the parameter text boxes values based on the best fit.
+
+        Args
+        ------
+        self: class
+            The GUI class in this module
+   
+        Returns
+        --------
+            None
+        """
        # loop over string containing all the gdict keys (i.e. port names)
         for m,i in enumerate(self.b_keys):
             #loop over all parameters and update values
@@ -430,6 +501,19 @@ class gui_dark(Tk.Frame):
          
     #set up data for plotting 
     def iris_dark_set(self):
+        """
+        This function reads in the IDL save files containing the dark trend information. It also sets default plotting symbols,
+        linestyles, and colors per port.
+
+        Args
+        ------
+        self: class
+            The GUI class in this module
+   
+        Returns
+        --------
+            None
+        """
         from scipy.io import readsav
         #Possible types of IRIS ports
         ptype = ['fuv','nuv']
@@ -462,6 +546,18 @@ class gui_dark(Tk.Frame):
 
     #plot the best fit data
     def iris_dark_plot(self):
+        """
+        This function will plot and IRIS pedestal data and the best fit parameters for each port.
+
+        Args
+        ------
+        self: class
+            The GUI class in this module
+   
+        Returns
+        --------
+            None
+        """
         #clear the plot axes 
         for i in self.wplot.keys(): 
 
@@ -500,6 +596,8 @@ class gui_dark(Tk.Frame):
 
             #set ptype attribute for curvefit and offset model 
             self.ptype = i[:-1]
+            #set the current port variable
+            self.cport= i 
 
             #get variance in best fit model
             var = self.get_var(i,self.gdict[i])
@@ -528,20 +626,50 @@ class gui_dark(Tk.Frame):
 
     #get variance in the model
     def get_var(self,port,parm):
+        """
+        This function will calculate the varience between the model and the data for a given port for the latest best fit model.
+
+        Args
+        ------
+        self: class
+            The GUI class in this module
+        port: str
+            String containing the port name (e.g. 'nuv1'), which is the dictionary key
+        parm: np.array
+            An array of parameter value to send to the offset function
+   
+        Returns
+        --------
+        var: float
+            The sum squared error divided by N. That is the average uncertainty per observation.   
+        """
         var = np.sqrt(np.sum((self.fdata[port][1]-self.offset(self.fdata[port][0],*parm))**2.)/float(len(self.fdata[port][0])))
         return var
     #get variance in the model
     def get_last(self,port,parm):
+        """
+        This function will calculate the varience between the model and the data for a given port using the previous model.
+
+        Args
+        ------
+        self: class
+            The GUI class in this module
+        port: str
+            String containing the port name (e.g. 'nuv1'), which is the dictionary key
+        parm: np.array
+            An array of parameter value to send to the offset function
+   
+        Returns
+        --------
+        var: float
+            The sum squared error divided by N. That is the average uncertainty per observation.   
+        """
         last = np.sqrt(((self.fdata[port][1]-self.offset(self.fdata[port][0],*parm))**2.))[-1]
         return last
 
-    #plot the currently used best fit line
-    def bfit(self,port):
-        self.bline[port]
-
 
     #Pedestal offset model
-    def offset(self,dt0,amp1,amp2,p1,phi1,phi2,trend,quad,off,qscale):
+    def offset_old(self,dt0,amp1,amp2,p1,phi1,phi2,trend,quad,off,qscale):
         c = 2.*np.pi
         dtq = dt0-self.dtq0[self.ptype]
         #do not add quadratic term before start time
@@ -570,12 +698,86 @@ class gui_dark(Tk.Frame):
         #return ((amp1*np.sin(c*(dt0/(p1)+phi1))**2.)+(amp2*np.sin(c*(dt0/(2.*p1)+phi2))**2.))*((trend*(dt0))+(quad*(dtq**2.))+(off))
         #return (amp1*(np.sin(c*(dt0/(2.*p1)+phi1)))**2.)+(amp2*(np.sin(c*(dt0/(2.*p1/2.)+phi2))**2))+(trend*(dt0))+(quad*(dtq**2.))+(p2*(dt0**3.))+(off)
 
+    #Pedestal offset model
+    def offset(self,dt0,amp1,amp2,p1,phi1,phi2,trend,quad,off,qscale,bo_drop,sc_amp):
+        """
+        
+        Args
+        ------
+        self: class
+            The GUI class in this module
+        dt0: np.array
+            The time is referenced with seconds since t0dict reference, which is port dependent. There is one time for every dark observation.
+        amp1: float
+            The amplitude of the approximately 1 year sine function.
+        amp2: float
+            The amplitude of the approximately 1/2 year sine function.
+        phi1: float
+            The phase of the approximately 1 year sine function in radians.
+        phi2: float
+            The phase of the approximately 1/2 year sine function in radians.
+        trend: float
+            The linear coefficient explaining the increase in the pedestal level. 
+        quad : float
+            The quadratic coefficient explaining the increase in the pedestal level. 
+        off:  float
+            The intercept for the quadratic and linear function
+        qscale: float
+            The flattening of the linear and quadratic term after August 2017
+        bo_drop: float
+            The fractional drop in the offset (intercept term due to the bake out on June 13-15, 2018
+        sc_amp: float
+            The amplication fraction in the in the sine function amplitudes due to the bake out on 
+            June 13-15, 2018.
+  
+   
+        Returns
+        --------
+        trend: float
+            The value of the trend at each t0 for a given set of parameters.
+        """
+
+
+
+        #constant on period term
+        c = 2.*np.pi
+        dtq = dt0-self.dtq0[self.ptype]
+        #do not add quadratic term before start time
+        dtq[dtq < 0.] = 0.
+        #Try removing quadratic term
+        #2018/10/08 J. Prchlik
+        #dtq = np.zeros(dtq.size)
+
+        #stop quad term after end time
+        #range to adjust quadratic term over 2018/05/25 J. Prchlik
+        adj, = np.where(dtq > self.dtq1[self.ptype]-self.dtq0[self.ptype])
+        off = np.zeros(dtq.size)+off
+        #adjust offset for given quad flattening time
+        off[adj] = off[adj]+quad*(1-qscale)*(self.dtq1[self.ptype]-self.dtq0[self.ptype])**2+trend*(1-qscale)*(self.dtq1[self.ptype])
+        dtq[adj] = (dtq[adj])*(qscale)**.5
+
+        #adjust offset for given linear flattening time
+        dtl = dt0.copy()
+        dtl[adj] = (dtl[adj])*(qscale)
+
+        #Default config
+        trend = (amp1*np.sin(c*(dt0/p1+phi1)))+(amp2*np.sin(c*(dt0/(p1/2.)+phi2)))+(trend*(dtl))+(quad*(dtq**2.00))+(off)
+        #drop the trend following the June 2018 bakeout
+        post_bo = [dt0 >  self.bojune152018-self.t0dict[self.cport]]
+        #Drop offset after June 2018 bake out by a fractional amount
+        drop_trend_offset = -(bo_drop)*off
+        #increase the amplitutude of the periodic terms after the June 2018 bake out by a fractional amount
+        incs_trend_amplit = ((amp1*np.sin(c*(dt0/p1+phi1)))+(amp2*np.sin(c*(dt0/(p1/2.)+phi2))))*sc_amp
+
+        #Trend after the 2018/06/15 bake out
+        trend[post_bo] = (trend+drop_trend_offset+incs_trend_amplit)[post_bo]
+        return trend
 
     #print data to terminal
     def Print(self):
-        print('      {0:10},{1:10},{2:15},{3:10},{4:10},{5:20},{6:20},{7:10},{8:10}'.format('Amp1','Amp2','P1','Phi1','Phi2','Trend','Quad','Offset','Scale'))
+        print('      {0:10},{1:10},{2:15},{3:10},{4:10},{5:20},{6:20},{7:10},{8:10},{9:10},{10:10}'.format('Amp1','Amp2','P1','Phi1','Phi2','Trend','Quad','Offset','Scale','OffDrop','AmpInc'))
         for i in self.b_keys:
-            print('{0}=[{1:^10.5f},{2:^10.5f},{3:^15.4e},{4:^10.5f},{5:^10.5f},{6:^20.9e},{7:^20.9e},{8:^10.5f},{9:10.5f}]'.format(i,*self.gdict[i]))
+            print('{0}=[{1:^10.5f},{2:^10.5f},{3:^15.4e},{4:^10.5f},{5:^10.5f},{6:^20.9e},{7:^20.9e},{8:^10.5f},{9:10.5f},{10:10.5f},{11:10.5f}]'.format(i,*self.gdict[i]))
 
 
     #refit list
@@ -646,7 +848,13 @@ class gui_dark(Tk.Frame):
             dt0   = self.fdata[i][0]
             port  = self.fdata[i][1]
             errs  = self.fdata[i][2]
+
+            #get the current port type
             self.ptype = i[:-1]
+            #get current full port informtion (i.e. nuv1 or fuv2)
+            self.cport = i
+             
+
             #for j,k in enumerate(mins): print(k,guess[j],maxs[j])
             popt, pcov = curve_fit(self.offset,dt0,port,p0=guess,sigma=errs,bounds=(mins,maxs),xtol=1e-10) 
 
