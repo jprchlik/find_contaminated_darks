@@ -9,22 +9,25 @@ matplotlib.use('TkAgg',warn=False,force=True)
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg, NavigationToolbar2TkAgg
 #implement the deault mpl key bindings
 from matplotlib.backend_bases import key_press_handler,MouseEvent
-import tkMessageBox as box
-import tkFileDialog as Tkf
 import numpy as np
 import sys
 import matplotlib.pyplot as plt
 from datetime import datetime
 from scipy.optimize import curve_fit
 from fancy_plot import fancy_plot
-import tkFont
 
 
 #check the python version to use one Tkinter syntax or another
 if sys.version_info[0] < 3:
     import Tkinter as Tk
+    import tkMessageBox as box
+    import tkFileDialog as Tkf
+    import tkFont
 else:
     import tkinter as Tk
+    from tkinter import messagebox as box
+    from tkinter import filedialog as Tkf
+    from tkinter import font as tkFont
 
 
 
