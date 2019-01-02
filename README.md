@@ -54,6 +54,27 @@ First, is make this script executable by typing chmod a+x run_dark_checks.csh.
 Then you need to update the HOME variable at the top of the directory to be your HOME directory.
 Finally, you need to follow instructions at https://developers.google.com/google-apps/calendar/quickstart/python
 to get the google calendar API for your email address and the associated python packages.
+The google documentation is a bit weak,
+so I will add a bit more detail.
+First, make sure to add the IRIS calibration as-run to your calendar if you don't already have it.
+If you followed the instructions on the webpage you should have downloaded a file called credentials.json in the current directory. 
+After you verify the code as detailed on the webpage, 
+move the credentials.json to client_secret.json.
+
+If the Google code fails, then follow the following steps:     
+
+python quick_script.py --noauth_local_webserver    
+
+Then a webpage will print in the terminal. Copy and paste that text into a web browser (mine looked like https://accounts.google.com/o/oauth2/auth?client_id=......). Then allow that application access to your calendar.
+
+That page will give you a verification code. Copy that code from the browser back to the terminal, which is now asking for a code. After you paste the code and hit enter you should see some events from your calendar.
+
+Now if you run python quick_script.py --noauth_local_webserver it will immediately print a few calendar events.
+
+Then move credentials.json to client_secret.json in the current directory.
+
+
+
 
 
 find_dark_runs.py
