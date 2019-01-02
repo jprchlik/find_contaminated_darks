@@ -141,14 +141,15 @@ class dark_times:
     def get_start_end(self):
 
 #lines with OBSID=obsid
-        lines = []
+        self.lines = []
         for line in self.timeline.split('\n'):
             if self.obsid in line:
-                 lines.append(line)
+                 self.lines.append(line)
 
-#get the last set of OBSIDs (only really useful for eclipse season)
-        self.sta_dark = lines[-3][3:20]
-        self.end_dark = lines[-1][3:20]
+        #get the last set of OBSIDs (useful for eclipse season)
+        #Query from start to end time 2019/01/02 J. Prchlik
+        self.sta_dark = self.lines[0][3:20]
+        self.end_dark = self.lines[-1][3:20]
 
         self.sta_dark_dt = self.create_dt_object(self.sta_dark)
         self.end_dark_dt = self.create_dt_object(self.end_dark)
