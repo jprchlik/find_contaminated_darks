@@ -95,7 +95,7 @@ class gui_dark(Tk.Frame):
         gfile.close()
 
         #dictionary of time offsets (i.e. start times in IDL anytim format)
-        self.t0dict =  {}
+        self.t0dict = {}
         self.t0dict['fuv1'] = 1090654728.
         self.t0dict['fuv2'] = 1089963933.
         self.t0dict['fuv3'] = 1090041516.
@@ -142,7 +142,8 @@ class gui_dark(Tk.Frame):
 
         #add parameter code corresponding to position
         self.p_code = {}
-        for j,i in enumerate(self.plis): self.p_code['{0:1d}'.format(j)] = i
+        for j,i in enumerate(self.plis):
+            self.p_code['{0:1d}'.format(j)] = i
 
         #add P2 for testing
         #self.plis = ['Amp1','Amp2','P1','P2','Phi1','Phi2','Trend','Quad','Offset']
@@ -595,7 +596,7 @@ class gui_dark(Tk.Frame):
         self.sdata = {}
        
         #plot data for all IRIS dark remaining pedestals
-        for i in self.fdata.keys():
+        for i in sorted(self.fdata.keys()):
             #Get plot associated with each port
             ax = self.wplot[i[:-1]] 
             #Put data in temp array
