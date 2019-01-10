@@ -123,6 +123,10 @@ class gui_dark(Tk.Frame):
         #unit s from 1-jan-1958 based on anytim from IDL 
         self.bojune152018 = 1.2450240e+09
 
+        #Add non-standard telescope operations following IRIS coarse control
+        #From Oct. 28 - Dec. 15 2018 (Added 2019/01/10 J. Prchlik)
+        self.nsdec152018  = 1.2608352e+09
+
         #basic set of keys
         self.b_keys = sorted(self.gdict.keys())
         #add min and max parameters (Default no restriction)
@@ -701,9 +705,20 @@ class gui_dark(Tk.Frame):
         #return ((amp1*np.sin(c*(dt0/(p1)+phi1))**2.)+(amp2*np.sin(c*(dt0/(2.*p1)+phi2))**2.))*((trend*(dt0))+(quad*(dtq**2.))+(off))
         #return (amp1*(np.sin(c*(dt0/(2.*p1)+phi1)))**2.)+(amp2*(np.sin(c*(dt0/(2.*p1/2.)+phi2))**2))+(trend*(dt0))+(quad*(dtq**2.))+(p2*(dt0**3.))+(off)
 
+    ########################################################################################
+    #!!!!!!Will need to update parameters in offset function as you add new parameters!!!!!!
+    #!!!!!!Will need to update parameters in offset function as you add new parameters!!!!!!
+    #!!!!!!Will need to update parameters in offset function as you add new parameters!!!!!!
+    #!!!!!!Will need to update parameters in offset function as you add new parameters!!!!!!
+    #!!!!!!Will need to update parameters in offset function as you add new parameters!!!!!!
+    #!!!!!!Will need to update parameters in offset function as you add new parameters!!!!!!
+    ########################################################################################
     #Pedestal offset model
-    def offset(self,dt0,amp1,amp2,p1,phi1,phi2,trend,quad,off,qscale,bo_drop,sc_amp):
+    def offset(self,dt0,amp1,amp2,p1,phi1,phi2,trend,quad,off,qscale,bo_drop,sc_amp,ns_incr):
         """
+        This function creates the model used for fitting. If you want to add new parameters to the
+        model, then you will need to add them this is function and document them. This function
+        will get passed to the minimization routine when trying to derive new parameters.
         
         Args
         ------
@@ -728,10 +743,13 @@ class gui_dark(Tk.Frame):
         qscale: float
             The flattening of the linear and quadratic term after August 2017
         bo_drop: float
-            The fractional drop in the offset (intercept term due to the bake out on June 13-15, 2018
+            The fractional drop in the offset (intercept term) due to the bake out on June 13-15, 2018
         sc_amp: float
             The amplication fraction in the in the sine function amplitudes due to the bake out on 
             June 13-15, 2018.
+        ns_incr: float
+            The fractional increase in the offset (intercept term) due to non-standard IRIS operations
+            from October 27th to December 15th, 2018.
   
    
         Returns
@@ -763,10 +781,18 @@ class gui_dark(Tk.Frame):
         dtl = dt0.copy()
         dtl[adj] = (dtl[adj])*(qscale)
 
+        ################################################################################################################
         #Default config
         trend = (amp1*np.sin(c*(dt0/p1+phi1)))+(amp2*np.sin(c*(dt0/(p1/2.)+phi2)))+(trend*(dtl))+(quad*(dtq**2.00))+(off)
+        ################################################################################################################
+
+        ################################################################################################################
         #drop the trend following the June 2018 bakeout
-        post_bo = [dt0 >  self.bojune152018-self.t0dict[self.cport]]
+        #Stop this trend once the non-standard coarse control of the telescope, which begins in Oct, 2018, end in Dec. 2018
+        #post_bo = [((dt0 >  self.bojune152018-self.t0dict[self.cport]) & (dt0 < self.nsdec152018-self.t0dict[self.cport]))]
+        #For now assumed the amplitude increase in the periodic trend presists after the bake and through the non-standard
+        #operations in Oct.-Dec. 2018 J. Prchlik 2019/01/10
+        post_bo = [((dt0 >  self.bojune152018-self.t0dict[self.cport]))]
         #Drop offset after June 2018 bake out by a fractional amount
         drop_trend_offset = -(bo_drop)*off
         #increase the amplitutude of the periodic terms after the June 2018 bake out by a fractional amount
@@ -774,16 +800,37 @@ class gui_dark(Tk.Frame):
 
         #Trend after the 2018/06/15 bake out
         trend[post_bo] = (trend+drop_trend_offset+incs_trend_amplit)[post_bo]
+        ################################################################################################################
+
+
+        ################################################################################################################
+        #Increase in the pedestal level following non-standard operations of the IRIS telescope from Oct.-Dec 2018
+        post_ns = [(dt0 > self.nsdec152018-self.t0dict[self.cport])]
+        #Increase pedestal offset after Oct.-Dec. 2018 non-standard operations by a fractional amount
+        incr_trend_offset = (ns_incr)
+
+        #Trend after the non-standard operations between Oct. 27th and Dec. 15 2018
+        trend[post_ns] = (trend+incr_trend_offset)[post_ns]
+ 
+        ################################################################################################################
         return trend
 
     #print data to terminal
+    ##########################################################################
+    #!!!!!!Will need to update parameters here as you add new parameters!!!!!!
+    #!!!!!!Will need to update parameters here as you add new parameters!!!!!!
+    #!!!!!!Will need to update parameters here as you add new parameters!!!!!!
+    #!!!!!!Will need to update parameters here as you add new parameters!!!!!!
+    #!!!!!!Will need to update parameters here as you add new parameters!!!!!!
+    #!!!!!!Will need to update parameters here as you add new parameters!!!!!!
+    ##########################################################################
     def Print(self):
-        print('      {0:10},{1:10},{2:15},{3:10},{4:10},{5:20},{6:20},{7:10},{8:10},{9:10},{10:10}'.format('Amp1','Amp2','P1','Phi1','Phi2','Trend','Quad','Offset','Scale','OffDrop','AmpInc'))
+        print('      {0:10},{1:10},{2:15},{3:10},{4:10},{5:20},{6:20},{7:10},{8:10},{9:10},{10:10},{11:10}'.format('Amp1','Amp2','P1','Phi1','Phi2','Trend','Quad','Offset','Scale','OffDrop','AmpInc','OffNSop'))
         for i in self.b_keys:
-            print('{0}=[{1:^10.5f},{2:^10.5f},{3:^15.4e},{4:^10.5f},{5:^10.5f},{6:^20.9e},{7:^20.9e},{8:^10.5f},{9:10.5f},{10:10.5f},{11:10.5f}]'.format(i,*self.gdict[i]))
+            print('{0}=[{1:^10.5f},{2:^10.5f},{3:^15.4e},{4:^10.5f},{5:^10.5f},{6:^20.9e},{7:^20.9e},{8:^10.5f},{9:10.5f},{10:10.5f},{11:10.5f},{12:10.5f}]'.format(i,*self.gdict[i]))
 
 
-    #refit list
+    #refit list (i.e. which ports should you refit)
     def refit_list_com(self):
         self.f.canvas._tkcanvas.focus_set()
         #check which boxes are checked 
@@ -799,7 +846,8 @@ class gui_dark(Tk.Frame):
                 self.refit_list.remove(i)
                 self.check_box[i].deselect()
             #if not checked and not in list do nothing
-            else: continue
+            else:
+                continue
 
     #parameter freeze list
     def freeze_list_com(self):
