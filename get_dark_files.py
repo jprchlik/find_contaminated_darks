@@ -131,12 +131,14 @@ class dark_times:
                 check = False 
                 v+=-1
                 inurl = self.irisweb.format(self.stime, v,irispath).replace(' ','0')
-            else: v+=1
+            else:
+                v+=1
 #get the timeline file information for request timeline
         res = urlopen(inurl)
 
         self.res = res
-        self.timeline = res.read()
+        #Need to add decode because python 3 is wonderful 2019/01/16 J. Prchlik
+        self.timeline = res.read().decode('utf-8')
 
     def get_start_end(self):
 
