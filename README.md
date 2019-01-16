@@ -90,6 +90,9 @@ Because LMSAL does not allow access to the Google calendar API,
 this version of find_dark_runs uses the iris timeline files. 
 The program searches archived timeline files and sends the day to get_dark_files.py and the year,month to c-shell script,
 which the c-shell script uses to pass to IDL functions.
+Replace line 22 of run_dark_checks.csh to say   
+set dday=`python find_dark_runs_no_google.py`   
+ to use this program instead. 
 
 get_dark_files.py
 -----------------
