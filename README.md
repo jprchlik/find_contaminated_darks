@@ -5,7 +5,7 @@ Primarily the directory now exists to test the long term trending of the IRIS pe
 which was first noticed to be discrepant from the launch model in ~June 2014.
 The main directory contains a c-shell script (run_dark_checks.csh), which runs a series of codes.
 First, it finds the day of the observed darks by querying the google calibration-as-run calendar for IRIS dark runs in the last 25 days.
-Then it grabs the text of the timeline file for that day and searches for the simpleb and complexa OBSIDs (find_dark_runs.py). 
+Then it grabs the text of the timeline file for that day and searches for the simpleb and complexa OBSIDs (find_dark_runs.py, N.B. read find_dark_runs_no_google.py documentation if your institution does not allow access to the Google Calendar API). 
 This would run into an issue if ~~the dark are ran on a weekend timeline (always ran on Wednesday during the time of this documentation)~~ (verified to work when run on the weekend)
 or someone messed up the calibration-as-run calendar either by not following naming convention (Calib 3: Dark) or by failing to update the calibration-as-run calendar.
 If it is the latter you should fix it in the calibration-as-run calendar, but if you notice a pattern of errors you should report that to Ryan Timmons because
@@ -82,6 +82,13 @@ find_dark_runs.py
 This program requires the google calendar API referenced above,
 but other than that is quite simple.
 The program searches the calendar for the string calib3:dark and sends the day to get_dark_files.py and the year,month to c-shell script,
+which the c-shell script uses to pass to IDL functions.
+
+find_dark_runs_no_google.py
+-----------------
+Because LMSAL does not allow access to the Google calendar API, 
+this version of find_dark_runs uses the iris timeline files. 
+The program searches archived timeline files and sends the day to get_dark_files.py and the year,month to c-shell script,
 which the c-shell script uses to pass to IDL functions.
 
 get_dark_files.py
