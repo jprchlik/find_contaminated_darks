@@ -59,7 +59,7 @@ so I will add a bit more detail.
 First, make sure to add the IRIS calibration as-run to your calendar if you don't already have it.
 If you followed the instructions on the webpage you should have downloaded a file called credentials.json in the current directory. 
 After you verify the code as detailed on the webpage, 
-move the credentials.json to client_secret.json.
+copy the token.json to client_secret.json and ~/.credentials/calendar-python-quickstart.json .
 
 If the Google code fails, then follow the following steps:     
 
