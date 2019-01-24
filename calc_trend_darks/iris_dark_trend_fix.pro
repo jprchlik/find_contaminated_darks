@@ -96,20 +96,33 @@ progver = 'v2018.Feb.02' ;--- (SSaar,JPrchlik) V14 update of double sine model
 progver = 'v2018.May.29' ;--- (SSaar,JPrchlik) V15 update of double sine model
 ;                                       +quad trend, P2=P1/2, data thru 05/18
 ;                                      linear+quad trend now reduced after 8/17
-progver = 'v2018.Oct.17' ;--- (SSaar,JPrchlik) V15 update of double sine model
+progver = 'v2018.Oct.17' ;--- (SSaar,JPrchlik) V16 update of double sine model
 ;                                       +quad trend, P2=P1/2, data thru 05/18
 ;                                      linear+quad trend now reduced after 8/17
 ;                                      fractional drop in offset and increase
-;                                      in quadratic term following the 6/18
+;                                      Amp terms following the 6/18
 ;                                      bakeout 
-progver = 'v2019.Jan.10' ;--- (SSaar,JPrchlik) V15 update of double sine model
+progver = 'v2019.Jan.10' ;--- (SSaar,JPrchlik) V17 update of double sine model
 ;                                        +quad trend, P2=P1/2, data thru 05/18
 ;                                       linear+quad trend now reduced after 8/17
 ;                                       fractional drop in offset and increase
-;                                       in quadratic term following the 6/18
+;                                       Amp terms following the 6/18
 ;                                       bakeout, an increase the the pedestal
 ;                                       offset level following non-standard
 ;                                       IRIS operations following 2018/12/15
+progver = 'v2019.Jan.22' ;--- (SSaar,JPrchlik) V18 update of double sine model
+;                                        +quad trend, P2=P1/2, data thru 05/18
+;                                       linear+quad trend now reduced after 8/17
+;                                       fractional drop in offset and increase
+;                                       Amp terms following the 6/18
+;                                       bakeout, an increase the the pedestal
+;                                       offset level following non-standard
+;                                       IRIS operations following 2018/12/15.
+;                                       Turned off increase in sine amplitude 
+;                                       due to bakeout following the resumption 
+;                                       of IRIS on 2018/12/15.
+;                                       
+;                                       
 ;
 ;-
 ; ============================================================================
