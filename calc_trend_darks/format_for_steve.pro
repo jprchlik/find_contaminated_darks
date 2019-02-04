@@ -45,7 +45,7 @@ pro format_for_steve
             yoff = [-0.30,-0.30,-0.25,-0.15]
             save,sigmx,avni,tni,xoff,yoff,filename=fname
          endif else begin
-            cut = 0.20
+            cut = 0.30
             goodday = where((gropsig[0,*] lt cut) and (gropsig[1,*] lt cut) and (gropsig[2,*] lt cut) and (gropsig[3,*] lt cut));emperically derived  to remove November 2015
 ;create new arrays where all ports pass
             gropave = gropave[*,goodday]
