@@ -790,10 +790,12 @@ class gui_dark(Tk.Frame):
         ################################################################################################################
         #drop the trend following the June 2018 bakeout
         #Stop this trend once the non-standard coarse control of the telescope, which begins in Oct, 2018, end in Dec. 2018
-        #post_bo = [((dt0 >  self.bojune152018-self.t0dict[self.cport]) & (dt0 < self.nsdec152018-self.t0dict[self.cport]))]
+        #Assume the trend is only for a time period between the bakeout and coarse control mode (June - Dec. 2018)
+        #2019/01/22 J. Prchlik
+        post_bo = [((dt0 >  self.bojune152018-self.t0dict[self.cport]) & (dt0 < self.nsdec152018-self.t0dict[self.cport]))]
         #For now assumed the amplitude increase in the periodic trend presists after the bake and through the non-standard
         #operations in Oct.-Dec. 2018 J. Prchlik 2019/01/10
-        post_bo = [((dt0 >  self.bojune152018-self.t0dict[self.cport]))]
+        #post_bo = [((dt0 >  self.bojune152018-self.t0dict[self.cport]))]
         #Drop offset after June 2018 bake out by a fractional amount
         drop_trend_offset = -(bo_drop)*off
         #increase the amplitutude of the periodic terms after the June 2018 bake out by a fractional amount
