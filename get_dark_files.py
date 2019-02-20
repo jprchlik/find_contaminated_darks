@@ -14,6 +14,9 @@ import drms
 from shutil import move
 import glob
 
+###Remove proxy server variables from Lockheed after using the proxy server to connect to the google calendar 2019/02/20 J. Prchlik
+##os.environ.pop("http_proxy" )
+##os.environ.pop("https_proxy")
 
 class dark_times:
 
@@ -238,7 +241,8 @@ class dark_times:
         fils = fils.split('/')[-1]
         nout = fils[:14]+'-'+fils[14:16]+'-'+fils[16:24]+fils[26:]
 #create new file name in same as previous format
-        move(str(outf['download'].values[0]),self.bdir+nout)
+        if os.path.isfile(str(outf['download'].values[0])):
+            move(str(outf['download'].values[0]),self.bdir+nout)
 
    
 
