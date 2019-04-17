@@ -264,6 +264,34 @@ calc_trend_darks/python_fit_ports/
 A python GUI for refitting the long term dark pedestal level. 
 
 
+Parameters
+==========
+amp1: float    
+    The amplitude of the approximately 1 year sine function.    
+amp2: float    
+    The amplitude of the approximately 1/2 year sine function.    
+phi1: float    
+    The phase of the approximately 1 year sine function in radians.    
+phi2: float    
+    The phase of the approximately 1/2 year sine function in radians.    
+trend: float    
+    The linear coefficient explaining the increase in the pedestal level.     
+quad : float    
+    The quadratic coefficient explaining the increase in the pedestal level.     
+off:  float    
+    The intercept for the quadratic and linear function    
+qscale: float    
+    The flattening of the linear and quadratic term after August 2017    
+bo_drop: float    
+    The fractional drop in the offset (intercept term) due to the bake out on June 13-15, 2018    
+sc_amp: float    
+    The amplication fraction in the in the sine function amplitudes due to the bake out on     
+    June 13-15, 2018.    
+ns_incr: float    
+    The fractional increase in the offset (intercept term) due to non-standard IRIS operations    
+    from October 27th to December 15th, 2018.    
+
+
 
 
 
