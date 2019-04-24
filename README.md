@@ -71,7 +71,7 @@ so I will add a bit more detail.
 First, make sure to add the IRIS calibration as-run to your calendar if you don't already have it.
 If you followed the instructions on the webpage you should have downloaded a file called credentials.json in the current directory. 
 After you verify the code as detailed on the webpage, 
-copy the token.json to client_secret.json and ~/.credentials/calendar-python-quickstart.json .
+copy the token.json to client_secret.json and ~/.credentials/calendar-python-quickstart.json. 
 
 If the Google code fails, then follow the following steps:     
 
@@ -83,7 +83,8 @@ That page will give you a verification code. Copy that code from the browser bac
 
 Now if you run python quick_script.py --noauth_local_webserver it will immediately print a few calendar events.
 
-Then move credentials.json to client_secret.json in the current directory.
+After you verify the code as detailed on the webpage, 
+copy the token.json to client_secret.json and ~/.credentials/calendar-python-quickstart.json. 
 
 
 
