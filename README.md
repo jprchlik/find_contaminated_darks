@@ -61,6 +61,7 @@ When the report is approved send it to iris_calib
 run_dark_checks.csh
 -------------------
 The c-shell file is a wrapper combining the IDL and python portions of the program.
+This wrapper is all you need to run for a simple run of IRIS dark calibrations.
 In order to run the script from your machine you will need to do a few things.
 First, is make this script executable by typing chmod a+x run_dark_checks.csh.
 Then you need to update the HOME variable at the top of the directory to be your HOME directory.
