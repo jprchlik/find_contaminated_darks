@@ -5,7 +5,7 @@ Primarily the directory now exists to test the long term trending of the IRIS pe
 which was first noticed to be discrepant from the launch model in ~June 2014.
 The main directory contains a c-shell script (run_dark_checks.csh), which runs a series of codes.
 First, it finds the day of the observed darks by querying the google calibration-as-run calendar for IRIS dark runs in the last 25 days.
-Then it grabs the text of the timeline file for that day and searches for the simpleb and complexa OBSIDs (find_dark_runs.py, N.B. read find_dark_runs_no_google.py documentation if your institution does not allow access to the Google Calendar API). 
+Then it grabs the text of the timeline file for that day and searches for the simpleb and complexa OBSIDs (find_dark_runs.py, N.B. add a proxy server to your environment in find_dark_runs.py if your institution does not allow access to the Google Calendar API). 
 This would run into an issue if ~~the dark are ran on a weekend timeline (always ran on Wednesday during the time of this documentation)~~ (verified to work when run on the weekend)
 or someone messed up the calibration-as-run calendar either by not following naming convention (Calib 3: Dark) or by failing to update the calibration-as-run calendar.
 If it is the latter you should fix it in the calibration-as-run calendar, but if you notice a pattern of errors you should report that to Ryan Timmons because
@@ -21,8 +21,7 @@ Then the script checks for darks significantly affected by SAAs or transient par
 This step runs in parallel, which requires that you add par_commands to your IDL start up via the enviromental variable IDL_PATH in .cshrc or your .idl_startup file.
 Next, download the temperature files for the day darks are observed plus +/- 1 day and format the output temperature file for IDL.
 The last step in the dark pedestal pipeline creates plots to compare the observed to the modeled dark pedestal trend.
-~~(Bonus the hot_pixel_plot_wrapper is included at the end of the script and based on my directory structure.
-I should just integrate into the main code because it solves a similar problem).~~
+The hot_pixel_plot_wrapper is included at the end of the script.
 
 
 After the pedestal analysis finishes, 
@@ -44,6 +43,19 @@ My process_darks.csh looks like the following:
 >source $HOME/.cshrc.user  
 >cd /MyPegasusDirectory/iris/find_con_darks/  
 >./run_dark_checks.csh  
+
+Overview Recalibration Procedure 
+--------------
+If you notice the dark trend does not represent the dark pedestal measurements well (~ 2 sigma) for a couple months in a row,
+then you need to do a recalibration of the dark pedestal.
+
+Run run_dark_checks.csh to add the new darks and analyze the trend    
+Run the python_fit_ports GUI and modify the parameters to improve the trend         
+Update initial_parameter.txt and copy the parameters also in calc_trend_darks/iris_dark_trend_fix.pro    
+Run dark_trend.pro and format_for_steve.pro to obtain the new plots    
+Send the new plots, an updated iris_dark_trend_fix.pro, and tentative report to the local dark pedestal curator    
+When the report is approved send it to iris_calib    
+
 
 
 run_dark_checks.csh
